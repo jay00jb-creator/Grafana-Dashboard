@@ -1,0 +1,1630 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 13,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "aliasColors": {},
+      "datasource": {
+        "type": "influxdb",
+        "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+      },
+      "doInit": {},
+      "format": "short",
+      "gridPos": {
+        "h": 23,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "handleMetric": {},
+      "id": 1,
+      "js_code": "// ============================================================\n// SP4 WGF Machine Health — Marcus Calidus Events code\n// 31 live bindings + rotor rotation animation tied to speed.\n// ============================================================\nvar series = (ctrl && ctrl.series) ? ctrl.series : [];\n \nfunction latestOf(s) {\n  if (!s) return null;\n  if (s.datapoints && s.datapoints.length) {\n    for (var i = s.datapoints.length - 1; i >= 0; i--) {\n      var v = s.datapoints[i][0];\n      if (v !== null && v !== undefined && !isNaN(v)) return v;\n    }\n  }\n  if (s.stats) {\n    if (s.stats.current !== undefined && s.stats.current !== null) return s.stats.current;\n    if (s.stats.last    !== undefined && s.stats.last    !== null) return s.stats.last;\n  }\n  return null;\n}\nfunction fmt(v, d) { return (v===null||v===undefined||isNaN(v))?'--':Number(v).toFixed(d); }\nfunction setAttr(id, attr, val) { var e=svgnode.getElementById(id); if(e) e.setAttribute(attr, val); }\nfunction setText(id, txt)       { var e=svgnode.getElementById(id); if(e) e.textContent = txt; }\n \nvar COLOR = { normal:'#22c55e', warning:'#f59e0b', critical:'#ef4444', nodata:'#64748b' };\n \n// Heat-map color for winding-temp pucks (40 °C → blue, 100 °C → green, 150 °C → red)\nfunction tempColor(v) {\n  if (v===null || v===undefined || isNaN(v)) return '#1e293b';\n  var stops = [\n    {p:40,  c:[34,211,238]},\n    {p:80,  c:[34,197,94]},\n    {p:120, c:[245,158,11]},\n    {p:155, c:[239,68,68]}\n  ];\n  var x = Math.max(stops[0].p, Math.min(stops[stops.length-1].p, v));\n  for (var i = 0; i < stops.length - 1; i++) {\n    if (x <= stops[i+1].p) {\n      var a = stops[i], b = stops[i+1];\n      var t = (x - a.p) / (b.p - a.p);\n      var r  = Math.round(a.c[0] + (b.c[0]-a.c[0])*t);\n      var g  = Math.round(a.c[1] + (b.c[1]-a.c[1])*t);\n      var bl = Math.round(a.c[2] + (b.c[2]-a.c[2])*t);\n      return 'rgb(' + r + ',' + g + ',' + bl + ')';\n    }\n  }\n  return '#ef4444';\n}\n \nvar level, v;\nvar values = {};\nvar counts = { normal:0, warning:0, critical:0, nodata:0 };\n \n \n// [0] wgf_speed  (WGF_SPEED)\nv = latestOf(series[0]);\nvalues['wgf_speed'] = v;\nlevel = (v===null)?'nodata':(v>820?'critical':(v>=780?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_speed_value', fmt(v, 0));\nsetAttr('wgf_speed_status_dot', 'fill', COLOR[level]);\n \n// [1] wgf_dc_current  (WGF_DC_CURRENT)\nv = latestOf(series[1]);\nvalues['wgf_dc_current'] = v;\nlevel = (v===null)?'nodata':(v>2000?'critical':(v>=1800?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_dc_current_value', fmt(v, 0));\nsetAttr('wgf_dc_current_status_dot', 'fill', COLOR[level]);\n \n// [2] wgf_exc_current  (WGF_EXCITATION_CURRENT)\nv = latestOf(series[2]);\nvalues['wgf_exc_current'] = v;\nlevel = (v===null)?'nodata':(v>160?'critical':(v>=140?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_exc_current_value', fmt(v, 1));\nsetAttr('wgf_exc_current_status_dot', 'fill', COLOR[level]);\n \n// [3] wgf_wind_u1  (WGF_MOTOR_U1_WINDING_TEMPERATURE)\nv = latestOf(series[3]);\nvalues['wgf_wind_u1'] = v;\nlevel = (v===null)?'nodata':(v>155?'critical':(v>=130?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_wind_u1_value', fmt(v, 0));\nsetAttr('wgf_wind_u1_dot', 'fill', tempColor(v));\nsetAttr('wgf_wind_u1_dot', 'stroke', COLOR[level]);\n \n// [4] wgf_wind_v1  (WGF_MOTOR_V1_WINDING_TEMPERATURE)\nv = latestOf(series[4]);\nvalues['wgf_wind_v1'] = v;\nlevel = (v===null)?'nodata':(v>155?'critical':(v>=130?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_wind_v1_value', fmt(v, 0));\nsetAttr('wgf_wind_v1_dot', 'fill', tempColor(v));\nsetAttr('wgf_wind_v1_dot', 'stroke', COLOR[level]);\n \n// [5] wgf_wind_w1  (WGF_MOTOR_W1_WINDING_TEMPERATURE)\nv = latestOf(series[5]);\nvalues['wgf_wind_w1'] = v;\nlevel = (v===null)?'nodata':(v>155?'critical':(v>=130?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_wind_w1_value', fmt(v, 0));\nsetAttr('wgf_wind_w1_dot', 'fill', tempColor(v));\nsetAttr('wgf_wind_w1_dot', 'stroke', COLOR[level]);\n \n// [6] wgf_wind_u2  (WGF_MOTOR_U2_WINDING_TEMPERATURE)\nv = latestOf(series[6]);\nvalues['wgf_wind_u2'] = v;\nlevel = (v===null)?'nodata':(v>155?'critical':(v>=130?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_wind_u2_value', fmt(v, 0));\nsetAttr('wgf_wind_u2_dot', 'fill', tempColor(v));\nsetAttr('wgf_wind_u2_dot', 'stroke', COLOR[level]);\n \n// [7] wgf_wind_v2  (WGF_MOTOR_V2_WINDING_TEMPERATURE)\nv = latestOf(series[7]);\nvalues['wgf_wind_v2'] = v;\nlevel = (v===null)?'nodata':(v>155?'critical':(v>=130?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_wind_v2_value', fmt(v, 0));\nsetAttr('wgf_wind_v2_dot', 'fill', tempColor(v));\nsetAttr('wgf_wind_v2_dot', 'stroke', COLOR[level]);\n \n// [8] wgf_wind_w2  (WGF_MOTOR_W2_WINDING_TEMPERATURE)\nv = latestOf(series[8]);\nvalues['wgf_wind_w2'] = v;\nlevel = (v===null)?'nodata':(v>155?'critical':(v>=130?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_wind_w2_value', fmt(v, 0));\nsetAttr('wgf_wind_w2_dot', 'fill', tempColor(v));\nsetAttr('wgf_wind_w2_dot', 'stroke', COLOR[level]);\n \n// [9] wgf_bear_de  (WGF_MOTOR_DE_BEARING_TEMPERATURE)\nv = latestOf(series[9]);\nvalues['wgf_bear_de'] = v;\nlevel = (v===null)?'nodata':(v>95?'critical':(v>=80?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_bear_de_value', fmt(v, 0));\nsetAttr('wgf_bear_de_dot', 'stroke', COLOR[level]);\n \n// [10] wgf_bear_nde  (WGF_MOTOR_NDE_BEARING_TEMPERATURE)\nv = latestOf(series[10]);\nvalues['wgf_bear_nde'] = v;\nlevel = (v===null)?'nodata':(v>95?'critical':(v>=80?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_bear_nde_value', fmt(v, 0));\nsetAttr('wgf_bear_nde_dot', 'stroke', COLOR[level]);\n \n// [11] wgf_fan_vib_de_x  (WGF_FAN_DE_X_VIBRATION)\nv = latestOf(series[11]);\nvalues['wgf_fan_vib_de_x'] = v;\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_fan_vib_de_x_value', fmt(v, 2));\nsetAttr('wgf_fan_vib_de_x_line', 'stroke', COLOR[level]);\n \n// [12] wgf_fan_vib_de_y  (WGF_FAN_DE_Y_VIBRATION)\nv = latestOf(series[12]);\nvalues['wgf_fan_vib_de_y'] = v;\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_fan_vib_de_y_value', fmt(v, 2));\nsetAttr('wgf_fan_vib_de_y_line', 'stroke', COLOR[level]);\n \n// [13] wgf_fan_vib_de_axial  (WGF_FAN_DE_AXIAL_VIBRATION)\nv = latestOf(series[13]);\nvalues['wgf_fan_vib_de_axial'] = v;\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_fan_vib_de_axial_value', fmt(v, 2));\nsetAttr('wgf_fan_vib_de_axial_line', 'stroke', COLOR[level]);\n \n// [14] wgf_fan_vib_nde_x  (WGF_FAN_NDE_X_VIBRATION)\nv = latestOf(series[14]);\nvalues['wgf_fan_vib_nde_x'] = v;\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_fan_vib_nde_x_value', fmt(v, 2));\nsetAttr('wgf_fan_vib_nde_x_line', 'stroke', COLOR[level]);\n \n// [15] wgf_fan_vib_nde_y  (WGF_FAN_NDE_Y_VIBRATION)\nv = latestOf(series[15]);\nvalues['wgf_fan_vib_nde_y'] = v;\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_fan_vib_nde_y_value', fmt(v, 2));\nsetAttr('wgf_fan_vib_nde_y_line', 'stroke', COLOR[level]);\n \n// [16] wgf_fan_vib_nde_axial  (WGF_FAN_NDE_AXIAL_VIBRATION)\nv = latestOf(series[16]);\nvalues['wgf_fan_vib_nde_axial'] = v;\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_fan_vib_nde_axial_value', fmt(v, 2));\nsetAttr('wgf_fan_vib_nde_axial_line', 'stroke', COLOR[level]);\n \n// [17] wgf_mot_vib_de_axial  (WGF_MOTOR_DE_AXIAL_VIBRATION)\nv = latestOf(series[17]);\nvalues['wgf_mot_vib_de_axial'] = v;\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_mot_vib_de_axial_value', fmt(v, 2));\nsetAttr('wgf_mot_vib_de_axial_line', 'stroke', COLOR[level]);\n \n// [18] wgf_mot_vib_nde_axial  (WGF_MOTOR_NDE_AXIAL_VIBRATION)\nv = latestOf(series[18]);\nvalues['wgf_mot_vib_nde_axial'] = v;\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_mot_vib_nde_axial_value', fmt(v, 2));\nsetAttr('wgf_mot_vib_nde_axial_line', 'stroke', COLOR[level]);\n \n// [19] lube_fan_de_flow  (WGF_FAN_DE_LUBRICATIONOIL_FLOW)\nv = latestOf(series[19]);\nvalues['lube_fan_de_flow'] = v;\nlevel = (v===null)?'nodata':(v<20?'critical':(v<=30?'warning':'normal'));\ncounts[level]++;\nsetText('lube_fan_de_flow_value', fmt(v, 1));\nsetAttr('lube_fan_de_flow_bar', 'width', (v===null||v<0)?0:Math.min(1, v/60) * 370);\n \n// [20] lube_fan_de_press  (WGF_FAN_DE_LUBRICATIONOIL_PRESSURE)\nv = latestOf(series[20]);\nvalues['lube_fan_de_press'] = v;\nlevel = (v===null)?'nodata':(v<1.0?'critical':(v<=1.5?'warning':'normal'));\ncounts[level]++;\nsetText('lube_fan_de_press_value', fmt(v, 2));\nsetAttr('lube_fan_de_press_bar', 'width', (v===null||v<0)?0:Math.min(1, v/4) * 370);\n \n// [21] lube_fan_de_temp  (WGF_FAN_DE_LUBRICATIONOIL_TEMPERATURE)\nv = latestOf(series[21]);\nvalues['lube_fan_de_temp'] = v;\nlevel = (v===null)?'nodata':(v>75?'critical':(v>=65?'warning':'normal'));\ncounts[level]++;\nsetText('lube_fan_de_temp_value', fmt(v, 1));\nsetAttr('lube_fan_de_temp_bar', 'width', (v===null||v<0)?0:Math.min(1, v/100) * 370);\n \n// [22] lube_fan_nde_flow  (WGF_FAN_NDE_LUBRICATIONOIL_FLOW)\nv = latestOf(series[22]);\nvalues['lube_fan_nde_flow'] = v;\nlevel = (v===null)?'nodata':(v<20?'critical':(v<=30?'warning':'normal'));\ncounts[level]++;\nsetText('lube_fan_nde_flow_value', fmt(v, 1));\nsetAttr('lube_fan_nde_flow_bar', 'width', (v===null||v<0)?0:Math.min(1, v/60) * 370);\n \n// [23] lube_fan_nde_press  (WGF_FAN_NDE_LUBRICATIONOIL_PRESSURE)\nv = latestOf(series[23]);\nvalues['lube_fan_nde_press'] = v;\nlevel = (v===null)?'nodata':(v<1.0?'critical':(v<=1.5?'warning':'normal'));\ncounts[level]++;\nsetText('lube_fan_nde_press_value', fmt(v, 2));\nsetAttr('lube_fan_nde_press_bar', 'width', (v===null||v<0)?0:Math.min(1, v/4) * 370);\n \n// [24] lube_fan_nde_temp  (WGF_FAN_NDE_LUBRICATIONOIL_TEMPERATURE)\nv = latestOf(series[24]);\nvalues['lube_fan_nde_temp'] = v;\nlevel = (v===null)?'nodata':(v>75?'critical':(v>=65?'warning':'normal'));\ncounts[level]++;\nsetText('lube_fan_nde_temp_value', fmt(v, 1));\nsetAttr('lube_fan_nde_temp_bar', 'width', (v===null||v<0)?0:Math.min(1, v/100) * 370);\n \n// [25] lube_mot_de_flow  (WGF_MOTOR_DE_LUBRICATIONOIL_FLOW)\nv = latestOf(series[25]);\nvalues['lube_mot_de_flow'] = v;\nlevel = (v===null)?'nodata':(v<20?'critical':(v<=30?'warning':'normal'));\ncounts[level]++;\nsetText('lube_mot_de_flow_value', fmt(v, 1));\nsetAttr('lube_mot_de_flow_bar', 'width', (v===null||v<0)?0:Math.min(1, v/60) * 370);\n \n// [26] lube_mot_de_press  (WGF_MOTOR_DE_LUBRICATIONOIL_PRESSURE)\nv = latestOf(series[26]);\nvalues['lube_mot_de_press'] = v;\nlevel = (v===null)?'nodata':(v<1.0?'critical':(v<=1.5?'warning':'normal'));\ncounts[level]++;\nsetText('lube_mot_de_press_value', fmt(v, 2));\nsetAttr('lube_mot_de_press_bar', 'width', (v===null||v<0)?0:Math.min(1, v/4) * 370);\n \n// [27] lube_mot_de_temp  (WGF_MOTOR_DE_LUBRICATIONOIL_TEMPERATURE)\nv = latestOf(series[27]);\nvalues['lube_mot_de_temp'] = v;\nlevel = (v===null)?'nodata':(v>75?'critical':(v>=65?'warning':'normal'));\ncounts[level]++;\nsetText('lube_mot_de_temp_value', fmt(v, 1));\nsetAttr('lube_mot_de_temp_bar', 'width', (v===null||v<0)?0:Math.min(1, v/100) * 370);\n \n// [28] lube_mot_nde_flow  (WGF_MOTOR_NDE_LUBRICATIONOIL_FLOW)\nv = latestOf(series[28]);\nvalues['lube_mot_nde_flow'] = v;\nlevel = (v===null)?'nodata':(v<20?'critical':(v<=30?'warning':'normal'));\ncounts[level]++;\nsetText('lube_mot_nde_flow_value', fmt(v, 1));\nsetAttr('lube_mot_nde_flow_bar', 'width', (v===null||v<0)?0:Math.min(1, v/60) * 370);\n \n// [29] lube_mot_nde_press  (WGF_MOTOR_NDE_LUBRICATIONOIL_PRESSURE)\nv = latestOf(series[29]);\nvalues['lube_mot_nde_press'] = v;\nlevel = (v===null)?'nodata':(v<1.0?'critical':(v<=1.5?'warning':'normal'));\ncounts[level]++;\nsetText('lube_mot_nde_press_value', fmt(v, 2));\nsetAttr('lube_mot_nde_press_bar', 'width', (v===null||v<0)?0:Math.min(1, v/4) * 370);\n \n// [30] lube_mot_nde_temp  (WGF_MOTOR_NDE_LUBRICATIONOIL_TEMPERATURE)\nv = latestOf(series[30]);\nvalues['lube_mot_nde_temp'] = v;\nlevel = (v===null)?'nodata':(v>75?'critical':(v>=65?'warning':'normal'));\ncounts[level]++;\nsetText('lube_mot_nde_temp_value', fmt(v, 1));\nsetAttr('lube_mot_nde_temp_bar', 'width', (v===null||v<0)?0:Math.min(1, v/100) * 370);\n \n \n// ============================================================\n// Per-circuit lube status dots (worst-of the 3 signals)\n// ============================================================\nfunction levelOfRaw(b, vv) {\n  // mirror of threshold logic in JS form for any binding spec inline\n  return ''; // unused stub\n}\nfunction rankOf(v, warn, crit, dir) {\n  if (v === null || v === undefined || isNaN(v)) return 0;\n  if (dir === 'high') {\n    if (v > crit) return 3;\n    if (v >= warn) return 2;\n    return 1;\n  } else {\n    if (v < crit) return 3;\n    if (v <= warn) return 2;\n    return 1;\n  }\n}\nfunction rankToColor(r) {\n  return r === 3 ? COLOR.critical : r === 2 ? COLOR.warning : r === 1 ? COLOR.normal : COLOR.nodata;\n}\n \n[\n  {cid:'fan_de'},  {cid:'fan_nde'}, {cid:'mot_de'}, {cid:'mot_nde'}\n].forEach(function(c){\n  var rFlow  = rankOf(values['lube_'+c.cid+'_flow'],  30,  20,  'low');\n  var rPress = rankOf(values['lube_'+c.cid+'_press'], 1.5, 1.0, 'low');\n  var rTemp  = rankOf(values['lube_'+c.cid+'_temp'],  65,  75,  'high');\n  var worst = Math.max(rFlow, rPress, rTemp);\n  setAttr('lube_'+c.cid+'_status_dot', 'fill', rankToColor(worst));\n});\n \n// ============================================================\n// Asset health rollup (top right KPI)\n// ============================================================\n(function(){\n  var live = counts.normal + counts.warning + counts.critical;\n  var total = 31;\n  var pctNormal = live > 0 ? Math.round((counts.normal / live) * 100) : 0;\n  setText('health_value', pctNormal + '%');\n  setText('health_summary_text',\n    counts.normal + ' normal · ' + counts.warning + ' warn · ' + counts.critical + ' crit');\n  var hv = svgnode.getElementById('health_value');\n  if (hv) {\n    if      (counts.critical > 0) hv.setAttribute('fill', COLOR.critical);\n    else if (counts.warning  > 0) hv.setAttribute('fill', COLOR.warning);\n    else if (counts.nodata   === total) hv.setAttribute('fill', COLOR.nodata);\n    else                          hv.setAttribute('fill', COLOR.normal);\n  }\n  setText('health_status_text',\n    counts.critical > 0 ? 'CRITICAL — investigate' :\n    counts.warning  > 0 ? 'WARNING' :\n    live === 0          ? 'NO DATA' :\n                          'NORMAL');\n})();\n \n// ============================================================\n// Rotor rotation — rotation rate proportional to WGF_SPEED\n// Marcus Calidus events re-run on every refresh. We keep angle\n// in a global-ish variable on svgnode so it survives across runs.\n// ============================================================\n(function(){\n  var speed = values['wgf_speed'];\n  // Persist angle on svgnode\n  if (typeof svgnode.__rotorAngle === 'undefined') svgnode.__rotorAngle = 0;\n  if (typeof svgnode.__rotorTimer !== 'undefined') {\n    try { clearInterval(svgnode.__rotorTimer); } catch(e) {}\n    svgnode.__rotorTimer = undefined;\n  }\n  if (speed === null || speed === undefined || isNaN(speed) || speed <= 0) {\n    return;  // no rotation\n  }\n  // Scale: 800 rpm => ~12 deg/frame at 30 fps. Cap so it stays visible.\n  var degPerFrame = Math.min(20, Math.max(0.5, speed / 80));\n  svgnode.__rotorTimer = setInterval(function(){\n    svgnode.__rotorAngle = (svgnode.__rotorAngle + degPerFrame) % 360;\n    var rotor = svgnode.getElementById('fan_rotor');\n    if (rotor) {\n      // Preserve translate, replace rotate\n      var t = rotor.getAttribute('transform') || '';\n      var m = t.match(/translate\\(([^)]+)\\)/);\n      var tr = m ? m[0] : '';\n      rotor.setAttribute('transform', tr + ' rotate(' + svgnode.__rotorAngle.toFixed(1) + ')');\n    }\n  }, 33);\n})();\n \n// Header timestamp\n(function(){\n  var t = new Date();\n  function pad(n){ return n<10?'0'+n:n; }\n  setText('header_updated', 'Updated ' + pad(t.getHours())+':'+pad(t.getMinutes())+':'+pad(t.getSeconds()));\n})();",
+      "js_init_code": "",
+      "links": [],
+      "maxDataPoints": 3,
+      "nullPointMode": "connected",
+      "options": {
+        "events_data": {
+          "events": []
+        },
+        "js_code_data": {
+          "js_code": "// ============================================================\n// SP4 WGF Machine Health — Marcus Calidus Events code\n// 31 live bindings + rotor rotation animation tied to speed.\n// ============================================================\nvar series = (ctrl && ctrl.series) ? ctrl.series : [];\n\nfunction latestOf(s) {\n  if (!s) return null;\n  if (s.datapoints && s.datapoints.length) {\n    for (var i = s.datapoints.length - 1; i >= 0; i--) {\n      var v = s.datapoints[i][0];\n      if (v !== null && v !== undefined && !isNaN(v)) return v;\n    }\n  }\n  if (s.stats) {\n    if (s.stats.current !== undefined && s.stats.current !== null) return s.stats.current;\n    if (s.stats.last    !== undefined && s.stats.last    !== null) return s.stats.last;\n  }\n  return null;\n}\nfunction fmt(v, d) { return (v===null||v===undefined||isNaN(v))?'--':Number(v).toFixed(d); }\nfunction setAttr(id, attr, val) { var e=svgnode.getElementById(id); if(e) e.setAttribute(attr, val); }\nfunction setText(id, txt)       { var e=svgnode.getElementById(id); if(e) e.textContent = txt; }\n\nvar COLOR = { normal:'#22c55e', warning:'#f59e0b', critical:'#ef4444', nodata:'#64748b' };\n\n// Heat-map color for winding-temp pucks (40 °C → blue, 100 °C → green, 150 °C → red)\nfunction tempColor(v) {\n  if (v===null || v===undefined || isNaN(v)) return '#1e293b';\n  var stops = [\n    {p:40,  c:[34,211,238]},\n    {p:80,  c:[34,197,94]},\n    {p:120, c:[245,158,11]},\n    {p:155, c:[239,68,68]}\n  ];\n  var x = Math.max(stops[0].p, Math.min(stops[stops.length-1].p, v));\n  for (var i = 0; i < stops.length - 1; i++) {\n    if (x <= stops[i+1].p) {\n      var a = stops[i], b = stops[i+1];\n      var t = (x - a.p) / (b.p - a.p);\n      var r  = Math.round(a.c[0] + (b.c[0]-a.c[0])*t);\n      var g  = Math.round(a.c[1] + (b.c[1]-a.c[1])*t);\n      var bl = Math.round(a.c[2] + (b.c[2]-a.c[2])*t);\n      return 'rgb(' + r + ',' + g + ',' + bl + ')';\n    }\n  }\n  return '#ef4444';\n}\n\nvar level, v;\nvar values = {};\nvar counts = { normal:0, warning:0, critical:0, nodata:0 };\n\n\n// [0] wgf_speed  (WGF_SPEED)\nv = latestOf(series[0]);\nvalues['wgf_speed'] = v;\nlevel = (v===null)?'nodata':(v>820?'critical':(v>=780?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_speed_value', fmt(v, 0));\nsetAttr('wgf_speed_status_dot', 'fill', COLOR[level]);\n\n// [1] wgf_dc_current  (WGF_DC_CURRENT)\nv = latestOf(series[1]);\nvalues['wgf_dc_current'] = v;\nlevel = (v===null)?'nodata':(v>2000?'critical':(v>=1800?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_dc_current_value', fmt(v, 0));\nsetAttr('wgf_dc_current_status_dot', 'fill', COLOR[level]);\n\n// [2] wgf_exc_current  (WGF_EXCITATION_CURRENT)\nv = latestOf(series[2]);\nvalues['wgf_exc_current'] = v;\nlevel = (v===null)?'nodata':(v>160?'critical':(v>=140?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_exc_current_value', fmt(v, 1));\nsetAttr('wgf_exc_current_status_dot', 'fill', COLOR[level]);\n\n// [3] wgf_wind_u1  (WGF_MOTOR_U1_WINDING_TEMPERATURE)\nv = latestOf(series[3]);\nvalues['wgf_wind_u1'] = v;\nlevel = (v===null)?'nodata':(v>155?'critical':(v>=130?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_wind_u1_value', fmt(v, 0));\nsetAttr('wgf_wind_u1_dot', 'fill', tempColor(v));\nsetAttr('wgf_wind_u1_dot', 'stroke', COLOR[level]);\n\n// [4] wgf_wind_v1  (WGF_MOTOR_V1_WINDING_TEMPERATURE)\nv = latestOf(series[4]);\nvalues['wgf_wind_v1'] = v;\nlevel = (v===null)?'nodata':(v>155?'critical':(v>=130?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_wind_v1_value', fmt(v, 0));\nsetAttr('wgf_wind_v1_dot', 'fill', tempColor(v));\nsetAttr('wgf_wind_v1_dot', 'stroke', COLOR[level]);\n\n// [5] wgf_wind_w1  (WGF_MOTOR_W1_WINDING_TEMPERATURE)\nv = latestOf(series[5]);\nvalues['wgf_wind_w1'] = v;\nlevel = (v===null)?'nodata':(v>155?'critical':(v>=130?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_wind_w1_value', fmt(v, 0));\nsetAttr('wgf_wind_w1_dot', 'fill', tempColor(v));\nsetAttr('wgf_wind_w1_dot', 'stroke', COLOR[level]);\n\n// [6] wgf_wind_u2  (WGF_MOTOR_U2_WINDING_TEMPERATURE)\nv = latestOf(series[6]);\nvalues['wgf_wind_u2'] = v;\nlevel = (v===null)?'nodata':(v>155?'critical':(v>=130?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_wind_u2_value', fmt(v, 0));\nsetAttr('wgf_wind_u2_dot', 'fill', tempColor(v));\nsetAttr('wgf_wind_u2_dot', 'stroke', COLOR[level]);\n\n// [7] wgf_wind_v2  (WGF_MOTOR_V2_WINDING_TEMPERATURE)\nv = latestOf(series[7]);\nvalues['wgf_wind_v2'] = v;\nlevel = (v===null)?'nodata':(v>155?'critical':(v>=130?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_wind_v2_value', fmt(v, 0));\nsetAttr('wgf_wind_v2_dot', 'fill', tempColor(v));\nsetAttr('wgf_wind_v2_dot', 'stroke', COLOR[level]);\n\n// [8] wgf_wind_w2  (WGF_MOTOR_W2_WINDING_TEMPERATURE)\nv = latestOf(series[8]);\nvalues['wgf_wind_w2'] = v;\nlevel = (v===null)?'nodata':(v>155?'critical':(v>=130?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_wind_w2_value', fmt(v, 0));\nsetAttr('wgf_wind_w2_dot', 'fill', tempColor(v));\nsetAttr('wgf_wind_w2_dot', 'stroke', COLOR[level]);\n\n// [9] wgf_bear_de  (WGF_MOTOR_DE_BEARING_TEMPERATURE)\nv = latestOf(series[9]);\nvalues['wgf_bear_de'] = v;\nlevel = (v===null)?'nodata':(v>95?'critical':(v>=80?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_bear_de_value', fmt(v, 0));\nsetAttr('wgf_bear_de_dot', 'stroke', COLOR[level]);\n\n// [10] wgf_bear_nde  (WGF_MOTOR_NDE_BEARING_TEMPERATURE)\nv = latestOf(series[10]);\nvalues['wgf_bear_nde'] = v;\nlevel = (v===null)?'nodata':(v>95?'critical':(v>=80?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_bear_nde_value', fmt(v, 0));\nsetAttr('wgf_bear_nde_dot', 'stroke', COLOR[level]);\n\n// [11] wgf_fan_vib_de_x  (WGF_FAN_DE_X_VIBRATION)\nv = latestOf(series[11]);\nvalues['wgf_fan_vib_de_x'] = v;\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_fan_vib_de_x_value', fmt(v, 2));\nsetAttr('wgf_fan_vib_de_x_line', 'stroke', COLOR[level]);\n\n// [12] wgf_fan_vib_de_y  (WGF_FAN_DE_Y_VIBRATION)\nv = latestOf(series[12]);\nvalues['wgf_fan_vib_de_y'] = v;\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_fan_vib_de_y_value', fmt(v, 2));\nsetAttr('wgf_fan_vib_de_y_line', 'stroke', COLOR[level]);\n\n// [13] wgf_fan_vib_de_axial  (WGF_FAN_DE_AXIAL_VIBRATION)\nv = latestOf(series[13]);\nvalues['wgf_fan_vib_de_axial'] = v;\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_fan_vib_de_axial_value', fmt(v, 2));\nsetAttr('wgf_fan_vib_de_axial_line', 'stroke', COLOR[level]);\n\n// [14] wgf_fan_vib_nde_x  (WGF_FAN_NDE_X_VIBRATION)\nv = latestOf(series[14]);\nvalues['wgf_fan_vib_nde_x'] = v;\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_fan_vib_nde_x_value', fmt(v, 2));\nsetAttr('wgf_fan_vib_nde_x_line', 'stroke', COLOR[level]);\n\n// [15] wgf_fan_vib_nde_y  (WGF_FAN_NDE_Y_VIBRATION)\nv = latestOf(series[15]);\nvalues['wgf_fan_vib_nde_y'] = v;\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_fan_vib_nde_y_value', fmt(v, 2));\nsetAttr('wgf_fan_vib_nde_y_line', 'stroke', COLOR[level]);\n\n// [16] wgf_fan_vib_nde_axial  (WGF_FAN_NDE_AXIAL_VIBRATION)\nv = latestOf(series[16]);\nvalues['wgf_fan_vib_nde_axial'] = v;\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_fan_vib_nde_axial_value', fmt(v, 2));\nsetAttr('wgf_fan_vib_nde_axial_line', 'stroke', COLOR[level]);\n\n// [17] wgf_mot_vib_de_axial  (WGF_MOTOR_DE_AXIAL_VIBRATION)\nv = latestOf(series[17]);\nvalues['wgf_mot_vib_de_axial'] = v;\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_mot_vib_de_axial_value', fmt(v, 2));\nsetAttr('wgf_mot_vib_de_axial_line', 'stroke', COLOR[level]);\n\n// [18] wgf_mot_vib_nde_axial  (WGF_MOTOR_NDE_AXIAL_VIBRATION)\nv = latestOf(series[18]);\nvalues['wgf_mot_vib_nde_axial'] = v;\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\nsetText('wgf_mot_vib_nde_axial_value', fmt(v, 2));\nsetAttr('wgf_mot_vib_nde_axial_line', 'stroke', COLOR[level]);\n\n// [19] lube_fan_de_flow  (WGF_FAN_DE_LUBRICATIONOIL_FLOW)\nv = latestOf(series[19]);\nvalues['lube_fan_de_flow'] = v;\nlevel = (v===null)?'nodata':(v<20?'critical':(v<=30?'warning':'normal'));\ncounts[level]++;\nsetText('lube_fan_de_flow_value', fmt(v, 1));\nsetAttr('lube_fan_de_flow_bar', 'width', (v===null||v<0)?0:Math.min(1, v/60) * 370);\n\n// [20] lube_fan_de_press  (WGF_FAN_DE_LUBRICATIONOIL_PRESSURE)\nv = latestOf(series[20]);\nvalues['lube_fan_de_press'] = v;\nlevel = (v===null)?'nodata':(v<1.0?'critical':(v<=1.5?'warning':'normal'));\ncounts[level]++;\nsetText('lube_fan_de_press_value', fmt(v, 2));\nsetAttr('lube_fan_de_press_bar', 'width', (v===null||v<0)?0:Math.min(1, v/4) * 370);\n\n// [21] lube_fan_de_temp  (WGF_FAN_DE_LUBRICATIONOIL_TEMPERATURE)\nv = latestOf(series[21]);\nvalues['lube_fan_de_temp'] = v;\nlevel = (v===null)?'nodata':(v>75?'critical':(v>=65?'warning':'normal'));\ncounts[level]++;\nsetText('lube_fan_de_temp_value', fmt(v, 1));\nsetAttr('lube_fan_de_temp_bar', 'width', (v===null||v<0)?0:Math.min(1, v/100) * 370);\n\n// [22] lube_fan_nde_flow  (WGF_FAN_NDE_LUBRICATIONOIL_FLOW)\nv = latestOf(series[22]);\nvalues['lube_fan_nde_flow'] = v;\nlevel = (v===null)?'nodata':(v<20?'critical':(v<=30?'warning':'normal'));\ncounts[level]++;\nsetText('lube_fan_nde_flow_value', fmt(v, 1));\nsetAttr('lube_fan_nde_flow_bar', 'width', (v===null||v<0)?0:Math.min(1, v/60) * 370);\n\n// [23] lube_fan_nde_press  (WGF_FAN_NDE_LUBRICATIONOIL_PRESSURE)\nv = latestOf(series[23]);\nvalues['lube_fan_nde_press'] = v;\nlevel = (v===null)?'nodata':(v<1.0?'critical':(v<=1.5?'warning':'normal'));\ncounts[level]++;\nsetText('lube_fan_nde_press_value', fmt(v, 2));\nsetAttr('lube_fan_nde_press_bar', 'width', (v===null||v<0)?0:Math.min(1, v/4) * 370);\n\n// [24] lube_fan_nde_temp  (WGF_FAN_NDE_LUBRICATIONOIL_TEMPERATURE)\nv = latestOf(series[24]);\nvalues['lube_fan_nde_temp'] = v;\nlevel = (v===null)?'nodata':(v>75?'critical':(v>=65?'warning':'normal'));\ncounts[level]++;\nsetText('lube_fan_nde_temp_value', fmt(v, 1));\nsetAttr('lube_fan_nde_temp_bar', 'width', (v===null||v<0)?0:Math.min(1, v/100) * 370);\n\n// [25] lube_mot_de_flow  (WGF_MOTOR_DE_LUBRICATIONOIL_FLOW)\nv = latestOf(series[25]);\nvalues['lube_mot_de_flow'] = v;\nlevel = (v===null)?'nodata':(v<20?'critical':(v<=30?'warning':'normal'));\ncounts[level]++;\nsetText('lube_mot_de_flow_value', fmt(v, 1));\nsetAttr('lube_mot_de_flow_bar', 'width', (v===null||v<0)?0:Math.min(1, v/60) * 370);\n\n// [26] lube_mot_de_press  (WGF_MOTOR_DE_LUBRICATIONOIL_PRESSURE)\nv = latestOf(series[26]);\nvalues['lube_mot_de_press'] = v;\nlevel = (v===null)?'nodata':(v<1.0?'critical':(v<=1.5?'warning':'normal'));\ncounts[level]++;\nsetText('lube_mot_de_press_value', fmt(v, 2));\nsetAttr('lube_mot_de_press_bar', 'width', (v===null||v<0)?0:Math.min(1, v/4) * 370);\n\n// [27] lube_mot_de_temp  (WGF_MOTOR_DE_LUBRICATIONOIL_TEMPERATURE)\nv = latestOf(series[27]);\nvalues['lube_mot_de_temp'] = v;\nlevel = (v===null)?'nodata':(v>75?'critical':(v>=65?'warning':'normal'));\ncounts[level]++;\nsetText('lube_mot_de_temp_value', fmt(v, 1));\nsetAttr('lube_mot_de_temp_bar', 'width', (v===null||v<0)?0:Math.min(1, v/100) * 370);\n\n// [28] lube_mot_nde_flow  (WGF_MOTOR_NDE_LUBRICATIONOIL_FLOW)\nv = latestOf(series[28]);\nvalues['lube_mot_nde_flow'] = v;\nlevel = (v===null)?'nodata':(v<20?'critical':(v<=30?'warning':'normal'));\ncounts[level]++;\nsetText('lube_mot_nde_flow_value', fmt(v, 1));\nsetAttr('lube_mot_nde_flow_bar', 'width', (v===null||v<0)?0:Math.min(1, v/60) * 370);\n\n// [29] lube_mot_nde_press  (WGF_MOTOR_NDE_LUBRICATIONOIL_PRESSURE)\nv = latestOf(series[29]);\nvalues['lube_mot_nde_press'] = v;\nlevel = (v===null)?'nodata':(v<1.0?'critical':(v<=1.5?'warning':'normal'));\ncounts[level]++;\nsetText('lube_mot_nde_press_value', fmt(v, 2));\nsetAttr('lube_mot_nde_press_bar', 'width', (v===null||v<0)?0:Math.min(1, v/4) * 370);\n\n// [30] lube_mot_nde_temp  (WGF_MOTOR_NDE_LUBRICATIONOIL_TEMPERATURE)\nv = latestOf(series[30]);\nvalues['lube_mot_nde_temp'] = v;\nlevel = (v===null)?'nodata':(v>75?'critical':(v>=65?'warning':'normal'));\ncounts[level]++;\nsetText('lube_mot_nde_temp_value', fmt(v, 1));\nsetAttr('lube_mot_nde_temp_bar', 'width', (v===null||v<0)?0:Math.min(1, v/100) * 370);\n\n\n// ============================================================\n// Per-circuit lube status dots (worst-of the 3 signals)\n// ============================================================\nfunction levelOfRaw(b, vv) {\n  // mirror of threshold logic in JS form for any binding spec inline\n  return ''; // unused stub\n}\nfunction rankOf(v, warn, crit, dir) {\n  if (v === null || v === undefined || isNaN(v)) return 0;\n  if (dir === 'high') {\n    if (v > crit) return 3;\n    if (v >= warn) return 2;\n    return 1;\n  } else {\n    if (v < crit) return 3;\n    if (v <= warn) return 2;\n    return 1;\n  }\n}\nfunction rankToColor(r) {\n  return r === 3 ? COLOR.critical : r === 2 ? COLOR.warning : r === 1 ? COLOR.normal : COLOR.nodata;\n}\n\n[\n  {cid:'fan_de'},  {cid:'fan_nde'}, {cid:'mot_de'}, {cid:'mot_nde'}\n].forEach(function(c){\n  var rFlow  = rankOf(values['lube_'+c.cid+'_flow'],  30,  20,  'low');\n  var rPress = rankOf(values['lube_'+c.cid+'_press'], 1.5, 1.0, 'low');\n  var rTemp  = rankOf(values['lube_'+c.cid+'_temp'],  65,  75,  'high');\n  var worst = Math.max(rFlow, rPress, rTemp);\n  setAttr('lube_'+c.cid+'_status_dot', 'fill', rankToColor(worst));\n});\n\n// ============================================================\n// Asset health rollup (top right KPI)\n// ============================================================\n(function(){\n  var live = counts.normal + counts.warning + counts.critical;\n  var total = 31;\n  var pctNormal = live > 0 ? Math.round((counts.normal / live) * 100) : 0;\n  setText('health_value', pctNormal + '%');\n  setText('health_summary_text',\n    counts.normal + ' normal · ' + counts.warning + ' warn · ' + counts.critical + ' crit');\n  var hv = svgnode.getElementById('health_value');\n  if (hv) {\n    if      (counts.critical > 0) hv.setAttribute('fill', COLOR.critical);\n    else if (counts.warning  > 0) hv.setAttribute('fill', COLOR.warning);\n    else if (counts.nodata   === total) hv.setAttribute('fill', COLOR.nodata);\n    else                          hv.setAttribute('fill', COLOR.normal);\n  }\n  setText('health_status_text',\n    counts.critical > 0 ? 'CRITICAL — investigate' :\n    counts.warning  > 0 ? 'WARNING' :\n    live === 0          ? 'NO DATA' :\n                          'NORMAL');\n})();\n\n// ============================================================\n// Rotor rotation — rotation rate proportional to WGF_SPEED\n// Marcus Calidus events re-run on every refresh. We keep angle\n// in a global-ish variable on svgnode so it survives across runs.\n// ============================================================\n(function(){\n  var speed = values['wgf_speed'];\n  // Persist angle on svgnode\n  if (typeof svgnode.__rotorAngle === 'undefined') svgnode.__rotorAngle = 0;\n  if (typeof svgnode.__rotorTimer !== 'undefined') {\n    try { clearInterval(svgnode.__rotorTimer); } catch(e) {}\n    svgnode.__rotorTimer = undefined;\n  }\n  if (speed === null || speed === undefined || isNaN(speed) || speed <= 0) {\n    return;  // no rotation\n  }\n  // Scale: 800 rpm => ~12 deg/frame at 30 fps. Cap so it stays visible.\n  var degPerFrame = Math.min(20, Math.max(0.5, speed / 80));\n  svgnode.__rotorTimer = setInterval(function(){\n    svgnode.__rotorAngle = (svgnode.__rotorAngle + degPerFrame) % 360;\n    var rotor = svgnode.getElementById('fan_rotor');\n    if (rotor) {\n      // Preserve translate, replace rotate\n      var t = rotor.getAttribute('transform') || '';\n      var m = t.match(/translate\\(([^)]+)\\)/);\n      var tr = m ? m[0] : '';\n      rotor.setAttribute('transform', tr + ' rotate(' + svgnode.__rotorAngle.toFixed(1) + ')');\n    }\n  }, 33);\n})();\n\n// Header timestamp\n(function(){\n  var t = new Date();\n  function pad(n){ return n<10?'0'+n:n; }\n  setText('header_updated', 'Updated ' + pad(t.getHours())+':'+pad(t.getMinutes())+':'+pad(t.getSeconds()));\n})();\n"
+        },
+        "js_code_init_data": {
+          "js_code": "// no init"
+        },
+        "svg_data": {
+          "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1920 1080\" font-family=\"'Segoe UI', Arial, sans-serif\">\n  <defs>\n    <linearGradient id=\"bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\n      <stop offset=\"0\" stop-color=\"#0c1322\"/><stop offset=\"1\" stop-color=\"#0a1a2e\"/>\n    </linearGradient>\n    <linearGradient id=\"card\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\n      <stop offset=\"0\" stop-color=\"#152037\"/><stop offset=\"1\" stop-color=\"#0e192c\"/>\n    </linearGradient>\n    <linearGradient id=\"motorBody\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\n      <stop offset=\"0\" stop-color=\"#475569\"/><stop offset=\"0.5\" stop-color=\"#64748b\"/><stop offset=\"1\" stop-color=\"#334155\"/>\n    </linearGradient>\n    <linearGradient id=\"fanHousing\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\n      <stop offset=\"0\" stop-color=\"#1e293b\"/><stop offset=\"1\" stop-color=\"#0f172a\"/>\n    </linearGradient>\n    <radialGradient id=\"fanHubGrad\" cx=\"0.5\" cy=\"0.5\" r=\"0.5\">\n      <stop offset=\"0\" stop-color=\"#64748b\"/><stop offset=\"1\" stop-color=\"#1e293b\"/>\n    </radialGradient>\n    <filter id=\"glow\"><feGaussianBlur stdDeviation=\"3\"/></filter>\n  </defs>\n\n  <defs>\n    <marker id=\"arrowGrey\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\">\n      <path d=\"M0,0 L10,5 L0,10 Z\" fill=\"#94a3b8\"/>\n    </marker>\n  </defs>\n\n  <rect width=\"1920\" height=\"1080\" fill=\"url(#bg)\"/>\n\n  <!-- ======== HEADER ======== -->\n  <rect x=\"0\" y=\"0\" width=\"1920\" height=\"84\" fill=\"#06101f\"/>\n  <text x=\"32\" y=\"34\" fill=\"#fbbf24\" font-size=\"12\" letter-spacing=\"4\">LITMUS EDGE  ·  SP4 SINTER PLANT</text>\n  <text x=\"32\" y=\"64\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">Waste Gas Fan — Machine Health</text>\n  <text x=\"1888\" y=\"34\" fill=\"#94a3b8\" font-size=\"12\" text-anchor=\"end\">31 live tags  ·  DB: tsdata  ·  Refresh 5s</text>\n  <text x=\"1888\" y=\"58\" fill=\"#94a3b8\" font-size=\"12\" text-anchor=\"end\">Asset: WGF  ·  Motor DC + Fan assembly  ·  4 lube circuits</text>\n  <text x=\"1888\" y=\"76\" fill=\"#94a3b8\" font-size=\"11\" text-anchor=\"end\" id=\"header_updated\">Updated --:--:--</text>\n  <rect x=\"0\" y=\"84\" width=\"1920\" height=\"2\" fill=\"#1e3a5f\"/>\n\n  <!-- ======== KPI STRIP ======== -->\n  <g transform=\"translate(16,100)\">\n    <rect width=\"460\" height=\"86\" rx=\"10\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <text x=\"20\" y=\"26\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\">WGF SPEED</text>\n    <text id=\"wgf_speed_value\" x=\"20\" y=\"64\" fill=\"#22d3ee\" font-size=\"36\" font-weight=\"700\">--</text>\n    <text x=\"444\" y=\"64\" fill=\"#64748b\" font-size=\"13\" text-anchor=\"end\">rpm</text>\n    <circle id=\"wgf_speed_status_dot\" cx=\"444\" cy=\"20\" r=\"6\" fill=\"#64748b\"/>\n  </g>\n  <g transform=\"translate(492,100)\">\n    <rect width=\"460\" height=\"86\" rx=\"10\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <text x=\"20\" y=\"26\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\">LC1 DC CURRENT</text>\n    <text id=\"wgf_dc_current_value\" x=\"20\" y=\"64\" fill=\"#7dd3fc\" font-size=\"36\" font-weight=\"700\">--</text>\n    <text x=\"444\" y=\"64\" fill=\"#64748b\" font-size=\"13\" text-anchor=\"end\">A</text>\n    <circle id=\"wgf_dc_current_status_dot\" cx=\"444\" cy=\"20\" r=\"6\" fill=\"#64748b\"/>\n  </g>\n  <g transform=\"translate(968,100)\">\n    <rect width=\"460\" height=\"86\" rx=\"10\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <text x=\"20\" y=\"26\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\">EXCITATION CURRENT</text>\n    <text id=\"wgf_exc_current_value\" x=\"20\" y=\"64\" fill=\"#a78bfa\" font-size=\"36\" font-weight=\"700\">--</text>\n    <text x=\"444\" y=\"64\" fill=\"#64748b\" font-size=\"13\" text-anchor=\"end\">A</text>\n    <circle id=\"wgf_exc_current_status_dot\" cx=\"444\" cy=\"20\" r=\"6\" fill=\"#64748b\"/>\n  </g>\n  <g transform=\"translate(1444,100)\">\n    <rect width=\"460\" height=\"86\" rx=\"10\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <text x=\"20\" y=\"26\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\">ASSET HEALTH</text>\n    <text id=\"health_value\" x=\"20\" y=\"64\" fill=\"#22c55e\" font-size=\"36\" font-weight=\"700\">--%</text>\n    <text x=\"444\" y=\"44\" fill=\"#64748b\" font-size=\"11\" text-anchor=\"end\" id=\"health_status_text\">--</text>\n    <text x=\"444\" y=\"64\" fill=\"#64748b\" font-size=\"13\" text-anchor=\"end\" id=\"health_summary_text\">-- normal · -- warn · -- crit</text>\n  </g>\n\n  <!-- ======== MAIN SCHEMATIC ======== -->\n  <g transform=\"translate(16,206)\">\n    <rect width=\"1888\" height=\"580\" rx=\"14\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <text x=\"24\" y=\"32\" fill=\"#e2e8f0\" font-size=\"16\" font-weight=\"600\">WGF Assembly — Motor + Fan Schematic</text>\n    <text x=\"24\" y=\"52\" fill=\"#64748b\" font-size=\"11\">Live overlay of 6 winding temps · 2 motor bearings · 6 fan vibrations · 2 motor axial vibrations · 4 lube circuits</text>\n  <rect x=\"100\" y=\"200\" width=\"480\" height=\"240\" rx=\"14\" fill=\"url(#motorBody)\" stroke=\"#0f172a\" stroke-width=\"2\"/>\n  <g opacity=\"0.4\" stroke=\"#0f172a\" stroke-width=\"2\">\n    <line x1=\"130\" y1=\"210\" x2=\"130\" y2=\"430\"/>\n    <line x1=\"154\" y1=\"210\" x2=\"154\" y2=\"430\"/>\n    <line x1=\"178\" y1=\"210\" x2=\"178\" y2=\"430\"/>\n    <line x1=\"202\" y1=\"210\" x2=\"202\" y2=\"430\"/>\n    <line x1=\"226\" y1=\"210\" x2=\"226\" y2=\"430\"/>\n    <line x1=\"250\" y1=\"210\" x2=\"250\" y2=\"430\"/>\n    <line x1=\"274\" y1=\"210\" x2=\"274\" y2=\"430\"/>\n    <line x1=\"298\" y1=\"210\" x2=\"298\" y2=\"430\"/>\n    <line x1=\"322\" y1=\"210\" x2=\"322\" y2=\"430\"/>\n    <line x1=\"346\" y1=\"210\" x2=\"346\" y2=\"430\"/>\n    <line x1=\"370\" y1=\"210\" x2=\"370\" y2=\"430\"/>\n    <line x1=\"394\" y1=\"210\" x2=\"394\" y2=\"430\"/>\n    <line x1=\"418\" y1=\"210\" x2=\"418\" y2=\"430\"/>\n    <line x1=\"442\" y1=\"210\" x2=\"442\" y2=\"430\"/>\n    <line x1=\"466\" y1=\"210\" x2=\"466\" y2=\"430\"/>\n    <line x1=\"490\" y1=\"210\" x2=\"490\" y2=\"430\"/>\n    <line x1=\"514\" y1=\"210\" x2=\"514\" y2=\"430\"/>\n    <line x1=\"538\" y1=\"210\" x2=\"538\" y2=\"430\"/>\n  </g>\n  <text x=\"340.0\" y=\"188\" fill=\"#94a3b8\" font-size=\"13\" text-anchor=\"middle\" letter-spacing=\"3\">MOTOR (DC)</text>\n  <text x=\"340.0\" y=\"468\" fill=\"#64748b\" font-size=\"10\" text-anchor=\"middle\">NDE end ← shaft → DE end (towards fan)</text>\n  <g transform=\"translate(190,260)\">\n    <circle id=\"wgf_wind_u1_dot\" r=\"22\" fill=\"#1e293b\" stroke=\"#64748b\" stroke-width=\"2\"/>\n    <text id=\"wgf_wind_u1_value\" x=\"0\" y=\"-2\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"middle\">--</text>\n    <text x=\"0\" y=\"11\" fill=\"#94a3b8\" font-size=\"8\" text-anchor=\"middle\">°C</text>\n    <text x=\"0\" y=\"38\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"middle\" font-weight=\"700\">U1</text>\n  </g>\n  <g transform=\"translate(190,320)\">\n    <circle id=\"wgf_wind_v1_dot\" r=\"22\" fill=\"#1e293b\" stroke=\"#64748b\" stroke-width=\"2\"/>\n    <text id=\"wgf_wind_v1_value\" x=\"0\" y=\"-2\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"middle\">--</text>\n    <text x=\"0\" y=\"11\" fill=\"#94a3b8\" font-size=\"8\" text-anchor=\"middle\">°C</text>\n    <text x=\"0\" y=\"38\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"middle\" font-weight=\"700\">V1</text>\n  </g>\n  <g transform=\"translate(190,380)\">\n    <circle id=\"wgf_wind_w1_dot\" r=\"22\" fill=\"#1e293b\" stroke=\"#64748b\" stroke-width=\"2\"/>\n    <text id=\"wgf_wind_w1_value\" x=\"0\" y=\"-2\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"middle\">--</text>\n    <text x=\"0\" y=\"11\" fill=\"#94a3b8\" font-size=\"8\" text-anchor=\"middle\">°C</text>\n    <text x=\"0\" y=\"38\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"middle\" font-weight=\"700\">W1</text>\n  </g>\n  <g transform=\"translate(490,260)\">\n    <circle id=\"wgf_wind_u2_dot\" r=\"22\" fill=\"#1e293b\" stroke=\"#64748b\" stroke-width=\"2\"/>\n    <text id=\"wgf_wind_u2_value\" x=\"0\" y=\"-2\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"middle\">--</text>\n    <text x=\"0\" y=\"11\" fill=\"#94a3b8\" font-size=\"8\" text-anchor=\"middle\">°C</text>\n    <text x=\"0\" y=\"38\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"middle\" font-weight=\"700\">U2</text>\n  </g>\n  <g transform=\"translate(490,320)\">\n    <circle id=\"wgf_wind_v2_dot\" r=\"22\" fill=\"#1e293b\" stroke=\"#64748b\" stroke-width=\"2\"/>\n    <text id=\"wgf_wind_v2_value\" x=\"0\" y=\"-2\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"middle\">--</text>\n    <text x=\"0\" y=\"11\" fill=\"#94a3b8\" font-size=\"8\" text-anchor=\"middle\">°C</text>\n    <text x=\"0\" y=\"38\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"middle\" font-weight=\"700\">V2</text>\n  </g>\n  <g transform=\"translate(490,380)\">\n    <circle id=\"wgf_wind_w2_dot\" r=\"22\" fill=\"#1e293b\" stroke=\"#64748b\" stroke-width=\"2\"/>\n    <text id=\"wgf_wind_w2_value\" x=\"0\" y=\"-2\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"middle\">--</text>\n    <text x=\"0\" y=\"11\" fill=\"#94a3b8\" font-size=\"8\" text-anchor=\"middle\">°C</text>\n    <text x=\"0\" y=\"38\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"middle\" font-weight=\"700\">W2</text>\n  </g>\n  <g transform=\"translate(100,320.0)\">\n    <circle r=\"34\" fill=\"#1e293b\" stroke=\"#475569\" stroke-width=\"3\"/>\n    <circle id=\"wgf_bear_nde_dot\" r=\"34\" fill=\"none\" stroke=\"#64748b\" stroke-width=\"5\"/>\n    <text id=\"wgf_bear_nde_value\" x=\"0\" y=\"-4\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"700\" text-anchor=\"middle\">--</text>\n    <text x=\"0\" y=\"10\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"middle\">°C</text>\n    <text x=\"0\" y=\"-46\" fill=\"#94a3b8\" font-size=\"10\" text-anchor=\"middle\">NDE BEARING</text>\n  </g>\n  <g transform=\"translate(580,320.0)\">\n    <circle r=\"34\" fill=\"#1e293b\" stroke=\"#475569\" stroke-width=\"3\"/>\n    <circle id=\"wgf_bear_de_dot\" r=\"34\" fill=\"none\" stroke=\"#64748b\" stroke-width=\"5\"/>\n    <text id=\"wgf_bear_de_value\" x=\"0\" y=\"-4\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"700\" text-anchor=\"middle\">--</text>\n    <text x=\"0\" y=\"10\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"middle\">°C</text>\n    <text x=\"0\" y=\"-46\" fill=\"#94a3b8\" font-size=\"10\" text-anchor=\"middle\">DE BEARING</text>\n  </g>\n  <g transform=\"translate(30,250.0)\">\n    <text x=\"0\" y=\"-2\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">MOT NDE AX</text>\n    <line id=\"wgf_mot_vib_nde_axial_line\" x1=\"0\" y1=\"10\" x2=\"40\" y2=\"10\" stroke=\"#64748b\" stroke-width=\"3\" marker-end=\"url(#arrowGrey)\"/>\n    <text id=\"wgf_mot_vib_nde_axial_value\" x=\"44\" y=\"14\" fill=\"#e2e8f0\" font-size=\"11\" font-weight=\"700\">--</text>\n    <text x=\"0\" y=\"32\" fill=\"#64748b\" font-size=\"9\">mm/s</text>\n  </g>\n  <g transform=\"translate(520,250.0)\">\n    <text x=\"0\" y=\"-2\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">MOT DE AX</text>\n    <line id=\"wgf_mot_vib_de_axial_line\" x1=\"0\" y1=\"10\" x2=\"40\" y2=\"10\" stroke=\"#64748b\" stroke-width=\"3\" marker-end=\"url(#arrowGrey)\"/>\n    <text id=\"wgf_mot_vib_de_axial_value\" x=\"44\" y=\"14\" fill=\"#e2e8f0\" font-size=\"11\" font-weight=\"700\">--</text>\n    <text x=\"0\" y=\"32\" fill=\"#64748b\" font-size=\"9\">mm/s</text>\n  </g>\n  <line x1=\"614\" y1=\"320.0\" x2=\"800\" y2=\"320.0\" stroke=\"#475569\" stroke-width=\"14\" stroke-linecap=\"round\"/>\n  <text x=\"680.0\" y=\"306.0\" fill=\"#64748b\" font-size=\"10\" text-anchor=\"middle\" letter-spacing=\"2\">COUPLING</text>\n  <text x=\"980\" y=\"188\" fill=\"#94a3b8\" font-size=\"13\" text-anchor=\"middle\" letter-spacing=\"3\">FAN</text>\n  <circle cx=\"980\" cy=\"320.0\" r=\"180\" fill=\"url(#fanHousing)\" stroke=\"#0f172a\" stroke-width=\"2\"/>\n  <circle cx=\"980\" cy=\"320.0\" r=\"168\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1\"/>\n  <g id=\"fan_rotor\" transform=\"translate(980,320.0) rotate(0)\">\n    <polygon points=\"14.0,6.4 150.0,16.0 150.0,-16.0 14.0,-6.4\" fill=\"#94a3b8\" stroke=\"#475569\" stroke-width=\"0.5\"/>\n    <polygon points=\"1.5,15.3 61.1,137.9 88.9,121.9 12.5,8.9\" fill=\"#94a3b8\" stroke=\"#475569\" stroke-width=\"0.5\"/>\n    <polygon points=\"-12.5,8.9 -88.9,121.9 -61.1,137.9 -1.5,15.3\" fill=\"#94a3b8\" stroke=\"#475569\" stroke-width=\"0.5\"/>\n    <polygon points=\"-14.0,-6.4 -150.0,-16.0 -150.0,16.0 -14.0,6.4\" fill=\"#94a3b8\" stroke=\"#475569\" stroke-width=\"0.5\"/>\n    <polygon points=\"-1.5,-15.3 -61.1,-137.9 -88.9,-121.9 -12.5,-8.9\" fill=\"#94a3b8\" stroke=\"#475569\" stroke-width=\"0.5\"/>\n    <polygon points=\"12.5,-8.9 88.9,-121.9 61.1,-137.9 1.5,-15.3\" fill=\"#94a3b8\" stroke=\"#475569\" stroke-width=\"0.5\"/>\n    <circle r=\"22\" fill=\"url(#fanHubGrad)\" stroke=\"#0f172a\" stroke-width=\"2\"/>\n  </g>\n  <g transform=\"translate(750,240.0)\">\n    <text x=\"0\" y=\"-2\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"start\" letter-spacing=\"1\">FAN DE • X</text>\n    <line id=\"wgf_fan_vib_de_x_line\" x1=\"0\" y1=\"10\" x2=\"40\" y2=\"10\" stroke=\"#64748b\" stroke-width=\"3\" marker-end=\"url(#arrowGrey)\"/>\n    <text id=\"wgf_fan_vib_de_x_value\" x=\"4\" y=\"14\" fill=\"#e2e8f0\" font-size=\"11\" font-weight=\"700\" text-anchor=\"start\">--</text>\n    <text x=\"54\" y=\"32\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"start\">mm/s</text>\n  </g>\n  <g transform=\"translate(750,340.0)\">\n    <text x=\"0\" y=\"-2\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"start\" letter-spacing=\"1\">FAN DE • Y</text>\n    <line id=\"wgf_fan_vib_de_y_line\" x1=\"0\" y1=\"10\" x2=\"0\" y2=\"50\" stroke=\"#64748b\" stroke-width=\"3\" marker-end=\"url(#arrowGrey)\"/>\n    <text id=\"wgf_fan_vib_de_y_value\" x=\"4\" y=\"14\" fill=\"#e2e8f0\" font-size=\"11\" font-weight=\"700\" text-anchor=\"start\">--</text>\n    <text x=\"54\" y=\"32\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"start\">mm/s</text>\n  </g>\n  <g transform=\"translate(750,410.0)\">\n    <text x=\"0\" y=\"-2\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"start\" letter-spacing=\"1\">FAN DE • AX</text>\n    <line id=\"wgf_fan_vib_de_axial_line\" x1=\"0\" y1=\"10\" x2=\"40\" y2=\"-15\" stroke=\"#64748b\" stroke-width=\"3\" marker-end=\"url(#arrowGrey)\"/>\n    <text id=\"wgf_fan_vib_de_axial_value\" x=\"4\" y=\"14\" fill=\"#e2e8f0\" font-size=\"11\" font-weight=\"700\" text-anchor=\"start\">--</text>\n    <text x=\"54\" y=\"32\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"start\">mm/s</text>\n  </g>\n  <g transform=\"translate(1170,240.0)\">\n    <text x=\"100\" y=\"-2\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"end\" letter-spacing=\"1\">FAN NDE • X</text>\n    <line id=\"wgf_fan_vib_nde_x_line\" x1=\"100\" y1=\"10\" x2=\"140\" y2=\"10\" stroke=\"#64748b\" stroke-width=\"3\" marker-end=\"url(#arrowGrey)\"/>\n    <text id=\"wgf_fan_vib_nde_x_value\" x=\"100\" y=\"14\" fill=\"#e2e8f0\" font-size=\"11\" font-weight=\"700\" text-anchor=\"end\">--</text>\n    <text x=\"50\" y=\"32\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mm/s</text>\n  </g>\n  <g transform=\"translate(1170,340.0)\">\n    <text x=\"100\" y=\"-2\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"end\" letter-spacing=\"1\">FAN NDE • Y</text>\n    <line id=\"wgf_fan_vib_nde_y_line\" x1=\"100\" y1=\"10\" x2=\"100\" y2=\"50\" stroke=\"#64748b\" stroke-width=\"3\" marker-end=\"url(#arrowGrey)\"/>\n    <text id=\"wgf_fan_vib_nde_y_value\" x=\"100\" y=\"14\" fill=\"#e2e8f0\" font-size=\"11\" font-weight=\"700\" text-anchor=\"end\">--</text>\n    <text x=\"50\" y=\"32\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mm/s</text>\n  </g>\n  <g transform=\"translate(1170,410.0)\">\n    <text x=\"100\" y=\"-2\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"end\" letter-spacing=\"1\">FAN NDE • AX</text>\n    <line id=\"wgf_fan_vib_nde_axial_line\" x1=\"100\" y1=\"10\" x2=\"60\" y2=\"-15\" stroke=\"#64748b\" stroke-width=\"3\" marker-end=\"url(#arrowGrey)\"/>\n    <text id=\"wgf_fan_vib_nde_axial_value\" x=\"100\" y=\"14\" fill=\"#e2e8f0\" font-size=\"11\" font-weight=\"700\" text-anchor=\"end\">--</text>\n    <text x=\"50\" y=\"32\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mm/s</text>\n  </g>\n  </g>\n\n  <!-- ======== LUBE OIL CIRCUITS ======== -->\n  <g transform=\"translate(16,802)\">\n    <rect width=\"460\" height=\"230\" rx=\"12\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <text x=\"20\" y=\"28\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"600\">Fan DE Lubrication Oil</text>\n    <text x=\"20\" y=\"46\" fill=\"#64748b\" font-size=\"10\">flow · pressure · temperature</text>\n    <circle id=\"lube_fan_de_status_dot\" cx=\"440\" cy=\"22\" r=\"6\" fill=\"#64748b\"/>\n\n    <!-- Flow -->\n    <g transform=\"translate(20,72)\">\n      <text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">FLOW</text>\n      <rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <rect id=\"lube_fan_de_flow_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#22d3ee\"/>\n      <text id=\"lube_fan_de_flow_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n      <text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">l/min</text>\n    </g>\n\n    <!-- Pressure -->\n    <g transform=\"translate(20,118)\">\n      <text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">PRESSURE</text>\n      <rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <rect id=\"lube_fan_de_press_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#a78bfa\"/>\n      <text id=\"lube_fan_de_press_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n      <text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">bar</text>\n    </g>\n\n    <!-- Temperature -->\n    <g transform=\"translate(20,164)\">\n      <text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">TEMPERATURE</text>\n      <rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <rect id=\"lube_fan_de_temp_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#f59e0b\"/>\n      <text id=\"lube_fan_de_temp_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n      <text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n    </g>\n  </g>\n  <g transform=\"translate(492,802)\">\n    <rect width=\"460\" height=\"230\" rx=\"12\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <text x=\"20\" y=\"28\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"600\">Fan NDE Lubrication Oil</text>\n    <text x=\"20\" y=\"46\" fill=\"#64748b\" font-size=\"10\">flow · pressure · temperature</text>\n    <circle id=\"lube_fan_nde_status_dot\" cx=\"440\" cy=\"22\" r=\"6\" fill=\"#64748b\"/>\n\n    <!-- Flow -->\n    <g transform=\"translate(20,72)\">\n      <text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">FLOW</text>\n      <rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <rect id=\"lube_fan_nde_flow_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#22d3ee\"/>\n      <text id=\"lube_fan_nde_flow_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n      <text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">l/min</text>\n    </g>\n\n    <!-- Pressure -->\n    <g transform=\"translate(20,118)\">\n      <text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">PRESSURE</text>\n      <rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <rect id=\"lube_fan_nde_press_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#a78bfa\"/>\n      <text id=\"lube_fan_nde_press_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n      <text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">bar</text>\n    </g>\n\n    <!-- Temperature -->\n    <g transform=\"translate(20,164)\">\n      <text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">TEMPERATURE</text>\n      <rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <rect id=\"lube_fan_nde_temp_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#f59e0b\"/>\n      <text id=\"lube_fan_nde_temp_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n      <text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n    </g>\n  </g>\n  <g transform=\"translate(968,802)\">\n    <rect width=\"460\" height=\"230\" rx=\"12\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <text x=\"20\" y=\"28\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"600\">Motor DE Lubrication Oil</text>\n    <text x=\"20\" y=\"46\" fill=\"#64748b\" font-size=\"10\">flow · pressure · temperature</text>\n    <circle id=\"lube_mot_de_status_dot\" cx=\"440\" cy=\"22\" r=\"6\" fill=\"#64748b\"/>\n\n    <!-- Flow -->\n    <g transform=\"translate(20,72)\">\n      <text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">FLOW</text>\n      <rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <rect id=\"lube_mot_de_flow_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#22d3ee\"/>\n      <text id=\"lube_mot_de_flow_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n      <text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">l/min</text>\n    </g>\n\n    <!-- Pressure -->\n    <g transform=\"translate(20,118)\">\n      <text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">PRESSURE</text>\n      <rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <rect id=\"lube_mot_de_press_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#a78bfa\"/>\n      <text id=\"lube_mot_de_press_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n      <text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">bar</text>\n    </g>\n\n    <!-- Temperature -->\n    <g transform=\"translate(20,164)\">\n      <text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">TEMPERATURE</text>\n      <rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <rect id=\"lube_mot_de_temp_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#f59e0b\"/>\n      <text id=\"lube_mot_de_temp_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n      <text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n    </g>\n  </g>\n  <g transform=\"translate(1444,802)\">\n    <rect width=\"460\" height=\"230\" rx=\"12\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <text x=\"20\" y=\"28\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"600\">Motor NDE Lubrication Oil</text>\n    <text x=\"20\" y=\"46\" fill=\"#64748b\" font-size=\"10\">flow · pressure · temperature</text>\n    <circle id=\"lube_mot_nde_status_dot\" cx=\"440\" cy=\"22\" r=\"6\" fill=\"#64748b\"/>\n\n    <!-- Flow -->\n    <g transform=\"translate(20,72)\">\n      <text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">FLOW</text>\n      <rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <rect id=\"lube_mot_nde_flow_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#22d3ee\"/>\n      <text id=\"lube_mot_nde_flow_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n      <text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">l/min</text>\n    </g>\n\n    <!-- Pressure -->\n    <g transform=\"translate(20,118)\">\n      <text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">PRESSURE</text>\n      <rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <rect id=\"lube_mot_nde_press_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#a78bfa\"/>\n      <text id=\"lube_mot_nde_press_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n      <text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">bar</text>\n    </g>\n\n    <!-- Temperature -->\n    <g transform=\"translate(20,164)\">\n      <text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">TEMPERATURE</text>\n      <rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <rect id=\"lube_mot_nde_temp_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#f59e0b\"/>\n      <text id=\"lube_mot_nde_temp_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n      <text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n    </g>\n  </g>\n\n  <text x=\"20\" y=\"1064\" fill=\"#475569\" font-size=\"10\">WGF Machine Health  ·  31 live bindings  ·  rotor RPM-proportional spin  ·  refresh 5s</text>\n  <text x=\"1900\" y=\"1064\" fill=\"#475569\" font-size=\"10\" text-anchor=\"end\">Marcus Calidus SVG  ·  Grafana 10.0.1</text>\n</svg>\n"
+        },
+        "useCustomBuiltinFunc": false,
+        "useEventsJSON": false,
+        "useSVGFile": false
+      },
+      "repositories": {
+        "rtmaster": {
+          "description": "simple examples",
+          "items": [
+            {
+              "category": "arrows",
+              "description": "Arrow facing up",
+              "name": "arrow-up",
+              "path": "rtmaster/arrows/arrow-up.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing down",
+              "name": "arrow-down",
+              "path": "rtmaster/arrows/arrow-down.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing right",
+              "name": "arrow-right",
+              "path": "rtmaster/arrows/arrow-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing left",
+              "name": "arrow-left",
+              "path": "rtmaster/arrows/arrow-left.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up right",
+              "name": "arrow-up-right",
+              "path": "rtmaster/arrows/arrow-up-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up left",
+              "name": "arrow-up-left",
+              "path": "rtmaster/arrows/arrow-up-left.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing down left",
+              "name": "arrow-down-left",
+              "path": "rtmaster/arrows/arrow-down-left.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing down right",
+              "name": "arrow-down-right",
+              "path": "rtmaster/arrows/arrow-down-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing left right",
+              "name": "arrow-left-right",
+              "path": "rtmaster/arrows/arrow-left-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up down",
+              "name": "arrow-up-down",
+              "path": "rtmaster/arrows/arrow-up-down.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up down left right",
+              "name": "arrow-up-down-left-right",
+              "path": "rtmaster/arrows/arrow-up-down-left-right.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Factory",
+              "name": "factory",
+              "path": "rtmaster/facilities/factory.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Jackup",
+              "name": "jackup",
+              "path": "rtmaster/facilities/jackup.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Plant",
+              "name": "plant",
+              "path": "rtmaster/facilities/plant.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Semisub",
+              "name": "semisub",
+              "path": "rtmaster/facilities/semisub.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Ship",
+              "name": "ship",
+              "path": "rtmaster/facilities/ship.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Truck",
+              "name": "truck",
+              "path": "rtmaster/facilities/truck.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Light Bulb",
+              "name": "light-bulb",
+              "path": "rtmaster/indicators/light-bulb.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Green Light Indicator",
+              "name": "light-green",
+              "path": "rtmaster/indicators/light-green.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Orange Light Indicator",
+              "name": "light-orange",
+              "path": "rtmaster/indicators/light-orange.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Red Light Indicator",
+              "name": "light-red",
+              "path": "rtmaster/indicators/light-red.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Compressor",
+              "name": "compressor",
+              "path": "rtmaster/industrial/compressor.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Derrick",
+              "name": "derrick",
+              "path": "rtmaster/industrial/derrick.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Heat Exchanger",
+              "name": "heatexchanger",
+              "path": "rtmaster/industrial/heatexchanger.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Motor",
+              "name": "motor",
+              "path": "rtmaster/industrial/motor.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Pump",
+              "name": "pump",
+              "path": "rtmaster/industrial/pump.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Horizontal Tank",
+              "name": "tank-horizontal",
+              "path": "rtmaster/industrial/tank-horizontal.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Vertical Tank",
+              "name": "tank-vertical",
+              "path": "rtmaster/industrial/tank-vertical.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Turbine",
+              "name": "turbine",
+              "path": "rtmaster/industrial/turbine.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Horizontal Vessel",
+              "name": "vessel-horizontal",
+              "path": "rtmaster/industrial/vessel-horizontal.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Vertical Vessel",
+              "name": "vessel-vertical",
+              "path": "rtmaster/industrial/vessel-vertical.svg"
+            },
+            {
+              "category": "letters",
+              "description": "A",
+              "name": "A",
+              "path": "rtmaster/letters/letter-a.svg"
+            },
+            {
+              "category": "letters",
+              "description": "B",
+              "name": "B",
+              "path": "rtmaster/letters/letter-b.svg"
+            },
+            {
+              "category": "letters",
+              "description": "C",
+              "name": "C",
+              "path": "rtmaster/letters/letter-c.svg"
+            },
+            {
+              "category": "letters",
+              "description": "D",
+              "name": "D",
+              "path": "rtmaster/letters/letter-d.svg"
+            },
+            {
+              "category": "letters",
+              "description": "E",
+              "name": "E",
+              "path": "rtmaster/letters/letter-e.svg"
+            },
+            {
+              "category": "letters",
+              "description": "F",
+              "name": "F",
+              "path": "rtmaster/letters/letter-f.svg"
+            },
+            {
+              "category": "letters",
+              "description": "G",
+              "name": "G",
+              "path": "rtmaster/letters/letter-g.svg"
+            },
+            {
+              "category": "letters",
+              "description": "H",
+              "name": "H",
+              "path": "rtmaster/letters/letter-h.svg"
+            },
+            {
+              "category": "letters",
+              "description": "I",
+              "name": "I",
+              "path": "rtmaster/letters/letter-i.svg"
+            },
+            {
+              "category": "letters",
+              "description": "J",
+              "name": "J",
+              "path": "rtmaster/letters/letter-j.svg"
+            },
+            {
+              "category": "letters",
+              "description": "K",
+              "name": "K",
+              "path": "rtmaster/letters/letter-k.svg"
+            },
+            {
+              "category": "letters",
+              "description": "L",
+              "name": "L",
+              "path": "rtmaster/letters/letter-l.svg"
+            },
+            {
+              "category": "letters",
+              "description": "M",
+              "name": "M",
+              "path": "rtmaster/letters/letter-m.svg"
+            },
+            {
+              "category": "letters",
+              "description": "N",
+              "name": "N",
+              "path": "rtmaster/letters/letter-n.svg"
+            },
+            {
+              "category": "letters",
+              "description": "O",
+              "name": "O",
+              "path": "rtmaster/letters/letter-o.svg"
+            },
+            {
+              "category": "letters",
+              "description": "P",
+              "name": "P",
+              "path": "rtmaster/letters/letter-p.svg"
+            },
+            {
+              "category": "letters",
+              "description": "Q",
+              "name": "Q",
+              "path": "rtmaster/letters/letter-q.svg"
+            },
+            {
+              "category": "letters",
+              "description": "R",
+              "name": "R",
+              "path": "rtmaster/letters-letter-r.svg"
+            },
+            {
+              "category": "letters",
+              "description": "S",
+              "name": "S",
+              "path": "rtmaster/letters/letter-s.svg"
+            },
+            {
+              "category": "letters",
+              "description": "T",
+              "name": "T",
+              "path": "rtmaster/letters/letter-t.svg"
+            },
+            {
+              "category": "letters",
+              "description": "U",
+              "name": "U",
+              "path": "rtmaster/letters/letter-u.svg"
+            },
+            {
+              "category": "letters",
+              "description": "V",
+              "name": "V",
+              "path": "rtmaster/letters/letter-v.svg"
+            },
+            {
+              "category": "letters",
+              "description": "W",
+              "name": "W",
+              "path": "rtmaster/letters/letter-w.svg"
+            },
+            {
+              "category": "letters",
+              "description": "X",
+              "name": "X",
+              "path": "rtmaster/letters/letter-x.svg"
+            },
+            {
+              "category": "letters",
+              "description": "Y",
+              "name": "Y",
+              "path": "rtmaster/letters/letter-y.svg"
+            },
+            {
+              "category": "letters",
+              "description": "Z",
+              "name": "Z",
+              "path": "rtmaster/letters/letter-z.svg"
+            },
+            {
+              "category": "meters",
+              "description": "Laboratory Flask",
+              "name": "flask",
+              "path": "rtmaster/meters/flask.svg"
+            },
+            {
+              "category": "meters",
+              "description": "Flowmeter",
+              "name": "flowmeter",
+              "path": "rtmaster/meters/flowmeter.svg"
+            },
+            {
+              "category": "meters",
+              "description": "Gauge",
+              "name": "gauge",
+              "path": "rtmaster/meters/gauge.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "0",
+              "name": "0",
+              "path": "rtmaster/numbers/number-0.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "1",
+              "name": "1",
+              "path": "rtmaster/numbers/number-1.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "2",
+              "name": "2",
+              "path": "rtmaster/numbers/number-2.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "3",
+              "name": "3",
+              "path": "rtmaster/numbers/number-3.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "4",
+              "name": "4",
+              "path": "rtmaster/numbers/number-4.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "5",
+              "name": "5",
+              "path": "rtmaster/numbers/number-5.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "6",
+              "name": "6",
+              "path": "rtmaster/numbers/number-6.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "7",
+              "name": "7",
+              "path": "rtmaster/numbers/number-7.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "8",
+              "name": "8",
+              "path": "rtmaster/numbers/number-8.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "9",
+              "name": "9",
+              "path": "rtmaster/numbers/number-9.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve down",
+              "name": "pipe-curve-down",
+              "path": "rtmaster/pipes/pipe-curve-down.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve down left",
+              "name": "pipe-curve-down-left",
+              "path": "rtmaster/pipes/pipe-curve-down-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve down right",
+              "name": "pipe-curve-down-right",
+              "path": "rtmaster/pipes/pipe-curve-down-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve left",
+              "name": "pipe-curve-left",
+              "path": "rtmaster/pipes/pipe-curve-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve right",
+              "name": "pipe-curve-right",
+              "path": "rtmaster/pipes/pipe-curve-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve up",
+              "name": "pipe-curve-up",
+              "path": "rtmaster/pipes/pipe-curve-up.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve up left",
+              "name": "pipe-curve-up-left",
+              "path": "rtmaster/pipes/pipe-curve-up-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve up right",
+              "name": "pipe-curve-up-right",
+              "path": "rtmaster/pipes/pipe-curve-up-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe diagonal left",
+              "name": "pipe-diagonal-left",
+              "path": "rtmaster/pipes/pipe-diagonal-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe diagonal right",
+              "name": "pipe-diagonal-right",
+              "path": "rtmaster/pipes/pipe-diagonal-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe flange horizontal",
+              "name": "pipe-flange-horizontal",
+              "path": "rtmaster/pipes/pipe-flange-horizontal.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe flange intersection",
+              "name": "pipe-flange-intersection",
+              "path": "rtmaster/pipes/pipe-flange-intersection.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe flange vertical",
+              "name": "pipe-flange-vertical",
+              "path": "rtmaster/pipes/pipe-flange-vertical.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe horizontal",
+              "name": "pipe-horizontal",
+              "path": "rtmaster/pipes/pipe-horizontal.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee down",
+              "name": "pipe-tee-down",
+              "path": "rtmaster/pipes/pipe-tee-down.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee left",
+              "name": "pipe-tee-left",
+              "path": "rtmaster/pipes/pipe-tee-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee right",
+              "name": "pipe-tee-right",
+              "path": "rtmaster/pipes/pipe-tee-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee up",
+              "name": "pipe-tee-up",
+              "path": "rtmaster/pipes/pipe-tee-up"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe vertical",
+              "name": "pipe-vertical",
+              "path": "rtmaster/pipes/pipe-vertical.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Circle",
+              "name": "circle",
+              "path": "rtmaster/shapes/circle.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Gear",
+              "name": "gear",
+              "path": "rtmaster/shapes/gear.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line horizontal",
+              "name": "line-horizontal",
+              "path": "rtmaster/shapes/line-horizontal.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line horizontal arrow left",
+              "name": "line-horizontal-arrow-left",
+              "path": "rtmaster/shapes/line-horizontal-arrow-left.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line horizontal arrow right",
+              "name": "line-horizontal-arrow-right",
+              "path": "rtmaster/shapes/line-horizontal-arrow-right.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line vertical",
+              "name": "line-vertical",
+              "path": "rtmaster/shapes/line-vertical.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line vertical arrow down",
+              "name": "line-vertical-arrow-down",
+              "path": "rtmaster/shapes/line-vertical-arrow-down.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line vertical arrow up",
+              "name": "line-vertical-arrow-up",
+              "path": "rtmaster/shapes/line-vertical-arrow-up.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Square",
+              "name": "square",
+              "path": "rtmaster/shapes/square.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle down",
+              "name": "triangle-down",
+              "path": "rtmaster/shapes/triangle-down.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle left",
+              "name": "triangle-left",
+              "path": "rtmaster/shapes/triangle-left.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle right",
+              "name": "triangle-right",
+              "path": "rtmaster/shapes/triangle-right.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle-up",
+              "name": "triangle-up",
+              "path": "rtmaster/shapes/triangle-up.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve Horizontal",
+              "name": "valve-horizontal",
+              "path": "rtmaster/valves/valve-horizontal.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve left right",
+              "name": "valve-left-right",
+              "path": "rtmaster/valves/valve-left-right.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round down",
+              "name": "valve-round-down",
+              "path": "rtmaster/valves/valve-round-down.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round left",
+              "name": "valve-round-left",
+              "path": "rtmaster/valves/valve-round-left.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round right",
+              "name": "valve-round-right",
+              "path": "rtmaster/valves/valve-round-right.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round up",
+              "name": "valve-round-up",
+              "path": "rtmaster/valves/valve-round-up.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square down",
+              "name": "valve-square-down",
+              "path": "rtmaster/valves/valve-square-down.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square left",
+              "name": "valve-square-left",
+              "path": "rtmaster/valves/valve-square-left.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square right",
+              "name": "valve-square-right",
+              "path": "rtmaster/valves/valve-square-right.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square up",
+              "name": "valve-square-up",
+              "path": "rtmaster/valves/valve-square-up.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve vertical",
+              "name": "valve-vertical",
+              "path": "rtmaster/valves/valve-vertical"
+            }
+          ],
+          "license": "Apache 2.0",
+          "url": "https://github.com/rtmaster"
+        }
+      },
+      "svgBuilderData": {
+        "elements": [],
+        "height": "100%",
+        "viewport": {
+          "height": 1000,
+          "width": 1000,
+          "x": 0,
+          "y": 0
+        },
+        "width": "100%"
+      },
+      "svg_data": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1920 1080\" font-family=\"'Segoe UI', Arial, sans-serif\">\n<defs>\n<linearGradient id=\"bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\n<stop offset=\"0\" stop-color=\"#0c1322\"/><stop offset=\"1\" stop-color=\"#0a1a2e\"/>\n</linearGradient>\n<linearGradient id=\"card\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\n<stop offset=\"0\" stop-color=\"#152037\"/><stop offset=\"1\" stop-color=\"#0e192c\"/>\n</linearGradient>\n<linearGradient id=\"motorBody\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\n<stop offset=\"0\" stop-color=\"#475569\"/><stop offset=\"0.5\" stop-color=\"#64748b\"/><stop offset=\"1\" stop-color=\"#334155\"/>\n</linearGradient>\n<linearGradient id=\"fanHousing\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\n<stop offset=\"0\" stop-color=\"#1e293b\"/><stop offset=\"1\" stop-color=\"#0f172a\"/>\n</linearGradient>\n<radialGradient id=\"fanHubGrad\" cx=\"0.5\" cy=\"0.5\" r=\"0.5\">\n<stop offset=\"0\" stop-color=\"#64748b\"/><stop offset=\"1\" stop-color=\"#1e293b\"/>\n</radialGradient>\n<filter id=\"glow\"><feGaussianBlur stdDeviation=\"3\"/></filter>\n</defs>\n \n  <defs>\n<marker id=\"arrowGrey\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\">\n<path d=\"M0,0 L10,5 L0,10 Z\" fill=\"#94a3b8\"/>\n</marker>\n</defs>\n \n  <rect width=\"1920\" height=\"1080\" fill=\"url(#bg)\"/>\n \n  <!-- ======== HEADER ======== -->\n<rect x=\"0\" y=\"0\" width=\"1920\" height=\"84\" fill=\"#06101f\"/>\n<text x=\"32\" y=\"34\" fill=\"#fbbf24\" font-size=\"12\" letter-spacing=\"4\">LITMUS EDGE  ·  SP4 SINTER PLANT</text>\n<text x=\"32\" y=\"64\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">Waste Gas Fan — Machine Health</text>\n<text x=\"1888\" y=\"34\" fill=\"#94a3b8\" font-size=\"12\" text-anchor=\"end\">31 live tags  ·  DB: tsdata  ·  Refresh 5s</text>\n<text x=\"1888\" y=\"58\" fill=\"#94a3b8\" font-size=\"12\" text-anchor=\"end\">Asset: WGF  ·  Motor DC + Fan assembly  ·  4 lube circuits</text>\n<text x=\"1888\" y=\"76\" fill=\"#94a3b8\" font-size=\"11\" text-anchor=\"end\" id=\"header_updated\">Updated --:--:--</text>\n<rect x=\"0\" y=\"84\" width=\"1920\" height=\"2\" fill=\"#1e3a5f\"/>\n \n  <!-- ======== KPI STRIP ======== -->\n<g transform=\"translate(16,100)\">\n<rect width=\"460\" height=\"86\" rx=\"10\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n<text x=\"20\" y=\"26\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\">WGF SPEED</text>\n<text id=\"wgf_speed_value\" x=\"20\" y=\"64\" fill=\"#22d3ee\" font-size=\"36\" font-weight=\"700\">--</text>\n<text x=\"444\" y=\"64\" fill=\"#64748b\" font-size=\"13\" text-anchor=\"end\">rpm</text>\n<circle id=\"wgf_speed_status_dot\" cx=\"444\" cy=\"20\" r=\"6\" fill=\"#64748b\"/>\n</g>\n<g transform=\"translate(492,100)\">\n<rect width=\"460\" height=\"86\" rx=\"10\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n<text x=\"20\" y=\"26\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\">LC1 DC CURRENT</text>\n<text id=\"wgf_dc_current_value\" x=\"20\" y=\"64\" fill=\"#7dd3fc\" font-size=\"36\" font-weight=\"700\">--</text>\n<text x=\"444\" y=\"64\" fill=\"#64748b\" font-size=\"13\" text-anchor=\"end\">A</text>\n<circle id=\"wgf_dc_current_status_dot\" cx=\"444\" cy=\"20\" r=\"6\" fill=\"#64748b\"/>\n</g>\n<g transform=\"translate(968,100)\">\n<rect width=\"460\" height=\"86\" rx=\"10\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n<text x=\"20\" y=\"26\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\">EXCITATION CURRENT</text>\n<text id=\"wgf_exc_current_value\" x=\"20\" y=\"64\" fill=\"#a78bfa\" font-size=\"36\" font-weight=\"700\">--</text>\n<text x=\"444\" y=\"64\" fill=\"#64748b\" font-size=\"13\" text-anchor=\"end\">A</text>\n<circle id=\"wgf_exc_current_status_dot\" cx=\"444\" cy=\"20\" r=\"6\" fill=\"#64748b\"/>\n</g>\n<g transform=\"translate(1444,100)\">\n<rect width=\"460\" height=\"86\" rx=\"10\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n<text x=\"20\" y=\"26\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\">ASSET HEALTH</text>\n<text id=\"health_value\" x=\"20\" y=\"64\" fill=\"#22c55e\" font-size=\"36\" font-weight=\"700\">--%</text>\n<text x=\"444\" y=\"44\" fill=\"#64748b\" font-size=\"11\" text-anchor=\"end\" id=\"health_status_text\">--</text>\n<text x=\"444\" y=\"64\" fill=\"#64748b\" font-size=\"13\" text-anchor=\"end\" id=\"health_summary_text\">-- normal · -- warn · -- crit</text>\n</g>\n \n  <!-- ======== MAIN SCHEMATIC ======== -->\n<g transform=\"translate(16,206)\">\n<rect width=\"1888\" height=\"580\" rx=\"14\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n<text x=\"24\" y=\"32\" fill=\"#e2e8f0\" font-size=\"16\" font-weight=\"600\">WGF Assembly — Motor + Fan Schematic</text>\n<text x=\"24\" y=\"52\" fill=\"#64748b\" font-size=\"11\">Live overlay of 6 winding temps · 2 motor bearings · 6 fan vibrations · 2 motor axial vibrations · 4 lube circuits</text>\n<rect x=\"100\" y=\"200\" width=\"480\" height=\"240\" rx=\"14\" fill=\"url(#motorBody)\" stroke=\"#0f172a\" stroke-width=\"2\"/>\n<g opacity=\"0.4\" stroke=\"#0f172a\" stroke-width=\"2\">\n<line x1=\"130\" y1=\"210\" x2=\"130\" y2=\"430\"/>\n<line x1=\"154\" y1=\"210\" x2=\"154\" y2=\"430\"/>\n<line x1=\"178\" y1=\"210\" x2=\"178\" y2=\"430\"/>\n<line x1=\"202\" y1=\"210\" x2=\"202\" y2=\"430\"/>\n<line x1=\"226\" y1=\"210\" x2=\"226\" y2=\"430\"/>\n<line x1=\"250\" y1=\"210\" x2=\"250\" y2=\"430\"/>\n<line x1=\"274\" y1=\"210\" x2=\"274\" y2=\"430\"/>\n<line x1=\"298\" y1=\"210\" x2=\"298\" y2=\"430\"/>\n<line x1=\"322\" y1=\"210\" x2=\"322\" y2=\"430\"/>\n<line x1=\"346\" y1=\"210\" x2=\"346\" y2=\"430\"/>\n<line x1=\"370\" y1=\"210\" x2=\"370\" y2=\"430\"/>\n<line x1=\"394\" y1=\"210\" x2=\"394\" y2=\"430\"/>\n<line x1=\"418\" y1=\"210\" x2=\"418\" y2=\"430\"/>\n<line x1=\"442\" y1=\"210\" x2=\"442\" y2=\"430\"/>\n<line x1=\"466\" y1=\"210\" x2=\"466\" y2=\"430\"/>\n<line x1=\"490\" y1=\"210\" x2=\"490\" y2=\"430\"/>\n<line x1=\"514\" y1=\"210\" x2=\"514\" y2=\"430\"/>\n<line x1=\"538\" y1=\"210\" x2=\"538\" y2=\"430\"/>\n</g>\n<text x=\"340.0\" y=\"188\" fill=\"#94a3b8\" font-size=\"13\" text-anchor=\"middle\" letter-spacing=\"3\">MOTOR (DC)</text>\n<text x=\"340.0\" y=\"468\" fill=\"#64748b\" font-size=\"10\" text-anchor=\"middle\">NDE end ← shaft → DE end (towards fan)</text>\n<g transform=\"translate(190,260)\">\n<circle id=\"wgf_wind_u1_dot\" r=\"22\" fill=\"#1e293b\" stroke=\"#64748b\" stroke-width=\"2\"/>\n<text id=\"wgf_wind_u1_value\" x=\"0\" y=\"-2\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"middle\">--</text>\n<text x=\"0\" y=\"11\" fill=\"#94a3b8\" font-size=\"8\" text-anchor=\"middle\">°C</text>\n<text x=\"0\" y=\"38\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"middle\" font-weight=\"700\">U1</text>\n</g>\n<g transform=\"translate(190,320)\">\n<circle id=\"wgf_wind_v1_dot\" r=\"22\" fill=\"#1e293b\" stroke=\"#64748b\" stroke-width=\"2\"/>\n<text id=\"wgf_wind_v1_value\" x=\"0\" y=\"-2\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"middle\">--</text>\n<text x=\"0\" y=\"11\" fill=\"#94a3b8\" font-size=\"8\" text-anchor=\"middle\">°C</text>\n<text x=\"0\" y=\"38\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"middle\" font-weight=\"700\">V1</text>\n</g>\n<g transform=\"translate(190,380)\">\n<circle id=\"wgf_wind_w1_dot\" r=\"22\" fill=\"#1e293b\" stroke=\"#64748b\" stroke-width=\"2\"/>\n<text id=\"wgf_wind_w1_value\" x=\"0\" y=\"-2\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"middle\">--</text>\n<text x=\"0\" y=\"11\" fill=\"#94a3b8\" font-size=\"8\" text-anchor=\"middle\">°C</text>\n<text x=\"0\" y=\"38\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"middle\" font-weight=\"700\">W1</text>\n</g>\n<g transform=\"translate(490,260)\">\n<circle id=\"wgf_wind_u2_dot\" r=\"22\" fill=\"#1e293b\" stroke=\"#64748b\" stroke-width=\"2\"/>\n<text id=\"wgf_wind_u2_value\" x=\"0\" y=\"-2\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"middle\">--</text>\n<text x=\"0\" y=\"11\" fill=\"#94a3b8\" font-size=\"8\" text-anchor=\"middle\">°C</text>\n<text x=\"0\" y=\"38\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"middle\" font-weight=\"700\">U2</text>\n</g>\n<g transform=\"translate(490,320)\">\n<circle id=\"wgf_wind_v2_dot\" r=\"22\" fill=\"#1e293b\" stroke=\"#64748b\" stroke-width=\"2\"/>\n<text id=\"wgf_wind_v2_value\" x=\"0\" y=\"-2\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"middle\">--</text>\n<text x=\"0\" y=\"11\" fill=\"#94a3b8\" font-size=\"8\" text-anchor=\"middle\">°C</text>\n<text x=\"0\" y=\"38\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"middle\" font-weight=\"700\">V2</text>\n</g>\n<g transform=\"translate(490,380)\">\n<circle id=\"wgf_wind_w2_dot\" r=\"22\" fill=\"#1e293b\" stroke=\"#64748b\" stroke-width=\"2\"/>\n<text id=\"wgf_wind_w2_value\" x=\"0\" y=\"-2\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"middle\">--</text>\n<text x=\"0\" y=\"11\" fill=\"#94a3b8\" font-size=\"8\" text-anchor=\"middle\">°C</text>\n<text x=\"0\" y=\"38\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"middle\" font-weight=\"700\">W2</text>\n</g>\n<g transform=\"translate(100,320.0)\">\n<circle r=\"34\" fill=\"#1e293b\" stroke=\"#475569\" stroke-width=\"3\"/>\n<circle id=\"wgf_bear_nde_dot\" r=\"34\" fill=\"none\" stroke=\"#64748b\" stroke-width=\"5\"/>\n<text id=\"wgf_bear_nde_value\" x=\"0\" y=\"-4\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"700\" text-anchor=\"middle\">--</text>\n<text x=\"0\" y=\"10\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"middle\">°C</text>\n<text x=\"0\" y=\"-46\" fill=\"#94a3b8\" font-size=\"10\" text-anchor=\"middle\">NDE BEARING</text>\n</g>\n<g transform=\"translate(580,320.0)\">\n<circle r=\"34\" fill=\"#1e293b\" stroke=\"#475569\" stroke-width=\"3\"/>\n<circle id=\"wgf_bear_de_dot\" r=\"34\" fill=\"none\" stroke=\"#64748b\" stroke-width=\"5\"/>\n<text id=\"wgf_bear_de_value\" x=\"0\" y=\"-4\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"700\" text-anchor=\"middle\">--</text>\n<text x=\"0\" y=\"10\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"middle\">°C</text>\n<text x=\"0\" y=\"-46\" fill=\"#94a3b8\" font-size=\"10\" text-anchor=\"middle\">DE BEARING</text>\n</g>\n<g transform=\"translate(30,250.0)\">\n<text x=\"0\" y=\"-2\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">MOT NDE AX</text>\n<line id=\"wgf_mot_vib_nde_axial_line\" x1=\"0\" y1=\"10\" x2=\"40\" y2=\"10\" stroke=\"#64748b\" stroke-width=\"3\" marker-end=\"url(#arrowGrey)\"/>\n<text id=\"wgf_mot_vib_nde_axial_value\" x=\"44\" y=\"14\" fill=\"#e2e8f0\" font-size=\"11\" font-weight=\"700\">--</text>\n<text x=\"0\" y=\"32\" fill=\"#64748b\" font-size=\"9\">mm/s</text>\n</g>\n<g transform=\"translate(520,250.0)\">\n<text x=\"0\" y=\"-2\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">MOT DE AX</text>\n<line id=\"wgf_mot_vib_de_axial_line\" x1=\"0\" y1=\"10\" x2=\"40\" y2=\"10\" stroke=\"#64748b\" stroke-width=\"3\" marker-end=\"url(#arrowGrey)\"/>\n<text id=\"wgf_mot_vib_de_axial_value\" x=\"44\" y=\"14\" fill=\"#e2e8f0\" font-size=\"11\" font-weight=\"700\">--</text>\n<text x=\"0\" y=\"32\" fill=\"#64748b\" font-size=\"9\">mm/s</text>\n</g>\n<line x1=\"614\" y1=\"320.0\" x2=\"800\" y2=\"320.0\" stroke=\"#475569\" stroke-width=\"14\" stroke-linecap=\"round\"/>\n<text x=\"680.0\" y=\"306.0\" fill=\"#64748b\" font-size=\"10\" text-anchor=\"middle\" letter-spacing=\"2\">COUPLING</text>\n<text x=\"980\" y=\"188\" fill=\"#94a3b8\" font-size=\"13\" text-anchor=\"middle\" letter-spacing=\"3\">FAN</text>\n<circle cx=\"980\" cy=\"320.0\" r=\"180\" fill=\"url(#fanHousing)\" stroke=\"#0f172a\" stroke-width=\"2\"/>\n<circle cx=\"980\" cy=\"320.0\" r=\"168\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1\"/>\n<g id=\"fan_rotor\" transform=\"translate(980,320.0) rotate(0)\">\n<polygon points=\"14.0,6.4 150.0,16.0 150.0,-16.0 14.0,-6.4\" fill=\"#94a3b8\" stroke=\"#475569\" stroke-width=\"0.5\"/>\n<polygon points=\"1.5,15.3 61.1,137.9 88.9,121.9 12.5,8.9\" fill=\"#94a3b8\" stroke=\"#475569\" stroke-width=\"0.5\"/>\n<polygon points=\"-12.5,8.9 -88.9,121.9 -61.1,137.9 -1.5,15.3\" fill=\"#94a3b8\" stroke=\"#475569\" stroke-width=\"0.5\"/>\n<polygon points=\"-14.0,-6.4 -150.0,-16.0 -150.0,16.0 -14.0,6.4\" fill=\"#94a3b8\" stroke=\"#475569\" stroke-width=\"0.5\"/>\n<polygon points=\"-1.5,-15.3 -61.1,-137.9 -88.9,-121.9 -12.5,-8.9\" fill=\"#94a3b8\" stroke=\"#475569\" stroke-width=\"0.5\"/>\n<polygon points=\"12.5,-8.9 88.9,-121.9 61.1,-137.9 1.5,-15.3\" fill=\"#94a3b8\" stroke=\"#475569\" stroke-width=\"0.5\"/>\n<circle r=\"22\" fill=\"url(#fanHubGrad)\" stroke=\"#0f172a\" stroke-width=\"2\"/>\n</g>\n<g transform=\"translate(750,240.0)\">\n<text x=\"0\" y=\"-2\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"start\" letter-spacing=\"1\">FAN DE • X</text>\n<line id=\"wgf_fan_vib_de_x_line\" x1=\"0\" y1=\"10\" x2=\"40\" y2=\"10\" stroke=\"#64748b\" stroke-width=\"3\" marker-end=\"url(#arrowGrey)\"/>\n<text id=\"wgf_fan_vib_de_x_value\" x=\"4\" y=\"14\" fill=\"#e2e8f0\" font-size=\"11\" font-weight=\"700\" text-anchor=\"start\">--</text>\n<text x=\"54\" y=\"32\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"start\">mm/s</text>\n</g>\n<g transform=\"translate(750,340.0)\">\n<text x=\"0\" y=\"-2\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"start\" letter-spacing=\"1\">FAN DE • Y</text>\n<line id=\"wgf_fan_vib_de_y_line\" x1=\"0\" y1=\"10\" x2=\"0\" y2=\"50\" stroke=\"#64748b\" stroke-width=\"3\" marker-end=\"url(#arrowGrey)\"/>\n<text id=\"wgf_fan_vib_de_y_value\" x=\"4\" y=\"14\" fill=\"#e2e8f0\" font-size=\"11\" font-weight=\"700\" text-anchor=\"start\">--</text>\n<text x=\"54\" y=\"32\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"start\">mm/s</text>\n</g>\n<g transform=\"translate(750,410.0)\">\n<text x=\"0\" y=\"-2\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"start\" letter-spacing=\"1\">FAN DE • AX</text>\n<line id=\"wgf_fan_vib_de_axial_line\" x1=\"0\" y1=\"10\" x2=\"40\" y2=\"-15\" stroke=\"#64748b\" stroke-width=\"3\" marker-end=\"url(#arrowGrey)\"/>\n<text id=\"wgf_fan_vib_de_axial_value\" x=\"4\" y=\"14\" fill=\"#e2e8f0\" font-size=\"11\" font-weight=\"700\" text-anchor=\"start\">--</text>\n<text x=\"54\" y=\"32\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"start\">mm/s</text>\n</g>\n<g transform=\"translate(1170,240.0)\">\n<text x=\"100\" y=\"-2\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"end\" letter-spacing=\"1\">FAN NDE • X</text>\n<line id=\"wgf_fan_vib_nde_x_line\" x1=\"100\" y1=\"10\" x2=\"140\" y2=\"10\" stroke=\"#64748b\" stroke-width=\"3\" marker-end=\"url(#arrowGrey)\"/>\n<text id=\"wgf_fan_vib_nde_x_value\" x=\"100\" y=\"14\" fill=\"#e2e8f0\" font-size=\"11\" font-weight=\"700\" text-anchor=\"end\">--</text>\n<text x=\"50\" y=\"32\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mm/s</text>\n</g>\n<g transform=\"translate(1170,340.0)\">\n<text x=\"100\" y=\"-2\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"end\" letter-spacing=\"1\">FAN NDE • Y</text>\n<line id=\"wgf_fan_vib_nde_y_line\" x1=\"100\" y1=\"10\" x2=\"100\" y2=\"50\" stroke=\"#64748b\" stroke-width=\"3\" marker-end=\"url(#arrowGrey)\"/>\n<text id=\"wgf_fan_vib_nde_y_value\" x=\"100\" y=\"14\" fill=\"#e2e8f0\" font-size=\"11\" font-weight=\"700\" text-anchor=\"end\">--</text>\n<text x=\"50\" y=\"32\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mm/s</text>\n</g>\n<g transform=\"translate(1170,410.0)\">\n<text x=\"100\" y=\"-2\" fill=\"#94a3b8\" font-size=\"9\" text-anchor=\"end\" letter-spacing=\"1\">FAN NDE • AX</text>\n<line id=\"wgf_fan_vib_nde_axial_line\" x1=\"100\" y1=\"10\" x2=\"60\" y2=\"-15\" stroke=\"#64748b\" stroke-width=\"3\" marker-end=\"url(#arrowGrey)\"/>\n<text id=\"wgf_fan_vib_nde_axial_value\" x=\"100\" y=\"14\" fill=\"#e2e8f0\" font-size=\"11\" font-weight=\"700\" text-anchor=\"end\">--</text>\n<text x=\"50\" y=\"32\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mm/s</text>\n</g>\n</g>\n \n  <!-- ======== LUBE OIL CIRCUITS ======== -->\n<g transform=\"translate(16,802)\">\n<rect width=\"460\" height=\"230\" rx=\"12\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n<text x=\"20\" y=\"28\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"600\">Fan DE Lubrication Oil</text>\n<text x=\"20\" y=\"46\" fill=\"#64748b\" font-size=\"10\">flow · pressure · temperature</text>\n<circle id=\"lube_fan_de_status_dot\" cx=\"440\" cy=\"22\" r=\"6\" fill=\"#64748b\"/>\n \n    <!-- Flow -->\n<g transform=\"translate(20,72)\">\n<text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">FLOW</text>\n<rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n<rect id=\"lube_fan_de_flow_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#22d3ee\"/>\n<text id=\"lube_fan_de_flow_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n<text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">l/min</text>\n</g>\n \n    <!-- Pressure -->\n<g transform=\"translate(20,118)\">\n<text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">PRESSURE</text>\n<rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n<rect id=\"lube_fan_de_press_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#a78bfa\"/>\n<text id=\"lube_fan_de_press_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n<text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">bar</text>\n</g>\n \n    <!-- Temperature -->\n<g transform=\"translate(20,164)\">\n<text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">TEMPERATURE</text>\n<rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n<rect id=\"lube_fan_de_temp_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#f59e0b\"/>\n<text id=\"lube_fan_de_temp_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n<text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n</g>\n</g>\n<g transform=\"translate(492,802)\">\n<rect width=\"460\" height=\"230\" rx=\"12\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n<text x=\"20\" y=\"28\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"600\">Fan NDE Lubrication Oil</text>\n<text x=\"20\" y=\"46\" fill=\"#64748b\" font-size=\"10\">flow · pressure · temperature</text>\n<circle id=\"lube_fan_nde_status_dot\" cx=\"440\" cy=\"22\" r=\"6\" fill=\"#64748b\"/>\n \n    <!-- Flow -->\n<g transform=\"translate(20,72)\">\n<text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">FLOW</text>\n<rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n<rect id=\"lube_fan_nde_flow_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#22d3ee\"/>\n<text id=\"lube_fan_nde_flow_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n<text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">l/min</text>\n</g>\n \n    <!-- Pressure -->\n<g transform=\"translate(20,118)\">\n<text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">PRESSURE</text>\n<rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n<rect id=\"lube_fan_nde_press_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#a78bfa\"/>\n<text id=\"lube_fan_nde_press_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n<text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">bar</text>\n</g>\n \n    <!-- Temperature -->\n<g transform=\"translate(20,164)\">\n<text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">TEMPERATURE</text>\n<rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n<rect id=\"lube_fan_nde_temp_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#f59e0b\"/>\n<text id=\"lube_fan_nde_temp_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n<text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n</g>\n</g>\n<g transform=\"translate(968,802)\">\n<rect width=\"460\" height=\"230\" rx=\"12\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n<text x=\"20\" y=\"28\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"600\">Motor DE Lubrication Oil</text>\n<text x=\"20\" y=\"46\" fill=\"#64748b\" font-size=\"10\">flow · pressure · temperature</text>\n<circle id=\"lube_mot_de_status_dot\" cx=\"440\" cy=\"22\" r=\"6\" fill=\"#64748b\"/>\n \n    <!-- Flow -->\n<g transform=\"translate(20,72)\">\n<text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">FLOW</text>\n<rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n<rect id=\"lube_mot_de_flow_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#22d3ee\"/>\n<text id=\"lube_mot_de_flow_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n<text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">l/min</text>\n</g>\n \n    <!-- Pressure -->\n<g transform=\"translate(20,118)\">\n<text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">PRESSURE</text>\n<rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n<rect id=\"lube_mot_de_press_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#a78bfa\"/>\n<text id=\"lube_mot_de_press_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n<text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">bar</text>\n</g>\n \n    <!-- Temperature -->\n<g transform=\"translate(20,164)\">\n<text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">TEMPERATURE</text>\n<rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n<rect id=\"lube_mot_de_temp_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#f59e0b\"/>\n<text id=\"lube_mot_de_temp_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n<text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n</g>\n</g>\n<g transform=\"translate(1444,802)\">\n<rect width=\"460\" height=\"230\" rx=\"12\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n<text x=\"20\" y=\"28\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"600\">Motor NDE Lubrication Oil</text>\n<text x=\"20\" y=\"46\" fill=\"#64748b\" font-size=\"10\">flow · pressure · temperature</text>\n<circle id=\"lube_mot_nde_status_dot\" cx=\"440\" cy=\"22\" r=\"6\" fill=\"#64748b\"/>\n \n    <!-- Flow -->\n<g transform=\"translate(20,72)\">\n<text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">FLOW</text>\n<rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n<rect id=\"lube_mot_nde_flow_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#22d3ee\"/>\n<text id=\"lube_mot_nde_flow_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n<text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">l/min</text>\n</g>\n \n    <!-- Pressure -->\n<g transform=\"translate(20,118)\">\n<text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">PRESSURE</text>\n<rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n<rect id=\"lube_mot_nde_press_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#a78bfa\"/>\n<text id=\"lube_mot_nde_press_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n<text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">bar</text>\n</g>\n \n    <!-- Temperature -->\n<g transform=\"translate(20,164)\">\n<text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">TEMPERATURE</text>\n<rect x=\"0\" y=\"8\" width=\"370\" height=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n<rect id=\"lube_mot_nde_temp_bar\" x=\"0\" y=\"8\" width=\"0\" height=\"6\" fill=\"#f59e0b\"/>\n<text id=\"lube_mot_nde_temp_value\" x=\"420\" y=\"14\" fill=\"#e2e8f0\" font-size=\"13\" font-weight=\"700\" text-anchor=\"end\">--</text>\n<text x=\"420\" y=\"28\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n</g>\n</g>\n \n  <text x=\"20\" y=\"1064\" fill=\"#475569\" font-size=\"10\">WGF Machine Health  ·  31 live bindings  ·  rotor RPM-proportional spin  ·  refresh 5s</text>\n<text x=\"1900\" y=\"1064\" fill=\"#475569\" font-size=\"10\" text-anchor=\"end\">Litmus Jay</text>\n</svg>",
+      "targets": [
+        {
+          "alias": "WGF_SPEED",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_SPEED' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_DC_CURRENT",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_DC_CURRENT' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_EXCITATION_CURRENT",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_EXCITATION_CURRENT' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_U1_WINDING_TEMPERATURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_U1_WINDING_TEMPERATURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "D",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_V1_WINDING_TEMPERATURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_V1_WINDING_TEMPERATURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "E",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_W1_WINDING_TEMPERATURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_W1_WINDING_TEMPERATURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "F",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_U2_WINDING_TEMPERATURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_U2_WINDING_TEMPERATURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "G",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_V2_WINDING_TEMPERATURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_V2_WINDING_TEMPERATURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "H",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_W2_WINDING_TEMPERATURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_W2_WINDING_TEMPERATURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "I",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_DE_BEARING_TEMPERATURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_DE_BEARING_TEMPERATURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "J",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_NDE_BEARING_TEMPERATURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_NDE_BEARING_TEMPERATURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "K",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_DE_X_VIBRATION",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_DE_X_VIBRATION' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "L",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_DE_Y_VIBRATION",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_DE_Y_VIBRATION' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "M",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_DE_AXIAL_VIBRATION",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_DE_AXIAL_VIBRATION' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "N",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_NDE_X_VIBRATION",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_NDE_X_VIBRATION' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "O",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_NDE_Y_VIBRATION",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_NDE_Y_VIBRATION' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "P",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_NDE_AXIAL_VIBRATION",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_NDE_AXIAL_VIBRATION' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "Q",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_DE_AXIAL_VIBRATION",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_DE_AXIAL_VIBRATION' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "R",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_NDE_AXIAL_VIBRATION",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_NDE_AXIAL_VIBRATION' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "S",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_DE_LUBRICATIONOIL_FLOW",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_DE_LUBRICATIONOIL_FLOW' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "T",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_DE_LUBRICATIONOIL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_DE_LUBRICATIONOIL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "U",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_DE_LUBRICATIONOIL_TEMPERATURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_DE_LUBRICATIONOIL_TEMPERATURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "V",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_NDE_LUBRICATIONOIL_FLOW",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_NDE_LUBRICATIONOIL_FLOW' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "W",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_NDE_LUBRICATIONOIL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_NDE_LUBRICATIONOIL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "X",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_NDE_LUBRICATIONOIL_TEMPERATURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_NDE_LUBRICATIONOIL_TEMPERATURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "Y",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_DE_LUBRICATIONOIL_FLOW",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_DE_LUBRICATIONOIL_FLOW' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "Z",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_DE_LUBRICATIONOIL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_DE_LUBRICATIONOIL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AA",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_DE_LUBRICATIONOIL_TEMPERATURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_DE_LUBRICATIONOIL_TEMPERATURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AB",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_NDE_LUBRICATIONOIL_FLOW",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_NDE_LUBRICATIONOIL_FLOW' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AC",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_NDE_LUBRICATIONOIL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_NDE_LUBRICATIONOIL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AD",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_NDE_LUBRICATIONOIL_TEMPERATURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_NDE_LUBRICATIONOIL_TEMPERATURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AE",
+          "resultFormat": "time_series"
+        }
+      ],
+      "type": "marcuscalidus-svg-panel",
+      "useSVGBuilder": false
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 8,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 23
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "alias": "WGF_FAN_DE_X_VIBRATION",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT mean(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_DE_X_VIBRATION' AND $timeFilter GROUP BY time($__interval) fill(linear)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_DE_Y_VIBRATION",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT mean(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_DE_Y_VIBRATION' AND $timeFilter GROUP BY time($__interval) fill(linear)",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_DE_AXIAL_VIBRATION",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT mean(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_DE_AXIAL_VIBRATION' AND $timeFilter GROUP BY time($__interval) fill(linear)",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Fan DE Vibrations (X/Y/Axial)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 8,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 23
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "alias": "WGF_FAN_NDE_X_VIBRATION",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT mean(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_NDE_X_VIBRATION' AND $timeFilter GROUP BY time($__interval) fill(linear)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_NDE_Y_VIBRATION",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT mean(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_NDE_Y_VIBRATION' AND $timeFilter GROUP BY time($__interval) fill(linear)",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_NDE_AXIAL_VIBRATION",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT mean(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_NDE_AXIAL_VIBRATION' AND $timeFilter GROUP BY time($__interval) fill(linear)",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Fan NDE Vibrations (X/Y/Axial)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 8,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 31
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "alias": "WGF_MOTOR_DE_BEARING_TEMPERATURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT mean(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_DE_BEARING_TEMPERATURE' AND $timeFilter GROUP BY time($__interval) fill(linear)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_NDE_BEARING_TEMPERATURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT mean(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_NDE_BEARING_TEMPERATURE' AND $timeFilter GROUP BY time($__interval) fill(linear)",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Motor Bearing Temperatures",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 8,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 31
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "alias": "WGF_FAN_DE_LUBRICATIONOIL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT mean(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_DE_LUBRICATIONOIL_PRESSURE' AND $timeFilter GROUP BY time($__interval) fill(linear)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_NDE_LUBRICATIONOIL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT mean(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_NDE_LUBRICATIONOIL_PRESSURE' AND $timeFilter GROUP BY time($__interval) fill(linear)",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_DE_LUBRICATIONOIL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT mean(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_DE_LUBRICATIONOIL_PRESSURE' AND $timeFilter GROUP BY time($__interval) fill(linear)",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_NDE_LUBRICATIONOIL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT mean(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_NDE_LUBRICATIONOIL_PRESSURE' AND $timeFilter GROUP BY time($__interval) fill(linear)",
+          "rawQuery": true,
+          "refId": "D",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Lube Oil Pressures (4 circuits)",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "sp4",
+    "wgf",
+    "machine-health",
+    "litmus"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "SP4 Sinter Plant — WGF Machine Health",
+  "uid": "sp4-wgf-health",
+  "version": 6,
+  "weekStart": ""
+}

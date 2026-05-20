@@ -1,0 +1,218 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Tata Steel SP4 Sinter Plant, Jamshedpur — Operations Landing Page",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 20,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 100,
+      "options": {
+        "code": {
+          "language": "html",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<div style=\"background:linear-gradient(180deg, #0f172a 0%, #020617 100%);padding:16px 28px;font-family:'Segoe UI',Roboto,sans-serif;color:#fff;height:100%;box-sizing:border-box;position:relative;border-bottom:1px solid #1e293b;border-radius:8px;\"><div style=\"display:flex;align-items:center;gap:12px;\"><div style=\"background:#2563eb;color:#fff;font-weight:bold;font-size:18px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:6px;box-shadow:0 0 12px rgba(37,99,235,0.5);\">T</div><span style=\"font-size:22px;font-weight:700;color:#60a5fa;letter-spacing:0.5px;\">Tata Steel</span></div><div style=\"text-align:center;margin-top:2px;\"><div style=\"font-size:32px;font-weight:800;color:#f8fafc;letter-spacing:0.5px;line-height:1.2;text-shadow:0 2px 10px rgba(0,0,0,0.5);\">SP4 Sinter Plant <span style=\"color:#3b82f6;\">—</span> Jamshedpur</div><div style=\"font-size:12px;color:#94a3b8;margin-top:6px;letter-spacing:2.5px;text-transform:uppercase;font-weight:600;\">Unified Monitoring &amp; Diagnostics Portal</div></div></div>",
+        "mode": "html"
+      },
+      "pluginVersion": "10.0.1",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 4
+      },
+      "id": 3,
+      "options": {
+        "code": {
+          "language": "html",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<a href=\"https://158.0.15.143:3000/d/sp4-plant-overview/sp4-sinter-plant-plant-overview?orgId=1&refresh=5s&kiosk\" target=\"_blank\" style=\"text-decoration:none;color:inherit;display:block;height:100%;\"><div style=\"background:linear-gradient(135deg, #0f172a 0%, #020617 100%);border-radius:12px;padding:22px 20px 18px 20px;height:100%;border:1px solid #3b82f6;box-shadow:0 4px 20px rgba(59,130,246,0.25), inset 0 0 16px rgba(59,130,246,0.1);cursor:pointer;font-family:'Segoe UI',Roboto,sans-serif;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;transition:all 0.25s ease;\" onmouseover=\"this.style.boxShadow='0 8px 32px rgba(59,130,246,0.45), inset 0 0 24px rgba(59,130,246,0.2)';this.style.transform='translateY(-4px)';this.style.borderColor='#60a5fa';\" onmouseout=\"this.style.boxShadow='0 4px 20px rgba(59,130,246,0.25), inset 0 0 16px rgba(59,130,246,0.1)';this.style.transform='translateY(0)';this.style.borderColor='#3b82f6';\"><div><div style=\"display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;\"><div style=\"background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);padding:6px 10px;border-radius:6px;font-size:12px;color:#60a5fa;font-weight:600;\">🏭 Plant Overview</div><span style=\"background:#1e293b;color:#94a3b8;padding:4px 8px;border-radius:4px;font-size:11px;\">Panel 3</span></div><div style=\"font-size:20px;font-weight:700;color:#60a5fa;margin-bottom:8px;line-height:1.2;\">Plant Overview</div><div style=\"font-size:13px;color:#cbd5e1;line-height:1.5;\">Bird's-eye view — production KPIs, OEE, throughput &amp; overall sinter plant health.</div></div><div style=\"display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:12px;border-top:1px solid #1e293b;\"><span style=\"font-size:13px;color:#94a3b8;font-weight:500;\">Click to open live dashboard</span><span style=\"font-size:20px;color:#3b82f6;font-weight:bold;\">→</span></div></div></a>",
+        "mode": "html"
+      },
+      "pluginVersion": "10.0.1",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 4
+      },
+      "id": 4,
+      "options": {
+        "code": {
+          "language": "html",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<a href=\"https://158.0.15.143:3000/d/sp2-process-esp/sp4-sinter-plant-process-esp?orgId=1&refresh=5s&kiosk\" target=\"_blank\" style=\"text-decoration:none;color:inherit;display:block;height:100%;\"><div style=\"background:linear-gradient(135deg, #0f172a 0%, #020617 100%);border-radius:12px;padding:22px 20px 18px 20px;height:100%;border:1px solid #f59e0b;box-shadow:0 4px 20px rgba(245,158,11,0.2), inset 0 0 16px rgba(245,158,11,0.1);cursor:pointer;font-family:'Segoe UI',Roboto,sans-serif;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;transition:all 0.25s ease;\" onmouseover=\"this.style.boxShadow='0 8px 32px rgba(245,158,11,0.4), inset 0 0 24px rgba(245,158,11,0.2)';this.style.transform='translateY(-4px)';this.style.borderColor='#fbbf24';\" onmouseout=\"this.style.boxShadow='0 4px 20px rgba(245,158,11,0.2), inset 0 0 16px rgba(245,158,11,0.1)';this.style.transform='translateY(0)';this.style.borderColor='#f59e0b';\"><div><div style=\"display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;\"><div style=\"background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);padding:6px 10px;border-radius:6px;font-size:12px;color:#fbbf24;font-weight:600;\">💨 Environment</div><span style=\"background:#1e293b;color:#94a3b8;padding:4px 8px;border-radius:4px;font-size:11px;\">Panel 4</span></div><div style=\"font-size:20px;font-weight:700;color:#fbbf24;margin-bottom:8px;line-height:1.2;\">Process ESP</div><div style=\"font-size:13px;color:#cbd5e1;line-height:1.5;\">Electrostatic precipitator performance — emission compliance &amp; field-level diagnostics.</div></div><div style=\"display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:12px;border-top:1px solid #1e293b;\"><span style=\"font-size:13px;color:#94a3b8;font-weight:500;\">Click to open live dashboard</span><span style=\"font-size:20px;color:#f59e0b;font-weight:bold;\">→</span></div></div></a>",
+        "mode": "html"
+      },
+      "pluginVersion": "10.0.1",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 4
+      },
+      "id": 5,
+      "options": {
+        "code": {
+          "language": "html",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<a href=\"https://158.0.15.143:3000/d/sp4-esp-ddesp/sp4-sinter-plant-process-esp-and-ddesp?orgId=1&refresh=5s&kiosk\" target=\"_blank\" style=\"text-decoration:none;color:inherit;display:block;height:100%;\"><div style=\"background:linear-gradient(135deg, #0f172a 0%, #020617 100%);border-radius:12px;padding:22px 20px 18px 20px;height:100%;border:1px solid #8b5cf6;box-shadow:0 4px 20px rgba(139,92,246,0.2), inset 0 0 16px rgba(139,92,246,0.1);cursor:pointer;font-family:'Segoe UI',Roboto,sans-serif;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;transition:all 0.25s ease;\" onmouseover=\"this.style.boxShadow='0 8px 32px rgba(139,92,246,0.4), inset 0 0 24px rgba(139,92,246,0.2)';this.style.transform='translateY(-4px)';this.style.borderColor='#a78bfa';\" onmouseout=\"this.style.boxShadow='0 4px 20px rgba(139,92,246,0.2), inset 0 0 16px rgba(139,92,246,0.1)';this.style.transform='translateY(0)';this.style.borderColor='#8b5cf6';\"><div><div style=\"display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;\"><div style=\"background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.3);padding:6px 10px;border-radius:6px;font-size:12px;color:#a78bfa;font-weight:600;\">🌪️ Secondary De-Dusting</div><span style=\"background:#1e293b;color:#94a3b8;padding:4px 8px;border-radius:4px;font-size:11px;\">Panel 5</span></div><div style=\"font-size:20px;font-weight:700;color:#a78bfa;margin-bottom:8px;line-height:1.2;\">Process ESP &amp; DDESP</div><div style=\"font-size:13px;color:#cbd5e1;line-height:1.5;\">Combined Process ESP &amp; De-Dusting ESP telemetry — secondary emission control units.</div></div><div style=\"display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:12px;border-top:1px solid #1e293b;\"><span style=\"font-size:13px;color:#94a3b8;font-weight:500;\">Click to open live dashboard</span><span style=\"font-size:20px;color:#8b5cf6;font-weight:bold;\">→</span></div></div></a>",
+        "mode": "html"
+      },
+      "pluginVersion": "10.0.1",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 11
+      },
+      "id": 6,
+      "options": {
+        "code": {
+          "language": "html",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<a href=\"https://158.0.15.143:3000/d/sp4-wgf-health/sp4-sinter-plant-wgf-machine-health?orgId=1&refresh=10s&kiosk\" target=\"_blank\" style=\"text-decoration:none;color:inherit;display:block;height:100%;\"><div style=\"background:linear-gradient(135deg, #0f172a 0%, #020617 100%);border-radius:12px;padding:22px 20px 18px 20px;height:100%;border:1px solid #06b6d4;box-shadow:0 4px 20px rgba(6,182,212,0.2), inset 0 0 16px rgba(6,182,212,0.1);cursor:pointer;font-family:'Segoe UI',Roboto,sans-serif;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;transition:all 0.25s ease;\" onmouseover=\"this.style.boxShadow='0 8px 32px rgba(6,182,212,0.4), inset 0 0 24px rgba(6,182,212,0.2)';this.style.transform='translateY(-4px)';this.style.borderColor='#22d3ee';\" onmouseout=\"this.style.boxShadow='0 4px 20px rgba(6,182,212,0.2), inset 0 0 16px rgba(6,182,212,0.1)';this.style.transform='translateY(0)';this.style.borderColor='#06b6d4';\"><div><div style=\"display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;\"><div style=\"background:rgba(6,182,212,0.15);border:1px solid rgba(6,182,212,0.3);padding:6px 10px;border-radius:6px;font-size:12px;color:#22d3ee;font-weight:600;\">🌀 Exhaust Systems</div><span style=\"background:#1e293b;color:#94a3b8;padding:4px 8px;border-radius:4px;font-size:11px;\">Panel 6</span></div><div style=\"font-size:20px;font-weight:700;color:#22d3ee;margin-bottom:8px;line-height:1.2;\">WGF Machine Health</div><div style=\"font-size:13px;color:#cbd5e1;line-height:1.5;\">Waste-gas fan health — vibration, bearing temp, drive current &amp; predictive indicators.</div></div><div style=\"display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:12px;border-top:1px solid #1e293b;\"><span style=\"font-size:13px;color:#94a3b8;font-weight:500;\">Click to open live dashboard</span><span style=\"font-size:20px;color:#06b6d4;font-weight:bold;\">→</span></div></div></a>",
+        "mode": "html"
+      },
+      "pluginVersion": "10.0.1",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 11
+      },
+      "id": 2,
+      "options": {
+        "code": {
+          "language": "html",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<a href=\"https://158.0.15.143:3000/d/sp4-ht-motors/sp4-sinter-plant-ht-motors?orgId=1&refresh=5s&kiosk\" target=\"_blank\" style=\"text-decoration:none;color:inherit;display:block;height:100%;\"><div style=\"background:linear-gradient(135deg, #0f172a 0%, #020617 100%);border-radius:12px;padding:22px 20px 18px 20px;height:100%;border:1px solid #10b981;box-shadow:0 4px 20px rgba(16,185,129,0.2), inset 0 0 16px rgba(16,185,129,0.1);cursor:pointer;font-family:'Segoe UI',Roboto,sans-serif;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;transition:all 0.25s ease;\" onmouseover=\"this.style.boxShadow='0 8px 32px rgba(16,185,129,0.4), inset 0 0 24px rgba(16,185,129,0.2)';this.style.transform='translateY(-4px)';this.style.borderColor='#34d399';\" onmouseout=\"this.style.boxShadow='0 4px 20px rgba(16,185,129,0.2), inset 0 0 16px rgba(16,185,129,0.1)';this.style.transform='translateY(0)';this.style.borderColor='#10b981';\"><div><div style=\"display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;\"><div style=\"background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);padding:6px 10px;border-radius:6px;font-size:12px;color:#34d399;font-weight:600;\">⚡ Drives &amp; Motors</div><span style=\"background:#1e293b;color:#94a3b8;padding:4px 8px;border-radius:4px;font-size:11px;\">Panel 2</span></div><div style=\"font-size:20px;font-weight:700;color:#34d399;margin-bottom:8px;line-height:1.2;\">HT Motors</div><div style=\"font-size:13px;color:#cbd5e1;line-height:1.5;\">High-tension motor vitals — winding temperature, vibration, current &amp; bearing health.</div></div><div style=\"display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:12px;border-top:1px solid #1e293b;\"><span style=\"font-size:13px;color:#94a3b8;font-weight:500;\">Click to open live dashboard</span><span style=\"font-size:20px;color:#10b981;font-weight:bold;\">→</span></div></div></a>",
+        "mode": "html"
+      },
+      "pluginVersion": "10.0.1",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 11
+      },
+      "id": 1,
+      "options": {
+        "code": {
+          "language": "html",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<a href=\"https://158.0.15.143:3000/d/sp4-critical-process/sp4-sinter-plant-critical-process-monitoring?orgId=1&refresh=5s&kiosk\" target=\"_blank\" style=\"text-decoration:none;color:inherit;display:block;height:100%;\"><div style=\"background:linear-gradient(135deg, #0f172a 0%, #020617 100%);border-radius:12px;padding:22px 20px 18px 20px;height:100%;border:1px solid #3b82f6;box-shadow:0 4px 20px rgba(59,130,246,0.25), inset 0 0 16px rgba(59,130,246,0.1);cursor:pointer;font-family:'Segoe UI',Roboto,sans-serif;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;transition:all 0.25s ease;\" onmouseover=\"this.style.boxShadow='0 8px 32px rgba(59,130,246,0.45), inset 0 0 24px rgba(59,130,246,0.2)';this.style.transform='translateY(-4px)';this.style.borderColor='#60a5fa';\" onmouseout=\"this.style.boxShadow='0 4px 20px rgba(59,130,246,0.25), inset 0 0 16px rgba(59,130,246,0.1)';this.style.transform='translateY(0)';this.style.borderColor='#3b82f6';\"><div><div style=\"display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;\"><div style=\"background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);padding:6px 10px;border-radius:6px;font-size:12px;color:#f87171;font-weight:600;\">⚠️ Critical Parameters</div><span style=\"background:#1e293b;color:#94a3b8;padding:4px 8px;border-radius:4px;font-size:11px;\">Panel 1</span></div><div style=\"font-size:20px;font-weight:700;color:#60a5fa;margin-bottom:8px;line-height:1.2;\">Critical Process Monitoring</div><div style=\"font-size:13px;color:#cbd5e1;line-height:1.5;\">Real-time alerts &amp; threshold breaches across critical sinter process parameters.</div></div><div style=\"display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:12px;border-top:1px solid #1e293b;\"><span style=\"font-size:13px;color:#94a3b8;font-weight:500;\">Click to open live dashboard</span><span style=\"font-size:20px;color:#3b82f6;font-weight:bold;\">→</span></div></div></a>",
+        "mode": "html"
+      },
+      "pluginVersion": "10.0.1",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 200,
+      "options": {
+        "code": {
+          "language": "html",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<div style=\"background:#0f172a;font-family:'Segoe UI',Roboto,sans-serif;height:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:12px;border-top:1px solid #1e293b;border-radius:8px;\"><div style=\"width:70%;height:1px;background:linear-gradient(90deg,transparent,#3b82f6,transparent);box-shadow:0 0 16px rgba(59,130,246,0.5);margin-bottom:14px;\"></div><div style=\"display:flex;align-items:center;gap:12px;\"><div style=\"background:#2563eb;color:#fff;font-weight:bold;font-size:14px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:4px;\">L</div><span style=\"font-size:15px;color:#cbd5e1;font-weight:600;\">Litmus Automation <span style=\"color:#64748b;font-weight:normal;font-size:13px;\">| Industrial AI Platform</span></span></div></div>",
+        "mode": "html"
+      },
+      "pluginVersion": "10.0.1",
+      "transparent": true,
+      "type": "text"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "sp4",
+    "sinter",
+    "litmus",
+    "landing-page",
+    "tata-steel"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Tata Steel SP4 — Operations Landing Page new",
+  "uid": "sp4-landing-pag-new",
+  "version": 5,
+  "weekStart": ""
+}

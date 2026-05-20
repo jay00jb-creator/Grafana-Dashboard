@@ -1,0 +1,1330 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 11,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "aliasColors": {},
+      "datasource": {
+        "type": "influxdb",
+        "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+      },
+      "doInit": {},
+      "format": "short",
+      "gridPos": {
+        "h": 23,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "handleMetric": {},
+      "id": 1,
+      "js_code": "// ============================================================\n// SP4 SINTER PLANT — Marcus Calidus SVG Events code\n// 45 bindings. Each query A..AS corresponds 1:1 to the binding list below.\n// ============================================================\nvar series = (ctrl && ctrl.series) ? ctrl.series : [];\nfunction latestOf(s) {\n  if (!s) return null;\n  if (s.datapoints && s.datapoints.length) {\n    for (var i = s.datapoints.length - 1; i >= 0; i--) {\n      var v = s.datapoints[i][0];\n      if (v !== null && v !== undefined && !isNaN(v)) return v;\n    }\n  }\n  if (s.stats) {\n    if (s.stats.current !== undefined && s.stats.current !== null) return s.stats.current;\n    if (s.stats.last    !== undefined && s.stats.last    !== null) return s.stats.last;\n  }\n  return null;\n}\nfunction fmt(v, d) { return (v===null||v===undefined||isNaN(v))?'--':Number(v).toFixed(d); }\nfunction setDot(id, color) { var e=svgnode.getElementById(id); if(e) e.setAttribute('fill', color); }\nvar COLOR = { normal:'#00d97e', warning:'#ffb547', critical:'#ff4d6d', nodata:'#64748b' };\n \nvar counts = { normal:0, warning:0, critical:0, nodata:0 };\nvar level, v;\n \n// --- furnace_1  (FURNACE_TEMPERATURE_1) ---\nv = latestOf(series[0]);\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('furnace_1_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('furnace_1_status_dot', COLOR[level]);\n(function(){\n  var g = svgnode.getElementById('furnace_1_glow');\n  if (g && v !== null) {\n    var op = Math.max(0, Math.min(1, (v - 1000) / 400));\n    g.setAttribute('opacity', op);\n  }\n})();\n \n// --- furnace_2  (FURNACE_TEMPERATURE_2) ---\nv = latestOf(series[1]);\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('furnace_2_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('furnace_2_status_dot', COLOR[level]);\n(function(){\n  var g = svgnode.getElementById('furnace_2_glow');\n  if (g && v !== null) {\n    var op = Math.max(0, Math.min(1, (v - 1000) / 400));\n    g.setAttribute('opacity', op);\n  }\n})();\n \n// --- furnace_3  (FURNACE_TEMPERATURE_3) ---\nv = latestOf(series[2]);\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('furnace_3_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('furnace_3_status_dot', COLOR[level]);\n(function(){\n  var g = svgnode.getElementById('furnace_3_glow');\n  if (g && v !== null) {\n    var op = Math.max(0, Math.min(1, (v - 1000) / 400));\n    g.setAttribute('opacity', op);\n  }\n})();\n \n// --- furnace_5  (FURNACE_TEMPERATURE_5) ---\nv = latestOf(series[3]);\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('furnace_5_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('furnace_5_status_dot', COLOR[level]);\n(function(){\n  var g = svgnode.getElementById('furnace_5_glow');\n  if (g && v !== null) {\n    var op = Math.max(0, Math.min(1, (v - 1000) / 400));\n    g.setAttribute('opacity', op);\n  }\n})();\n \n// --- furnace_6  (FURNACE_TEMPERATURE_6) ---\nv = latestOf(series[4]);\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('furnace_6_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('furnace_6_status_dot', COLOR[level]);\n(function(){\n  var g = svgnode.getElementById('furnace_6_glow');\n  if (g && v !== null) {\n    var op = Math.max(0, Math.min(1, (v - 1000) / 400));\n    g.setAttribute('opacity', op);\n  }\n})();\n \n// --- wgf_fan_de_x_vib  (WGF_FAN_DE_X_VIBRATION) ---\nv = latestOf(series[5]);\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wgf_fan_de_x_vib_value'); if(e) e.textContent = fmt(v, 2); })();\nsetDot('wgf_fan_de_x_vib_status_dot', COLOR[level]);\n \n// --- wgf_fan_de_y_vib  (WGF_FAN_DE_Y_VIBRATION) ---\nv = latestOf(series[6]);\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wgf_fan_de_y_vib_value'); if(e) e.textContent = fmt(v, 2); })();\nsetDot('wgf_fan_de_y_vib_status_dot', COLOR[level]);\n \n// --- wgf_fan_nde_x_vib  (WGF_FAN_NDE_X_VIBRATION) ---\nv = latestOf(series[7]);\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wgf_fan_nde_x_vib_value'); if(e) e.textContent = fmt(v, 2); })();\nsetDot('wgf_fan_nde_x_vib_status_dot', COLOR[level]);\n \n// --- wgf_fan_nde_y_vib  (WGF_FAN_NDE_Y_VIBRATION) ---\nv = latestOf(series[8]);\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wgf_fan_nde_y_vib_value'); if(e) e.textContent = fmt(v, 2); })();\nsetDot('wgf_fan_nde_y_vib_status_dot', COLOR[level]);\n \n// --- wgf_mot_de_bearing  (WGF_MOTOR_DE_BEARING_TEMPERATURE) ---\nv = latestOf(series[9]);\nlevel = (v===null)?'nodata':(v>95?'critical':(v>=80?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wgf_mot_de_bearing_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('wgf_mot_de_bearing_status_dot', COLOR[level]);\n \n// --- wgf_mot_nde_bearing  (WGF_MOTOR_NDE_BEARING_TEMPERATURE) ---\nv = latestOf(series[10]);\nlevel = (v===null)?'nodata':(v>95?'critical':(v>=80?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wgf_mot_nde_bearing_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('wgf_mot_nde_bearing_status_dot', COLOR[level]);\n \n// --- wgf_fan_de_oil_p  (WGF_FAN_DE_LUBRICATIONOIL_PRESSURE) ---\nv = latestOf(series[11]);\nlevel = (v===null)?'nodata':(v<1.0?'critical':(v<=1.5?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wgf_fan_de_oil_p_value'); if(e) e.textContent = fmt(v, 2); })();\nsetDot('wgf_fan_de_oil_p_status_dot', COLOR[level]);\n \n// --- wgf_mot_de_oil_p  (WGF_MOTOR_DE_LUBRICATIONOIL_PRESSURE) ---\nv = latestOf(series[12]);\nlevel = (v===null)?'nodata':(v<1.0?'critical':(v<=1.5?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wgf_mot_de_oil_p_value'); if(e) e.textContent = fmt(v, 2); })();\nsetDot('wgf_mot_de_oil_p_status_dot', COLOR[level]);\n \n// --- bin_1  (STORAGE_BIN1_LEVEL) ---\nv = latestOf(series[13]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_1_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_1_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_1_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n \n// --- bin_2  (STORAGE_BIN2_LEVEL) ---\nv = latestOf(series[14]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_2_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_2_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_2_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n \n// --- bin_3  (STORAGE_BIN3_LEVEL) ---\nv = latestOf(series[15]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_3_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_3_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_3_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n \n// --- bin_4  (STORAGE_BIN4_LEVEL) ---\nv = latestOf(series[16]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_4_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_4_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_4_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n \n// --- bin_5  (STORAGE_BIN5_LEVEL) ---\nv = latestOf(series[17]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_5_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_5_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_5_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n \n// --- bin_6  (STORAGE_BIN6_LEVEL) ---\nv = latestOf(series[18]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_6_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_6_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_6_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n \n// --- bin_7  (STORAGE_BIN7_LEVEL) ---\nv = latestOf(series[19]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_7_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_7_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_7_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n \n// --- bin_8  (STORAGE_BIN8_LEVEL) ---\nv = latestOf(series[20]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_8_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_8_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_8_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n \n// --- bin_9  (STORAGE_BIN9_LEVEL) ---\nv = latestOf(series[21]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_9_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_9_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_9_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n \n// --- bin_10  (STORAGE_BIN10_LEVEL) ---\nv = latestOf(series[22]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_10_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_10_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_10_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n \n// --- bin_11  (STORAGE_BIN11_LEVEL) ---\nv = latestOf(series[23]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_11_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_11_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_11_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n \n// --- tr_1_i  (TR_1_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[24]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_1_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_1_i_status_dot', COLOR[level]);\n \n// --- tr_2_i  (TR_2_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[25]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_2_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_2_i_status_dot', COLOR[level]);\n \n// --- tr_3_i  (TR_3_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[26]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_3_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_3_i_status_dot', COLOR[level]);\n \n// --- tr_4_i  (TR_4_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[27]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_4_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_4_i_status_dot', COLOR[level]);\n \n// --- tr_5_i  (TR_5_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[28]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_5_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_5_i_status_dot', COLOR[level]);\n \n// --- tr_6_i  (TR_6_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[29]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_6_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_6_i_status_dot', COLOR[level]);\n \n// --- tr_7_i  (TR_7_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[30]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_7_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_7_i_status_dot', COLOR[level]);\n \n// --- tr_8_i  (TR_8_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[31]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_8_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_8_i_status_dot', COLOR[level]);\n \n// --- tr_9_i  (TR_9_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[32]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_9_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_9_i_status_dot', COLOR[level]);\n \n// --- tr_10_i  (TR_10_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[33]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_10_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_10_i_status_dot', COLOR[level]);\n \n// --- tr_11_i  (TR_11_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[34]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_11_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_11_i_status_dot', COLOR[level]);\n \n// --- tr_12_i  (TR_12_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[35]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_12_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_12_i_status_dot', COLOR[level]);\n \n// --- tr_13_i  (TR_13_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[36]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_13_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_13_i_status_dot', COLOR[level]);\n \n// --- tr_14_i  (TR_14_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[37]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_14_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_14_i_status_dot', COLOR[level]);\n \n// --- tr_15_i  (TR_15_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[38]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_15_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_15_i_status_dot', COLOR[level]);\n \n// --- wb_11  (WINDBOX_11_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[39]);\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wb_11_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('wb_11_status_dot', COLOR[level]);\n \n// --- wb_12  (WINDBOX_12_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[40]);\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wb_12_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('wb_12_status_dot', COLOR[level]);\n \n// --- wb_13  (WINDBOX_13_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[41]);\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wb_13_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('wb_13_status_dot', COLOR[level]);\n \n// --- wb_14  (WINDBOX_14_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[42]);\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wb_14_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('wb_14_status_dot', COLOR[level]);\n \n// --- wb_15  (WINDBOX_15_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[43]);\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wb_15_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('wb_15_status_dot', COLOR[level]);\n \n// --- wb_17a  (WINDBOX_17A_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[44]);\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wb_17a_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('wb_17a_status_dot', COLOR[level]);\n \n// ---- KPI strip rollup ----\nvar total = 45;\nvar live = counts.normal + counts.warning + counts.critical;\n(function(){\n  var e;\n  e = svgnode.getElementById('kpi_assets_value'); if(e) e.textContent = live + '/' + total;\n  e = svgnode.getElementById('kpi_assets_pct');   if(e) e.textContent = (total?Math.round(live/total*100):0) + '%';\n  e = svgnode.getElementById('kpi_warn_value');   if(e) e.textContent = counts.warning;\n  e = svgnode.getElementById('kpi_crit_value');   if(e) e.textContent = counts.critical;\n  e = svgnode.getElementById('kpi_health_value'); if(e) e.textContent = (live?Math.round(counts.normal/live*100):0) + '%';\n  // header timestamp\n  var t = new Date();\n  function pad(n){ return n<10?'0'+n:n; }\n  var hd = svgnode.getElementById('header_updated');\n  if (hd) hd.textContent = 'Updated ' + pad(t.getHours())+':'+pad(t.getMinutes())+':'+pad(t.getSeconds());\n})();",
+      "js_init_code": "",
+      "links": [],
+      "maxDataPoints": 3,
+      "nullPointMode": "connected",
+      "options": {
+        "events_data": {
+          "events": []
+        },
+        "js_code_data": {
+          "js_code": "// ============================================================\n// SP4 SINTER PLANT — Marcus Calidus SVG Events code\n// 45 bindings. Each query A..AS corresponds 1:1 to the binding list below.\n// ============================================================\nvar series = (ctrl && ctrl.series) ? ctrl.series : [];\nfunction latestOf(s) {\n  if (!s) return null;\n  if (s.datapoints && s.datapoints.length) {\n    for (var i = s.datapoints.length - 1; i >= 0; i--) {\n      var v = s.datapoints[i][0];\n      if (v !== null && v !== undefined && !isNaN(v)) return v;\n    }\n  }\n  if (s.stats) {\n    if (s.stats.current !== undefined && s.stats.current !== null) return s.stats.current;\n    if (s.stats.last    !== undefined && s.stats.last    !== null) return s.stats.last;\n  }\n  return null;\n}\nfunction fmt(v, d) { return (v===null||v===undefined||isNaN(v))?'--':Number(v).toFixed(d); }\nfunction setDot(id, color) { var e=svgnode.getElementById(id); if(e) e.setAttribute('fill', color); }\nvar COLOR = { normal:'#00d97e', warning:'#ffb547', critical:'#ff4d6d', nodata:'#64748b' };\n\nvar counts = { normal:0, warning:0, critical:0, nodata:0 };\nvar level, v;\n\n// --- furnace_1  (FURNACE_TEMPERATURE_1) ---\nv = latestOf(series[0]);\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('furnace_1_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('furnace_1_status_dot', COLOR[level]);\n(function(){\n  var g = svgnode.getElementById('furnace_1_glow');\n  if (g && v !== null) {\n    var op = Math.max(0, Math.min(1, (v - 1000) / 400));\n    g.setAttribute('opacity', op);\n  }\n})();\n\n// --- furnace_2  (FURNACE_TEMPERATURE_2) ---\nv = latestOf(series[1]);\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('furnace_2_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('furnace_2_status_dot', COLOR[level]);\n(function(){\n  var g = svgnode.getElementById('furnace_2_glow');\n  if (g && v !== null) {\n    var op = Math.max(0, Math.min(1, (v - 1000) / 400));\n    g.setAttribute('opacity', op);\n  }\n})();\n\n// --- furnace_3  (FURNACE_TEMPERATURE_3) ---\nv = latestOf(series[2]);\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('furnace_3_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('furnace_3_status_dot', COLOR[level]);\n(function(){\n  var g = svgnode.getElementById('furnace_3_glow');\n  if (g && v !== null) {\n    var op = Math.max(0, Math.min(1, (v - 1000) / 400));\n    g.setAttribute('opacity', op);\n  }\n})();\n\n// --- furnace_5  (FURNACE_TEMPERATURE_5) ---\nv = latestOf(series[3]);\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('furnace_5_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('furnace_5_status_dot', COLOR[level]);\n(function(){\n  var g = svgnode.getElementById('furnace_5_glow');\n  if (g && v !== null) {\n    var op = Math.max(0, Math.min(1, (v - 1000) / 400));\n    g.setAttribute('opacity', op);\n  }\n})();\n\n// --- furnace_6  (FURNACE_TEMPERATURE_6) ---\nv = latestOf(series[4]);\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('furnace_6_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('furnace_6_status_dot', COLOR[level]);\n(function(){\n  var g = svgnode.getElementById('furnace_6_glow');\n  if (g && v !== null) {\n    var op = Math.max(0, Math.min(1, (v - 1000) / 400));\n    g.setAttribute('opacity', op);\n  }\n})();\n\n// --- wgf_fan_de_x_vib  (WGF_FAN_DE_X_VIBRATION) ---\nv = latestOf(series[5]);\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wgf_fan_de_x_vib_value'); if(e) e.textContent = fmt(v, 2); })();\nsetDot('wgf_fan_de_x_vib_status_dot', COLOR[level]);\n\n// --- wgf_fan_de_y_vib  (WGF_FAN_DE_Y_VIBRATION) ---\nv = latestOf(series[6]);\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wgf_fan_de_y_vib_value'); if(e) e.textContent = fmt(v, 2); })();\nsetDot('wgf_fan_de_y_vib_status_dot', COLOR[level]);\n\n// --- wgf_fan_nde_x_vib  (WGF_FAN_NDE_X_VIBRATION) ---\nv = latestOf(series[7]);\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wgf_fan_nde_x_vib_value'); if(e) e.textContent = fmt(v, 2); })();\nsetDot('wgf_fan_nde_x_vib_status_dot', COLOR[level]);\n\n// --- wgf_fan_nde_y_vib  (WGF_FAN_NDE_Y_VIBRATION) ---\nv = latestOf(series[8]);\nlevel = (v===null)?'nodata':(v>7.1?'critical':(v>=4.5?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wgf_fan_nde_y_vib_value'); if(e) e.textContent = fmt(v, 2); })();\nsetDot('wgf_fan_nde_y_vib_status_dot', COLOR[level]);\n\n// --- wgf_mot_de_bearing  (WGF_MOTOR_DE_BEARING_TEMPERATURE) ---\nv = latestOf(series[9]);\nlevel = (v===null)?'nodata':(v>95?'critical':(v>=80?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wgf_mot_de_bearing_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('wgf_mot_de_bearing_status_dot', COLOR[level]);\n\n// --- wgf_mot_nde_bearing  (WGF_MOTOR_NDE_BEARING_TEMPERATURE) ---\nv = latestOf(series[10]);\nlevel = (v===null)?'nodata':(v>95?'critical':(v>=80?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wgf_mot_nde_bearing_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('wgf_mot_nde_bearing_status_dot', COLOR[level]);\n\n// --- wgf_fan_de_oil_p  (WGF_FAN_DE_LUBRICATIONOIL_PRESSURE) ---\nv = latestOf(series[11]);\nlevel = (v===null)?'nodata':(v<1.0?'critical':(v<=1.5?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wgf_fan_de_oil_p_value'); if(e) e.textContent = fmt(v, 2); })();\nsetDot('wgf_fan_de_oil_p_status_dot', COLOR[level]);\n\n// --- wgf_mot_de_oil_p  (WGF_MOTOR_DE_LUBRICATIONOIL_PRESSURE) ---\nv = latestOf(series[12]);\nlevel = (v===null)?'nodata':(v<1.0?'critical':(v<=1.5?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wgf_mot_de_oil_p_value'); if(e) e.textContent = fmt(v, 2); })();\nsetDot('wgf_mot_de_oil_p_status_dot', COLOR[level]);\n\n// --- bin_1  (STORAGE_BIN1_LEVEL) ---\nv = latestOf(series[13]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_1_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_1_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_1_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n\n// --- bin_2  (STORAGE_BIN2_LEVEL) ---\nv = latestOf(series[14]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_2_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_2_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_2_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n\n// --- bin_3  (STORAGE_BIN3_LEVEL) ---\nv = latestOf(series[15]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_3_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_3_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_3_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n\n// --- bin_4  (STORAGE_BIN4_LEVEL) ---\nv = latestOf(series[16]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_4_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_4_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_4_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n\n// --- bin_5  (STORAGE_BIN5_LEVEL) ---\nv = latestOf(series[17]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_5_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_5_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_5_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n\n// --- bin_6  (STORAGE_BIN6_LEVEL) ---\nv = latestOf(series[18]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_6_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_6_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_6_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n\n// --- bin_7  (STORAGE_BIN7_LEVEL) ---\nv = latestOf(series[19]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_7_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_7_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_7_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n\n// --- bin_8  (STORAGE_BIN8_LEVEL) ---\nv = latestOf(series[20]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_8_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_8_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_8_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n\n// --- bin_9  (STORAGE_BIN9_LEVEL) ---\nv = latestOf(series[21]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_9_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_9_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_9_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n\n// --- bin_10  (STORAGE_BIN10_LEVEL) ---\nv = latestOf(series[22]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_10_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_10_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_10_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n\n// --- bin_11  (STORAGE_BIN11_LEVEL) ---\nv = latestOf(series[23]);\nlevel = (v===null)?'nodata':((v<10||v>90)?'critical':((v<20||v>80)?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('bin_11_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('bin_11_status_dot', COLOR[level]);\n(function(){\n  var f = svgnode.getElementById('bin_11_fill_rect');\n  if (f && v !== null) {\n    var pct = Math.max(0, Math.min(100, v));\n    var H = 52; // inner height\n    var h = (pct/100) * H;\n    f.setAttribute('height', h);\n    f.setAttribute('y', 38 + (H - h) + 1);\n  }\n})();\n\n// --- tr_1_i  (TR_1_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[24]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_1_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_1_i_status_dot', COLOR[level]);\n\n// --- tr_2_i  (TR_2_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[25]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_2_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_2_i_status_dot', COLOR[level]);\n\n// --- tr_3_i  (TR_3_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[26]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_3_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_3_i_status_dot', COLOR[level]);\n\n// --- tr_4_i  (TR_4_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[27]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_4_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_4_i_status_dot', COLOR[level]);\n\n// --- tr_5_i  (TR_5_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[28]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_5_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_5_i_status_dot', COLOR[level]);\n\n// --- tr_6_i  (TR_6_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[29]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_6_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_6_i_status_dot', COLOR[level]);\n\n// --- tr_7_i  (TR_7_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[30]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_7_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_7_i_status_dot', COLOR[level]);\n\n// --- tr_8_i  (TR_8_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[31]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_8_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_8_i_status_dot', COLOR[level]);\n\n// --- tr_9_i  (TR_9_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[32]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_9_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_9_i_status_dot', COLOR[level]);\n\n// --- tr_10_i  (TR_10_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[33]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_10_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_10_i_status_dot', COLOR[level]);\n\n// --- tr_11_i  (TR_11_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[34]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_11_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_11_i_status_dot', COLOR[level]);\n\n// --- tr_12_i  (TR_12_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[35]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_12_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_12_i_status_dot', COLOR[level]);\n\n// --- tr_13_i  (TR_13_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[36]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_13_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_13_i_status_dot', COLOR[level]);\n\n// --- tr_14_i  (TR_14_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[37]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_14_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_14_i_status_dot', COLOR[level]);\n\n// --- tr_15_i  (TR_15_SECONDARY_CURRENT_mA_) ---\nv = latestOf(series[38]);\nlevel = (v===null)?'nodata':(v>1000?'critical':(v>=800?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('tr_15_i_value'); if(e) e.textContent = fmt(v, 0); })();\nsetDot('tr_15_i_status_dot', COLOR[level]);\n\n// --- wb_11  (WINDBOX_11_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[39]);\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wb_11_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('wb_11_status_dot', COLOR[level]);\n\n// --- wb_12  (WINDBOX_12_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[40]);\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wb_12_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('wb_12_status_dot', COLOR[level]);\n\n// --- wb_13  (WINDBOX_13_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[41]);\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wb_13_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('wb_13_status_dot', COLOR[level]);\n\n// --- wb_14  (WINDBOX_14_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[42]);\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wb_14_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('wb_14_status_dot', COLOR[level]);\n\n// --- wb_15  (WINDBOX_15_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[43]);\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wb_15_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('wb_15_status_dot', COLOR[level]);\n\n// --- wb_17a  (WINDBOX_17A_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[44]);\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\ncounts[level]++;\n(function(){ var e=svgnode.getElementById('wb_17a_value'); if(e) e.textContent = fmt(v, 1); })();\nsetDot('wb_17a_status_dot', COLOR[level]);\n\n// ---- KPI strip rollup ----\nvar total = 45;\nvar live = counts.normal + counts.warning + counts.critical;\n(function(){\n  var e;\n  e = svgnode.getElementById('kpi_assets_value'); if(e) e.textContent = live + '/' + total;\n  e = svgnode.getElementById('kpi_assets_pct');   if(e) e.textContent = (total?Math.round(live/total*100):0) + '%';\n  e = svgnode.getElementById('kpi_warn_value');   if(e) e.textContent = counts.warning;\n  e = svgnode.getElementById('kpi_crit_value');   if(e) e.textContent = counts.critical;\n  e = svgnode.getElementById('kpi_health_value'); if(e) e.textContent = (live?Math.round(counts.normal/live*100):0) + '%';\n  // header timestamp\n  var t = new Date();\n  function pad(n){ return n<10?'0'+n:n; }\n  var hd = svgnode.getElementById('header_updated');\n  if (hd) hd.textContent = 'Updated ' + pad(t.getHours())+':'+pad(t.getMinutes())+':'+pad(t.getSeconds());\n})();\n"
+        },
+        "js_code_init_data": {
+          "js_code": "// no init needed for SP4 overview"
+        },
+        "svg_data": {
+          "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1920 1080\" font-family=\"'Segoe UI', Arial, sans-serif\">\n  <defs>\n    <linearGradient id=\"bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\n      <stop offset=\"0\" stop-color=\"#0b1426\"/>\n      <stop offset=\"1\" stop-color=\"#0a1a2e\"/>\n    </linearGradient>\n    <linearGradient id=\"card\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\n      <stop offset=\"0\" stop-color=\"#172238\"/>\n      <stop offset=\"1\" stop-color=\"#0f1a2d\"/>\n    </linearGradient>\n    <linearGradient id=\"cardWarn\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\n      <stop offset=\"0\" stop-color=\"#2a1f0a\"/>\n      <stop offset=\"1\" stop-color=\"#1a1206\"/>\n    </linearGradient>\n    <linearGradient id=\"binFillGrad\" x1=\"0\" y1=\"1\" x2=\"0\" y2=\"0\">\n      <stop offset=\"0\" stop-color=\"#00d97e\"/>\n      <stop offset=\"1\" stop-color=\"#7dd3fc\"/>\n    </linearGradient>\n    <linearGradient id=\"furnaceGlow\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\n      <stop offset=\"0\" stop-color=\"#ff6b35\" stop-opacity=\"0.35\"/>\n      <stop offset=\"1\" stop-color=\"#ff6b35\" stop-opacity=\"0\"/>\n    </linearGradient>\n  </defs>\n  <rect width=\"1920\" height=\"1080\" fill=\"url(#bg)\"/>\n\n  <!-- HEADER -->\n  <rect x=\"0\" y=\"0\" width=\"1920\" height=\"84\" fill=\"#06101f\"/>\n  <text x=\"32\" y=\"34\" fill=\"#7dd3fc\" font-size=\"12\" letter-spacing=\"4\">LITMUS EDGE  •  SP4 SINTER PLANT</text>\n  <text x=\"32\" y=\"64\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">Plant Overview — Asset Monitoring</text>\n  <text x=\"1888\" y=\"34\" fill=\"#94a3b8\" font-size=\"12\" text-anchor=\"end\">DEVICE: SP4Iba  •  DRIVER: DeviceHub Agent  •  739 tags via NATS</text>\n  <text x=\"1888\" y=\"58\" fill=\"#94a3b8\" font-size=\"12\" text-anchor=\"end\">DB: tsdata  •  Measurement: SP4Iba.94F1A3D6…D360</text>\n  <text x=\"1888\" y=\"76\" fill=\"#94a3b8\" font-size=\"11\" text-anchor=\"end\" id=\"header_updated\">Updated --:--:--</text>\n  <rect x=\"0\" y=\"84\" width=\"1920\" height=\"2\" fill=\"#1e3a5f\"/>\n\n  <!-- KPI STRIP -->\n  <g transform=\"translate(24,100)\">\n    <g>\n      <rect x=\"0\" y=\"0\" width=\"370\" height=\"80\" rx=\"10\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n      <text x=\"20\" y=\"28\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\">ASSETS WITH LIVE DATA</text>\n      <text id=\"kpi_assets_value\" x=\"20\" y=\"64\" fill=\"#00d97e\" font-size=\"32\" font-weight=\"700\">--/45</text>\n      <text x=\"350\" y=\"64\" fill=\"#64748b\" font-size=\"12\" text-anchor=\"end\" id=\"kpi_assets_pct\">--%</text>\n    </g>\n    <g transform=\"translate(386,0)\">\n      <rect width=\"370\" height=\"80\" rx=\"10\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n      <text x=\"20\" y=\"28\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\">ACTIVE WARNINGS</text>\n      <text id=\"kpi_warn_value\" x=\"20\" y=\"64\" fill=\"#ffb547\" font-size=\"32\" font-weight=\"700\">--</text>\n      <text x=\"350\" y=\"64\" fill=\"#64748b\" font-size=\"12\" text-anchor=\"end\">amber threshold</text>\n    </g>\n    <g transform=\"translate(772,0)\">\n      <rect width=\"370\" height=\"80\" rx=\"10\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n      <text x=\"20\" y=\"28\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\">CRITICAL ALARMS</text>\n      <text id=\"kpi_crit_value\" x=\"20\" y=\"64\" fill=\"#ff4d6d\" font-size=\"32\" font-weight=\"700\">--</text>\n      <text x=\"350\" y=\"64\" fill=\"#64748b\" font-size=\"12\" text-anchor=\"end\">red threshold</text>\n    </g>\n    <g transform=\"translate(1158,0)\">\n      <rect width=\"370\" height=\"80\" rx=\"10\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n      <text x=\"20\" y=\"28\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\">PLANT HEALTH SCORE</text>\n      <text id=\"kpi_health_value\" x=\"20\" y=\"64\" fill=\"#7dd3fc\" font-size=\"32\" font-weight=\"700\">--%</text>\n      <text x=\"350\" y=\"64\" fill=\"#64748b\" font-size=\"12\" text-anchor=\"end\">% normal</text>\n    </g>\n    <g transform=\"translate(1544,0)\">\n      <rect width=\"328\" height=\"80\" rx=\"10\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n      <text x=\"20\" y=\"28\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\">STREAMING</text>\n      <text x=\"20\" y=\"64\" fill=\"#e2e8f0\" font-size=\"22\" font-weight=\"700\">739 tags</text>\n      <text x=\"308\" y=\"64\" fill=\"#00d97e\" font-size=\"12\" text-anchor=\"end\">● NATS LIVE</text>\n    </g>\n  </g>\n  <text x=\"28\" y=\"210\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"3\">FURNACE TEMPERATURES   ·   normal &lt;1200°C   ·   warn 1200–1300°C   ·   critical &gt;1300°C</text>\n  <line x1=\"28\" y1=\"222\" x2=\"1878\" y2=\"222\" stroke=\"#1e3a5f\" stroke-width=\"1\"/>\n  <g transform=\"translate(28,234)\">\n    <rect width=\"361\" height=\"140\" rx=\"10\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <rect id=\"furnace_1_glow\" width=\"361\" height=\"140\" rx=\"10\" fill=\"url(#furnaceGlow)\" opacity=\"0\"/>\n    <circle id=\"furnace_1_status_dot\" cx=\"345\" cy=\"16\" r=\"6\" fill=\"#64748b\"/>\n    <text x=\"14\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"2\">FURNACE</text>\n    <text x=\"14\" y=\"44\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"600\">TEMPERATURE 1</text>\n    <text id=\"furnace_1_value\" x=\"14\" y=\"114\" fill=\"#e2e8f0\" font-size=\"36\" font-weight=\"700\">--</text>\n    <text x=\"347\" y=\"126\" fill=\"#64748b\" font-size=\"11\" text-anchor=\"end\">°C</text>\n  </g>\n  <g transform=\"translate(405,234)\">\n    <rect width=\"361\" height=\"140\" rx=\"10\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <rect id=\"furnace_2_glow\" width=\"361\" height=\"140\" rx=\"10\" fill=\"url(#furnaceGlow)\" opacity=\"0\"/>\n    <circle id=\"furnace_2_status_dot\" cx=\"345\" cy=\"16\" r=\"6\" fill=\"#64748b\"/>\n    <text x=\"14\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"2\">FURNACE</text>\n    <text x=\"14\" y=\"44\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"600\">TEMPERATURE 2</text>\n    <text id=\"furnace_2_value\" x=\"14\" y=\"114\" fill=\"#e2e8f0\" font-size=\"36\" font-weight=\"700\">--</text>\n    <text x=\"347\" y=\"126\" fill=\"#64748b\" font-size=\"11\" text-anchor=\"end\">°C</text>\n  </g>\n  <g transform=\"translate(782,234)\">\n    <rect width=\"361\" height=\"140\" rx=\"10\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <rect id=\"furnace_3_glow\" width=\"361\" height=\"140\" rx=\"10\" fill=\"url(#furnaceGlow)\" opacity=\"0\"/>\n    <circle id=\"furnace_3_status_dot\" cx=\"345\" cy=\"16\" r=\"6\" fill=\"#64748b\"/>\n    <text x=\"14\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"2\">FURNACE</text>\n    <text x=\"14\" y=\"44\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"600\">TEMPERATURE 3</text>\n    <text id=\"furnace_3_value\" x=\"14\" y=\"114\" fill=\"#e2e8f0\" font-size=\"36\" font-weight=\"700\">--</text>\n    <text x=\"347\" y=\"126\" fill=\"#64748b\" font-size=\"11\" text-anchor=\"end\">°C</text>\n  </g>\n  <g transform=\"translate(1159,234)\">\n    <rect width=\"361\" height=\"140\" rx=\"10\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <rect id=\"furnace_5_glow\" width=\"361\" height=\"140\" rx=\"10\" fill=\"url(#furnaceGlow)\" opacity=\"0\"/>\n    <circle id=\"furnace_5_status_dot\" cx=\"345\" cy=\"16\" r=\"6\" fill=\"#64748b\"/>\n    <text x=\"14\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"2\">FURNACE</text>\n    <text x=\"14\" y=\"44\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"600\">TEMPERATURE 5</text>\n    <text id=\"furnace_5_value\" x=\"14\" y=\"114\" fill=\"#e2e8f0\" font-size=\"36\" font-weight=\"700\">--</text>\n    <text x=\"347\" y=\"126\" fill=\"#64748b\" font-size=\"11\" text-anchor=\"end\">°C</text>\n  </g>\n  <g transform=\"translate(1536,234)\">\n    <rect width=\"361\" height=\"140\" rx=\"10\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <rect id=\"furnace_6_glow\" width=\"361\" height=\"140\" rx=\"10\" fill=\"url(#furnaceGlow)\" opacity=\"0\"/>\n    <circle id=\"furnace_6_status_dot\" cx=\"345\" cy=\"16\" r=\"6\" fill=\"#64748b\"/>\n    <text x=\"14\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"2\">FURNACE</text>\n    <text x=\"14\" y=\"44\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"600\">TEMPERATURE 6</text>\n    <text id=\"furnace_6_value\" x=\"14\" y=\"114\" fill=\"#e2e8f0\" font-size=\"36\" font-weight=\"700\">--</text>\n    <text x=\"347\" y=\"126\" fill=\"#64748b\" font-size=\"11\" text-anchor=\"end\">°C</text>\n  </g>\n  <text x=\"28\" y=\"394\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"3\">WGF FAN &amp; MOTOR   ·   vibration ISO10816   ·   bearing temp limits 80/95°C   ·   oil pressure ≥ 1.0 bar</text>\n  <line x1=\"28\" y1=\"406\" x2=\"1878\" y2=\"406\" stroke=\"#1e3a5f\" stroke-width=\"1\"/>\n  <g transform=\"translate(28,418)\">\n    <rect width=\"223\" height=\"90\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"wgf_fan_de_x_vib_status_dot\" cx=\"209\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">FAN DE • X VIB</text>\n    <text id=\"wgf_fan_de_x_vib_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"211\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mm/s</text>\n  </g>\n  <g transform=\"translate(263,418)\">\n    <rect width=\"223\" height=\"90\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"wgf_fan_de_y_vib_status_dot\" cx=\"209\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">FAN DE • Y VIB</text>\n    <text id=\"wgf_fan_de_y_vib_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"211\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mm/s</text>\n  </g>\n  <g transform=\"translate(498,418)\">\n    <rect width=\"223\" height=\"90\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"wgf_fan_nde_x_vib_status_dot\" cx=\"209\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">FAN NDE • X VIB</text>\n    <text id=\"wgf_fan_nde_x_vib_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"211\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mm/s</text>\n  </g>\n  <g transform=\"translate(733,418)\">\n    <rect width=\"223\" height=\"90\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"wgf_fan_nde_y_vib_status_dot\" cx=\"209\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">FAN NDE • Y VIB</text>\n    <text id=\"wgf_fan_nde_y_vib_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"211\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mm/s</text>\n  </g>\n  <g transform=\"translate(968,418)\">\n    <rect width=\"223\" height=\"90\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"wgf_mot_de_bearing_status_dot\" cx=\"209\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">MOT DE • BEARING T</text>\n    <text id=\"wgf_mot_de_bearing_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"211\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n  </g>\n  <g transform=\"translate(1203,418)\">\n    <rect width=\"223\" height=\"90\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"wgf_mot_nde_bearing_status_dot\" cx=\"209\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">MOT NDE • BEARING T</text>\n    <text id=\"wgf_mot_nde_bearing_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"211\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n  </g>\n  <g transform=\"translate(1438,418)\">\n    <rect width=\"223\" height=\"90\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"wgf_fan_de_oil_p_status_dot\" cx=\"209\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">FAN DE • OIL P</text>\n    <text id=\"wgf_fan_de_oil_p_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"211\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">bar</text>\n  </g>\n  <g transform=\"translate(1673,418)\">\n    <rect width=\"223\" height=\"90\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"wgf_mot_de_oil_p_status_dot\" cx=\"209\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">MOT DE • OIL P</text>\n    <text id=\"wgf_mot_de_oil_p_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"211\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">bar</text>\n  </g>\n  <text x=\"28\" y=\"528\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"3\">STORAGE BINS   ·   normal 20–80%   ·   warn 10–20 or 80–90%   ·   critical &lt;10% or &gt;90%</text>\n  <line x1=\"28\" y1=\"540\" x2=\"1878\" y2=\"540\" stroke=\"#1e3a5f\" stroke-width=\"1\"/>\n  <g transform=\"translate(28,552)\">\n    <rect width=\"161\" height=\"110\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"bin_1_status_dot\" cx=\"147\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">BIN 1</text>\n    <!-- bin pictogram -->\n    <rect x=\"8\" y=\"38\" width=\"22\" height=\"54\" rx=\"3\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\n    <rect id=\"bin_1_fill_rect\" x=\"10\" y=\"91\" width=\"18\" height=\"0\" fill=\"url(#binFillGrad)\" rx=\"2\"/>\n    <!-- numeric -->\n    <text id=\"bin_1_value\" x=\"149\" y=\"88\" fill=\"#e2e8f0\" font-size=\"22\" font-weight=\"700\" text-anchor=\"end\">--</text>\n    <text x=\"149\" y=\"100\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">% fill</text>\n  </g>\n  <g transform=\"translate(199,552)\">\n    <rect width=\"161\" height=\"110\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"bin_2_status_dot\" cx=\"147\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">BIN 2</text>\n    <!-- bin pictogram -->\n    <rect x=\"8\" y=\"38\" width=\"22\" height=\"54\" rx=\"3\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\n    <rect id=\"bin_2_fill_rect\" x=\"10\" y=\"91\" width=\"18\" height=\"0\" fill=\"url(#binFillGrad)\" rx=\"2\"/>\n    <!-- numeric -->\n    <text id=\"bin_2_value\" x=\"149\" y=\"88\" fill=\"#e2e8f0\" font-size=\"22\" font-weight=\"700\" text-anchor=\"end\">--</text>\n    <text x=\"149\" y=\"100\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">% fill</text>\n  </g>\n  <g transform=\"translate(370,552)\">\n    <rect width=\"161\" height=\"110\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"bin_3_status_dot\" cx=\"147\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">BIN 3</text>\n    <!-- bin pictogram -->\n    <rect x=\"8\" y=\"38\" width=\"22\" height=\"54\" rx=\"3\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\n    <rect id=\"bin_3_fill_rect\" x=\"10\" y=\"91\" width=\"18\" height=\"0\" fill=\"url(#binFillGrad)\" rx=\"2\"/>\n    <!-- numeric -->\n    <text id=\"bin_3_value\" x=\"149\" y=\"88\" fill=\"#e2e8f0\" font-size=\"22\" font-weight=\"700\" text-anchor=\"end\">--</text>\n    <text x=\"149\" y=\"100\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">% fill</text>\n  </g>\n  <g transform=\"translate(541,552)\">\n    <rect width=\"161\" height=\"110\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"bin_4_status_dot\" cx=\"147\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">BIN 4</text>\n    <!-- bin pictogram -->\n    <rect x=\"8\" y=\"38\" width=\"22\" height=\"54\" rx=\"3\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\n    <rect id=\"bin_4_fill_rect\" x=\"10\" y=\"91\" width=\"18\" height=\"0\" fill=\"url(#binFillGrad)\" rx=\"2\"/>\n    <!-- numeric -->\n    <text id=\"bin_4_value\" x=\"149\" y=\"88\" fill=\"#e2e8f0\" font-size=\"22\" font-weight=\"700\" text-anchor=\"end\">--</text>\n    <text x=\"149\" y=\"100\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">% fill</text>\n  </g>\n  <g transform=\"translate(712,552)\">\n    <rect width=\"161\" height=\"110\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"bin_5_status_dot\" cx=\"147\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">BIN 5</text>\n    <!-- bin pictogram -->\n    <rect x=\"8\" y=\"38\" width=\"22\" height=\"54\" rx=\"3\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\n    <rect id=\"bin_5_fill_rect\" x=\"10\" y=\"91\" width=\"18\" height=\"0\" fill=\"url(#binFillGrad)\" rx=\"2\"/>\n    <!-- numeric -->\n    <text id=\"bin_5_value\" x=\"149\" y=\"88\" fill=\"#e2e8f0\" font-size=\"22\" font-weight=\"700\" text-anchor=\"end\">--</text>\n    <text x=\"149\" y=\"100\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">% fill</text>\n  </g>\n  <g transform=\"translate(883,552)\">\n    <rect width=\"161\" height=\"110\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"bin_6_status_dot\" cx=\"147\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">BIN 6</text>\n    <!-- bin pictogram -->\n    <rect x=\"8\" y=\"38\" width=\"22\" height=\"54\" rx=\"3\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\n    <rect id=\"bin_6_fill_rect\" x=\"10\" y=\"91\" width=\"18\" height=\"0\" fill=\"url(#binFillGrad)\" rx=\"2\"/>\n    <!-- numeric -->\n    <text id=\"bin_6_value\" x=\"149\" y=\"88\" fill=\"#e2e8f0\" font-size=\"22\" font-weight=\"700\" text-anchor=\"end\">--</text>\n    <text x=\"149\" y=\"100\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">% fill</text>\n  </g>\n  <g transform=\"translate(1054,552)\">\n    <rect width=\"161\" height=\"110\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"bin_7_status_dot\" cx=\"147\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">BIN 7</text>\n    <!-- bin pictogram -->\n    <rect x=\"8\" y=\"38\" width=\"22\" height=\"54\" rx=\"3\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\n    <rect id=\"bin_7_fill_rect\" x=\"10\" y=\"91\" width=\"18\" height=\"0\" fill=\"url(#binFillGrad)\" rx=\"2\"/>\n    <!-- numeric -->\n    <text id=\"bin_7_value\" x=\"149\" y=\"88\" fill=\"#e2e8f0\" font-size=\"22\" font-weight=\"700\" text-anchor=\"end\">--</text>\n    <text x=\"149\" y=\"100\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">% fill</text>\n  </g>\n  <g transform=\"translate(1225,552)\">\n    <rect width=\"161\" height=\"110\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"bin_8_status_dot\" cx=\"147\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">BIN 8</text>\n    <!-- bin pictogram -->\n    <rect x=\"8\" y=\"38\" width=\"22\" height=\"54\" rx=\"3\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\n    <rect id=\"bin_8_fill_rect\" x=\"10\" y=\"91\" width=\"18\" height=\"0\" fill=\"url(#binFillGrad)\" rx=\"2\"/>\n    <!-- numeric -->\n    <text id=\"bin_8_value\" x=\"149\" y=\"88\" fill=\"#e2e8f0\" font-size=\"22\" font-weight=\"700\" text-anchor=\"end\">--</text>\n    <text x=\"149\" y=\"100\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">% fill</text>\n  </g>\n  <g transform=\"translate(1396,552)\">\n    <rect width=\"161\" height=\"110\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"bin_9_status_dot\" cx=\"147\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">BIN 9</text>\n    <!-- bin pictogram -->\n    <rect x=\"8\" y=\"38\" width=\"22\" height=\"54\" rx=\"3\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\n    <rect id=\"bin_9_fill_rect\" x=\"10\" y=\"91\" width=\"18\" height=\"0\" fill=\"url(#binFillGrad)\" rx=\"2\"/>\n    <!-- numeric -->\n    <text id=\"bin_9_value\" x=\"149\" y=\"88\" fill=\"#e2e8f0\" font-size=\"22\" font-weight=\"700\" text-anchor=\"end\">--</text>\n    <text x=\"149\" y=\"100\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">% fill</text>\n  </g>\n  <g transform=\"translate(1567,552)\">\n    <rect width=\"161\" height=\"110\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"bin_10_status_dot\" cx=\"147\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">BIN 10</text>\n    <!-- bin pictogram -->\n    <rect x=\"8\" y=\"38\" width=\"22\" height=\"54\" rx=\"3\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\n    <rect id=\"bin_10_fill_rect\" x=\"10\" y=\"91\" width=\"18\" height=\"0\" fill=\"url(#binFillGrad)\" rx=\"2\"/>\n    <!-- numeric -->\n    <text id=\"bin_10_value\" x=\"149\" y=\"88\" fill=\"#e2e8f0\" font-size=\"22\" font-weight=\"700\" text-anchor=\"end\">--</text>\n    <text x=\"149\" y=\"100\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">% fill</text>\n  </g>\n  <g transform=\"translate(1738,552)\">\n    <rect width=\"161\" height=\"110\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"bin_11_status_dot\" cx=\"147\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">BIN 11</text>\n    <!-- bin pictogram -->\n    <rect x=\"8\" y=\"38\" width=\"22\" height=\"54\" rx=\"3\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\n    <rect id=\"bin_11_fill_rect\" x=\"10\" y=\"91\" width=\"18\" height=\"0\" fill=\"url(#binFillGrad)\" rx=\"2\"/>\n    <!-- numeric -->\n    <text id=\"bin_11_value\" x=\"149\" y=\"88\" fill=\"#e2e8f0\" font-size=\"22\" font-weight=\"700\" text-anchor=\"end\">--</text>\n    <text x=\"149\" y=\"100\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">% fill</text>\n  </g>\n  <text x=\"28\" y=\"682\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"3\">TRANSFORMERS (TR 1–15)   ·   secondary current   ·   warn 800 mA   ·   critical 1000 mA</text>\n  <line x1=\"28\" y1=\"694\" x2=\"1878\" y2=\"694\" stroke=\"#1e3a5f\" stroke-width=\"1\"/>\n  <g transform=\"translate(28,706)\">\n    <rect width=\"117\" height=\"80\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"tr_1_i_status_dot\" cx=\"103\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">TR 01</text>\n    <text id=\"tr_1_i_value\" x=\"12\" y=\"58\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"105\" y=\"70\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mA</text>\n  </g>\n  <g transform=\"translate(153,706)\">\n    <rect width=\"117\" height=\"80\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"tr_2_i_status_dot\" cx=\"103\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">TR 02</text>\n    <text id=\"tr_2_i_value\" x=\"12\" y=\"58\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"105\" y=\"70\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mA</text>\n  </g>\n  <g transform=\"translate(278,706)\">\n    <rect width=\"117\" height=\"80\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"tr_3_i_status_dot\" cx=\"103\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">TR 03</text>\n    <text id=\"tr_3_i_value\" x=\"12\" y=\"58\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"105\" y=\"70\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mA</text>\n  </g>\n  <g transform=\"translate(403,706)\">\n    <rect width=\"117\" height=\"80\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"tr_4_i_status_dot\" cx=\"103\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">TR 04</text>\n    <text id=\"tr_4_i_value\" x=\"12\" y=\"58\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"105\" y=\"70\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mA</text>\n  </g>\n  <g transform=\"translate(528,706)\">\n    <rect width=\"117\" height=\"80\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"tr_5_i_status_dot\" cx=\"103\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">TR 05</text>\n    <text id=\"tr_5_i_value\" x=\"12\" y=\"58\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"105\" y=\"70\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mA</text>\n  </g>\n  <g transform=\"translate(653,706)\">\n    <rect width=\"117\" height=\"80\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"tr_6_i_status_dot\" cx=\"103\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">TR 06</text>\n    <text id=\"tr_6_i_value\" x=\"12\" y=\"58\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"105\" y=\"70\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mA</text>\n  </g>\n  <g transform=\"translate(778,706)\">\n    <rect width=\"117\" height=\"80\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"tr_7_i_status_dot\" cx=\"103\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">TR 07</text>\n    <text id=\"tr_7_i_value\" x=\"12\" y=\"58\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"105\" y=\"70\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mA</text>\n  </g>\n  <g transform=\"translate(903,706)\">\n    <rect width=\"117\" height=\"80\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"tr_8_i_status_dot\" cx=\"103\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">TR 08</text>\n    <text id=\"tr_8_i_value\" x=\"12\" y=\"58\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"105\" y=\"70\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mA</text>\n  </g>\n  <g transform=\"translate(1028,706)\">\n    <rect width=\"117\" height=\"80\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"tr_9_i_status_dot\" cx=\"103\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">TR 09</text>\n    <text id=\"tr_9_i_value\" x=\"12\" y=\"58\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"105\" y=\"70\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mA</text>\n  </g>\n  <g transform=\"translate(1153,706)\">\n    <rect width=\"117\" height=\"80\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"tr_10_i_status_dot\" cx=\"103\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">TR 10</text>\n    <text id=\"tr_10_i_value\" x=\"12\" y=\"58\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"105\" y=\"70\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mA</text>\n  </g>\n  <g transform=\"translate(1278,706)\">\n    <rect width=\"117\" height=\"80\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"tr_11_i_status_dot\" cx=\"103\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">TR 11</text>\n    <text id=\"tr_11_i_value\" x=\"12\" y=\"58\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"105\" y=\"70\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mA</text>\n  </g>\n  <g transform=\"translate(1403,706)\">\n    <rect width=\"117\" height=\"80\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"tr_12_i_status_dot\" cx=\"103\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">TR 12</text>\n    <text id=\"tr_12_i_value\" x=\"12\" y=\"58\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"105\" y=\"70\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mA</text>\n  </g>\n  <g transform=\"translate(1528,706)\">\n    <rect width=\"117\" height=\"80\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"tr_13_i_status_dot\" cx=\"103\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">TR 13</text>\n    <text id=\"tr_13_i_value\" x=\"12\" y=\"58\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"105\" y=\"70\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mA</text>\n  </g>\n  <g transform=\"translate(1653,706)\">\n    <rect width=\"117\" height=\"80\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"tr_14_i_status_dot\" cx=\"103\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">TR 14</text>\n    <text id=\"tr_14_i_value\" x=\"12\" y=\"58\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"105\" y=\"70\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mA</text>\n  </g>\n  <g transform=\"translate(1778,706)\">\n    <rect width=\"117\" height=\"80\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"tr_15_i_status_dot\" cx=\"103\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">TR 15</text>\n    <text id=\"tr_15_i_value\" x=\"12\" y=\"58\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"105\" y=\"70\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mA</text>\n  </g>\n  <text x=\"28\" y=\"806\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"3\">WINDBOX DIFFERENTIAL PRESSURES   ·   normal &lt;25 mbar   ·   warn 25–35   ·   critical &gt;35</text>\n  <line x1=\"28\" y1=\"818\" x2=\"1878\" y2=\"818\" stroke=\"#1e3a5f\" stroke-width=\"1\"/>\n  <g transform=\"translate(28,830)\">\n    <rect width=\"298\" height=\"90\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"wb_11_status_dot\" cx=\"284\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">WB 11</text>\n    <text id=\"wb_11_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"286\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mbar</text>\n  </g>\n  <g transform=\"translate(342,830)\">\n    <rect width=\"298\" height=\"90\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"wb_12_status_dot\" cx=\"284\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">WB 12</text>\n    <text id=\"wb_12_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"286\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mbar</text>\n  </g>\n  <g transform=\"translate(656,830)\">\n    <rect width=\"298\" height=\"90\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"wb_13_status_dot\" cx=\"284\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">WB 13</text>\n    <text id=\"wb_13_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"286\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mbar</text>\n  </g>\n  <g transform=\"translate(970,830)\">\n    <rect width=\"298\" height=\"90\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"wb_14_status_dot\" cx=\"284\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">WB 14</text>\n    <text id=\"wb_14_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"286\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mbar</text>\n  </g>\n  <g transform=\"translate(1284,830)\">\n    <rect width=\"298\" height=\"90\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"wb_15_status_dot\" cx=\"284\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">WB 15</text>\n    <text id=\"wb_15_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"286\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mbar</text>\n  </g>\n  <g transform=\"translate(1598,830)\">\n    <rect width=\"298\" height=\"90\" rx=\"8\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <circle id=\"wb_17a_status_dot\" cx=\"284\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\n    <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">WB 17A</text>\n    <text id=\"wb_17a_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\n    <text x=\"286\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">mbar</text>\n  </g>\n  <text x=\"28\" y=\"1058\" fill=\"#475569\" font-size=\"10\">SP4 Sinter Plant Overview  ·  45 live bindings  ·  Refresh 5s</text>\n  <text x=\"1892\" y=\"1058\" fill=\"#475569\" font-size=\"10\" text-anchor=\"end\">Marcus Calidus SVG Panel  ·  Grafana 10.0.1</text>\n</svg>\n"
+        },
+        "useCustomBuiltinFunc": false,
+        "useEventsJSON": false,
+        "useSVGFile": false
+      },
+      "repositories": {
+        "rtmaster": {
+          "description": "simple examples",
+          "items": [
+            {
+              "category": "arrows",
+              "description": "Arrow facing up",
+              "name": "arrow-up",
+              "path": "rtmaster/arrows/arrow-up.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing down",
+              "name": "arrow-down",
+              "path": "rtmaster/arrows/arrow-down.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing right",
+              "name": "arrow-right",
+              "path": "rtmaster/arrows/arrow-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing left",
+              "name": "arrow-left",
+              "path": "rtmaster/arrows/arrow-left.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up right",
+              "name": "arrow-up-right",
+              "path": "rtmaster/arrows/arrow-up-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up left",
+              "name": "arrow-up-left",
+              "path": "rtmaster/arrows/arrow-up-left.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing down left",
+              "name": "arrow-down-left",
+              "path": "rtmaster/arrows/arrow-down-left.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing down right",
+              "name": "arrow-down-right",
+              "path": "rtmaster/arrows/arrow-down-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing left right",
+              "name": "arrow-left-right",
+              "path": "rtmaster/arrows/arrow-left-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up down",
+              "name": "arrow-up-down",
+              "path": "rtmaster/arrows/arrow-up-down.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up down left right",
+              "name": "arrow-up-down-left-right",
+              "path": "rtmaster/arrows/arrow-up-down-left-right.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Factory",
+              "name": "factory",
+              "path": "rtmaster/facilities/factory.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Jackup",
+              "name": "jackup",
+              "path": "rtmaster/facilities/jackup.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Plant",
+              "name": "plant",
+              "path": "rtmaster/facilities/plant.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Semisub",
+              "name": "semisub",
+              "path": "rtmaster/facilities/semisub.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Ship",
+              "name": "ship",
+              "path": "rtmaster/facilities/ship.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Truck",
+              "name": "truck",
+              "path": "rtmaster/facilities/truck.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Light Bulb",
+              "name": "light-bulb",
+              "path": "rtmaster/indicators/light-bulb.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Green Light Indicator",
+              "name": "light-green",
+              "path": "rtmaster/indicators/light-green.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Orange Light Indicator",
+              "name": "light-orange",
+              "path": "rtmaster/indicators/light-orange.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Red Light Indicator",
+              "name": "light-red",
+              "path": "rtmaster/indicators/light-red.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Compressor",
+              "name": "compressor",
+              "path": "rtmaster/industrial/compressor.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Derrick",
+              "name": "derrick",
+              "path": "rtmaster/industrial/derrick.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Heat Exchanger",
+              "name": "heatexchanger",
+              "path": "rtmaster/industrial/heatexchanger.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Motor",
+              "name": "motor",
+              "path": "rtmaster/industrial/motor.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Pump",
+              "name": "pump",
+              "path": "rtmaster/industrial/pump.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Horizontal Tank",
+              "name": "tank-horizontal",
+              "path": "rtmaster/industrial/tank-horizontal.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Vertical Tank",
+              "name": "tank-vertical",
+              "path": "rtmaster/industrial/tank-vertical.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Turbine",
+              "name": "turbine",
+              "path": "rtmaster/industrial/turbine.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Horizontal Vessel",
+              "name": "vessel-horizontal",
+              "path": "rtmaster/industrial/vessel-horizontal.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Vertical Vessel",
+              "name": "vessel-vertical",
+              "path": "rtmaster/industrial/vessel-vertical.svg"
+            },
+            {
+              "category": "letters",
+              "description": "A",
+              "name": "A",
+              "path": "rtmaster/letters/letter-a.svg"
+            },
+            {
+              "category": "letters",
+              "description": "B",
+              "name": "B",
+              "path": "rtmaster/letters/letter-b.svg"
+            },
+            {
+              "category": "letters",
+              "description": "C",
+              "name": "C",
+              "path": "rtmaster/letters/letter-c.svg"
+            },
+            {
+              "category": "letters",
+              "description": "D",
+              "name": "D",
+              "path": "rtmaster/letters/letter-d.svg"
+            },
+            {
+              "category": "letters",
+              "description": "E",
+              "name": "E",
+              "path": "rtmaster/letters/letter-e.svg"
+            },
+            {
+              "category": "letters",
+              "description": "F",
+              "name": "F",
+              "path": "rtmaster/letters/letter-f.svg"
+            },
+            {
+              "category": "letters",
+              "description": "G",
+              "name": "G",
+              "path": "rtmaster/letters/letter-g.svg"
+            },
+            {
+              "category": "letters",
+              "description": "H",
+              "name": "H",
+              "path": "rtmaster/letters/letter-h.svg"
+            },
+            {
+              "category": "letters",
+              "description": "I",
+              "name": "I",
+              "path": "rtmaster/letters/letter-i.svg"
+            },
+            {
+              "category": "letters",
+              "description": "J",
+              "name": "J",
+              "path": "rtmaster/letters/letter-j.svg"
+            },
+            {
+              "category": "letters",
+              "description": "K",
+              "name": "K",
+              "path": "rtmaster/letters/letter-k.svg"
+            },
+            {
+              "category": "letters",
+              "description": "L",
+              "name": "L",
+              "path": "rtmaster/letters/letter-l.svg"
+            },
+            {
+              "category": "letters",
+              "description": "M",
+              "name": "M",
+              "path": "rtmaster/letters/letter-m.svg"
+            },
+            {
+              "category": "letters",
+              "description": "N",
+              "name": "N",
+              "path": "rtmaster/letters/letter-n.svg"
+            },
+            {
+              "category": "letters",
+              "description": "O",
+              "name": "O",
+              "path": "rtmaster/letters/letter-o.svg"
+            },
+            {
+              "category": "letters",
+              "description": "P",
+              "name": "P",
+              "path": "rtmaster/letters/letter-p.svg"
+            },
+            {
+              "category": "letters",
+              "description": "Q",
+              "name": "Q",
+              "path": "rtmaster/letters/letter-q.svg"
+            },
+            {
+              "category": "letters",
+              "description": "R",
+              "name": "R",
+              "path": "rtmaster/letters-letter-r.svg"
+            },
+            {
+              "category": "letters",
+              "description": "S",
+              "name": "S",
+              "path": "rtmaster/letters/letter-s.svg"
+            },
+            {
+              "category": "letters",
+              "description": "T",
+              "name": "T",
+              "path": "rtmaster/letters/letter-t.svg"
+            },
+            {
+              "category": "letters",
+              "description": "U",
+              "name": "U",
+              "path": "rtmaster/letters/letter-u.svg"
+            },
+            {
+              "category": "letters",
+              "description": "V",
+              "name": "V",
+              "path": "rtmaster/letters/letter-v.svg"
+            },
+            {
+              "category": "letters",
+              "description": "W",
+              "name": "W",
+              "path": "rtmaster/letters/letter-w.svg"
+            },
+            {
+              "category": "letters",
+              "description": "X",
+              "name": "X",
+              "path": "rtmaster/letters/letter-x.svg"
+            },
+            {
+              "category": "letters",
+              "description": "Y",
+              "name": "Y",
+              "path": "rtmaster/letters/letter-y.svg"
+            },
+            {
+              "category": "letters",
+              "description": "Z",
+              "name": "Z",
+              "path": "rtmaster/letters/letter-z.svg"
+            },
+            {
+              "category": "meters",
+              "description": "Laboratory Flask",
+              "name": "flask",
+              "path": "rtmaster/meters/flask.svg"
+            },
+            {
+              "category": "meters",
+              "description": "Flowmeter",
+              "name": "flowmeter",
+              "path": "rtmaster/meters/flowmeter.svg"
+            },
+            {
+              "category": "meters",
+              "description": "Gauge",
+              "name": "gauge",
+              "path": "rtmaster/meters/gauge.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "0",
+              "name": "0",
+              "path": "rtmaster/numbers/number-0.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "1",
+              "name": "1",
+              "path": "rtmaster/numbers/number-1.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "2",
+              "name": "2",
+              "path": "rtmaster/numbers/number-2.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "3",
+              "name": "3",
+              "path": "rtmaster/numbers/number-3.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "4",
+              "name": "4",
+              "path": "rtmaster/numbers/number-4.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "5",
+              "name": "5",
+              "path": "rtmaster/numbers/number-5.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "6",
+              "name": "6",
+              "path": "rtmaster/numbers/number-6.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "7",
+              "name": "7",
+              "path": "rtmaster/numbers/number-7.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "8",
+              "name": "8",
+              "path": "rtmaster/numbers/number-8.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "9",
+              "name": "9",
+              "path": "rtmaster/numbers/number-9.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve down",
+              "name": "pipe-curve-down",
+              "path": "rtmaster/pipes/pipe-curve-down.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve down left",
+              "name": "pipe-curve-down-left",
+              "path": "rtmaster/pipes/pipe-curve-down-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve down right",
+              "name": "pipe-curve-down-right",
+              "path": "rtmaster/pipes/pipe-curve-down-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve left",
+              "name": "pipe-curve-left",
+              "path": "rtmaster/pipes/pipe-curve-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve right",
+              "name": "pipe-curve-right",
+              "path": "rtmaster/pipes/pipe-curve-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve up",
+              "name": "pipe-curve-up",
+              "path": "rtmaster/pipes/pipe-curve-up.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve up left",
+              "name": "pipe-curve-up-left",
+              "path": "rtmaster/pipes/pipe-curve-up-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve up right",
+              "name": "pipe-curve-up-right",
+              "path": "rtmaster/pipes/pipe-curve-up-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe diagonal left",
+              "name": "pipe-diagonal-left",
+              "path": "rtmaster/pipes/pipe-diagonal-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe diagonal right",
+              "name": "pipe-diagonal-right",
+              "path": "rtmaster/pipes/pipe-diagonal-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe flange horizontal",
+              "name": "pipe-flange-horizontal",
+              "path": "rtmaster/pipes/pipe-flange-horizontal.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe flange intersection",
+              "name": "pipe-flange-intersection",
+              "path": "rtmaster/pipes/pipe-flange-intersection.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe flange vertical",
+              "name": "pipe-flange-vertical",
+              "path": "rtmaster/pipes/pipe-flange-vertical.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe horizontal",
+              "name": "pipe-horizontal",
+              "path": "rtmaster/pipes/pipe-horizontal.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee down",
+              "name": "pipe-tee-down",
+              "path": "rtmaster/pipes/pipe-tee-down.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee left",
+              "name": "pipe-tee-left",
+              "path": "rtmaster/pipes/pipe-tee-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee right",
+              "name": "pipe-tee-right",
+              "path": "rtmaster/pipes/pipe-tee-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee up",
+              "name": "pipe-tee-up",
+              "path": "rtmaster/pipes/pipe-tee-up"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe vertical",
+              "name": "pipe-vertical",
+              "path": "rtmaster/pipes/pipe-vertical.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Circle",
+              "name": "circle",
+              "path": "rtmaster/shapes/circle.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Gear",
+              "name": "gear",
+              "path": "rtmaster/shapes/gear.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line horizontal",
+              "name": "line-horizontal",
+              "path": "rtmaster/shapes/line-horizontal.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line horizontal arrow left",
+              "name": "line-horizontal-arrow-left",
+              "path": "rtmaster/shapes/line-horizontal-arrow-left.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line horizontal arrow right",
+              "name": "line-horizontal-arrow-right",
+              "path": "rtmaster/shapes/line-horizontal-arrow-right.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line vertical",
+              "name": "line-vertical",
+              "path": "rtmaster/shapes/line-vertical.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line vertical arrow down",
+              "name": "line-vertical-arrow-down",
+              "path": "rtmaster/shapes/line-vertical-arrow-down.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line vertical arrow up",
+              "name": "line-vertical-arrow-up",
+              "path": "rtmaster/shapes/line-vertical-arrow-up.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Square",
+              "name": "square",
+              "path": "rtmaster/shapes/square.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle down",
+              "name": "triangle-down",
+              "path": "rtmaster/shapes/triangle-down.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle left",
+              "name": "triangle-left",
+              "path": "rtmaster/shapes/triangle-left.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle right",
+              "name": "triangle-right",
+              "path": "rtmaster/shapes/triangle-right.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle-up",
+              "name": "triangle-up",
+              "path": "rtmaster/shapes/triangle-up.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve Horizontal",
+              "name": "valve-horizontal",
+              "path": "rtmaster/valves/valve-horizontal.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve left right",
+              "name": "valve-left-right",
+              "path": "rtmaster/valves/valve-left-right.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round down",
+              "name": "valve-round-down",
+              "path": "rtmaster/valves/valve-round-down.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round left",
+              "name": "valve-round-left",
+              "path": "rtmaster/valves/valve-round-left.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round right",
+              "name": "valve-round-right",
+              "path": "rtmaster/valves/valve-round-right.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round up",
+              "name": "valve-round-up",
+              "path": "rtmaster/valves/valve-round-up.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square down",
+              "name": "valve-square-down",
+              "path": "rtmaster/valves/valve-square-down.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square left",
+              "name": "valve-square-left",
+              "path": "rtmaster/valves/valve-square-left.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square right",
+              "name": "valve-square-right",
+              "path": "rtmaster/valves/valve-square-right.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square up",
+              "name": "valve-square-up",
+              "path": "rtmaster/valves/valve-square-up.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve vertical",
+              "name": "valve-vertical",
+              "path": "rtmaster/valves/valve-vertical"
+            }
+          ],
+          "license": "Apache 2.0",
+          "url": "https://github.com/rtmaster"
+        }
+      },
+      "svgBuilderData": {
+        "elements": [],
+        "height": "100%",
+        "viewport": {
+          "height": 1000,
+          "width": 1000,
+          "x": 0,
+          "y": 0
+        },
+        "width": "100%"
+      },
+      "svg_data": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1920 1080\" font-family=\"'Segoe UI', Arial, sans-serif\">\r\n  <defs>\r\n    <!-- Background Gradients -->\r\n    <linearGradient id=\"bgGrad\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\r\n      <stop offset=\"0%\" stop-color=\"#0a0f1c\"/>\r\n      <stop offset=\"100%\" stop-color=\"#060b14\"/>\r\n    </linearGradient>\r\n    <linearGradient id=\"cardGrad\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\r\n      <stop offset=\"0%\" stop-color=\"#1a2235\"/>\r\n      <stop offset=\"100%\" stop-color=\"#111827\"/>\r\n    </linearGradient>\r\n    <linearGradient id=\"cardHoverGrad\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\r\n      <stop offset=\"0%\" stop-color=\"#1e2a40\"/>\r\n      <stop offset=\"100%\" stop-color=\"#151e30\"/>\r\n    </linearGradient>\r\n    <linearGradient id=\"headerGrad\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\">\r\n      <stop offset=\"0%\" stop-color=\"#0d1525\"/>\r\n      <stop offset=\"100%\" stop-color=\"#0a101e\"/>\r\n    </linearGradient>\r\n\r\n    <!-- Status Gradients -->\r\n    <linearGradient id=\"greenGrad\" x1=\"0\" y1=\"1\" x2=\"0\" y2=\"0\">\r\n      <stop offset=\"0%\" stop-color=\"#00d97e\"/>\r\n      <stop offset=\"100%\" stop-color=\"#7dd3fc\"/>\r\n    </linearGradient>\r\n    <linearGradient id=\"warnGrad\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\r\n      <stop offset=\"0%\" stop-color=\"#ffb547\"/>\r\n      <stop offset=\"100%\" stop-color=\"#ff6b35\"/>\r\n    </linearGradient>\r\n    <linearGradient id=\"critGrad\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\r\n      <stop offset=\"0%\" stop-color=\"#ff4d6d\"/>\r\n      <stop offset=\"100%\" stop-color=\"#c81d3f\"/>\r\n    </linearGradient>\r\n\r\n    <!-- Glow Effects -->\r\n    <filter id=\"glowGreen\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"140%\">\r\n      <feGaussianBlur stdDeviation=\"4\" result=\"blur\"/>\r\n      <feComposite in=\"SourceGraphic\" in2=\"blur\" operator=\"over\"/>\r\n    </filter>\r\n    <filter id=\"glowWarn\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"140%\">\r\n      <feGaussianBlur stdDeviation=\"6\" result=\"blur\"/>\r\n      <feComposite in=\"SourceGraphic\" in2=\"blur\" operator=\"over\"/>\r\n    </filter>\r\n    <filter id=\"glowCrit\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"140%\">\r\n      <feGaussianBlur stdDeviation=\"8\" result=\"blur\"/>\r\n      <feComposite in=\"SourceGraphic\" in2=\"blur\" operator=\"over\"/>\r\n    </filter>\r\n\r\n    <!-- Furnace Glow -->\r\n    <radialGradient id=\"furnaceGlowGrad\" cx=\"50%\" cy=\"80%\" r=\"70%\">\r\n      <stop offset=\"0%\" stop-color=\"#ff6b35\" stop-opacity=\"0.4\"/>\r\n      <stop offset=\"100%\" stop-color=\"#ff6b35\" stop-opacity=\"0\"/>\r\n    </radialGradient>\r\n\r\n    <!-- Drop Shadow -->\r\n    <filter id=\"dropShadow\" x=\"-5%\" y=\"-5%\" width=\"120%\" height=\"130%\">\r\n      <feDropShadow dx=\"0\" dy=\"8\" stdDeviation=\"6\" flood-color=\"#000\" flood-opacity=\"0.4\"/>\r\n    </filter>\r\n\r\n    <!-- Hover Shadow (stronger) -->\r\n    <filter id=\"dropShadowHover\" x=\"-10%\" y=\"-10%\" width=\"140%\" height=\"150%\">\r\n      <feDropShadow dx=\"0\" dy=\"12\" stdDeviation=\"10\" flood-color=\"#00d97e\" flood-opacity=\"0.3\"/>\r\n    </filter>\r\n\r\n    <!-- Pulse Animation for Warn -->\r\n    <style>\r\n      @keyframes pulse-warn {\r\n        0%, 100% { opacity: 0.2; }\r\n        50% { opacity: 0.8; }\r\n      }\r\n      @keyframes pulse-crit {\r\n        0%, 100% { opacity: 0.4; transform: scale(1); }\r\n        50% { opacity: 1; transform: scale(1.3); }\r\n      }\r\n      @keyframes fill-rise {\r\n        from { height: 0; }\r\n      }\r\n      @keyframes rotate-fan {\r\n        from { transform: rotate(0deg); }\r\n        to { transform: rotate(360deg); }\r\n      }\r\n      @keyframes spin-slow {\r\n        from { transform: rotate(0deg); }\r\n        to { transform: rotate(360deg); }\r\n      }\r\n      @keyframes fade-in {\r\n        from { opacity: 0; transform: translateY(10px); }\r\n        to { opacity: 1; transform: translateY(0); }\r\n      }\r\n      .warn-pulse { animation: pulse-warn 2s ease-in-out infinite; }\r\n      .crit-pulse { animation: pulse-crit 1.5s ease-in-out infinite; }\r\n      .fill-anim { animation: fill-rise 0.8s ease-out forwards; }\r\n      .fan-blade { transform-origin: center; animation: rotate-fan 2s linear infinite; }\r\n      .slow-spin { transform-origin: center; animation: spin-slow 8s linear infinite; }\r\n      \r\n      /* Fixed hover effects - no transform movement to prevent jitter */\r\n      .card { cursor: pointer; }\r\n      .card:hover .card-bg { \r\n        fill: url(#cardHoverGrad); \r\n        filter: url(#dropShadowHover);\r\n      }\r\n      .card:hover {\r\n        /* Removed transform to prevent high-frequency movement/jitter */\r\n      }\r\n    </style>\r\n  </defs>\r\n\r\n  <!-- BACKGROUND -->\r\n  <rect width=\"1920\" height=\"1080\" fill=\"url(#bgGrad)\"/>\r\n\r\n  <!-- DECORATIVE GRID LINES -->\r\n  <g opacity=\"0.03\">\r\n    <line x1=\"0\" y1=\"200\" x2=\"1920\" y2=\"200\" stroke=\"#7dd3fc\" stroke-width=\"1\"/>\r\n    <line x1=\"0\" y1=\"400\" x2=\"1920\" y2=\"400\" stroke=\"#7dd3fc\" stroke-width=\"1\"/>\r\n    <line x1=\"0\" y1=\"600\" x2=\"1920\" y2=\"600\" stroke=\"#7dd3fc\" stroke-width=\"1\"/>\r\n    <line x1=\"0\" y1=\"800\" x2=\"1920\" y2=\"800\" stroke=\"#7dd3fc\" stroke-width=\"1\"/>\r\n  </g>\r\n\r\n  <!-- HEADER -->\r\n  <rect x=\"0\" y=\"0\" width=\"1920\" height=\"90\" fill=\"url(#headerGrad)\"/>\r\n  <rect x=\"0\" y=\"90\" width=\"1920\" height=\"2\" fill=\"#1e3a5f\"/>\r\n  \r\n  <!-- Header Logo Area -->\r\n  <g transform=\"translate(32, 20)\">\r\n    <rect x=\"0\" y=\"0\" width=\"40\" height=\"40\" rx=\"8\" fill=\"#1e3a5f\" opacity=\"0.5\"/>\r\n    <circle cx=\"20\" cy=\"20\" r=\"12\" fill=\"none\" stroke=\"#7dd3fc\" stroke-width=\"2\"/>\r\n    <circle cx=\"20\" cy=\"20\" r=\"4\" fill=\"#7dd3fc\"/>\r\n    <text x=\"56\" y=\"18\" fill=\"#7dd3fc\" font-size=\"11\" font-weight=\"600\" letter-spacing=\"4\">LITMUS EDGE</text>\r\n    <text x=\"56\" y=\"34\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"2\">SP4 SINTER PLANT</text>\r\n  </g>\r\n\r\n  <text x=\"180\" y=\"48\" fill=\"#e2e8f0\" font-size=\"28\" font-weight=\"700\">Plant Overview — Asset Monitoring</text>\r\n\r\n  <!-- Right-side Header Info -->\r\n  <g transform=\"translate(1400, 20)\">\r\n    <text x=\"488\" y=\"14\" fill=\"#94a3b8\" font-size=\"11\" text-anchor=\"end\" letter-spacing=\"1\">DEVICE: SP4Iba  •  DRIVER: DeviceHub Agent</text>\r\n    <text x=\"488\" y=\"30\" fill=\"#94a3b8\" font-size=\"11\" text-anchor=\"end\" letter-spacing=\"1\">DB: tsdata  •  739 tags via NATS</text>\r\n    \r\n    <!-- Live indicator -->\r\n    <circle cx=\"488\" cy=\"52\" r=\"4\" fill=\"#00d97e\" filter=\"url(#glowGreen)\">\r\n      <animate attributeName=\"opacity\" values=\"1;0.4;1\" dur=\"2s\" repeatCount=\"indefinite\"/>\r\n    </circle>\r\n    <text x=\"480\" y=\"56\" fill=\"#00d97e\" font-size=\"11\" text-anchor=\"end\" id=\"header_updated\">● Updated: --:--:--</text>\r\n  </g>\r\n\r\n  <!-- KPI STRIP -->\r\n  <g transform=\"translate(28, 105)\" class=\"fade-in\">\r\n    <!-- KPI 1 -->\r\n    <g class=\"card\">\r\n      <rect class=\"card-bg\" x=\"0\" y=\"0\" width=\"370\" height=\"90\" rx=\"12\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1.5\" filter=\"url(#dropShadow)\"/>\r\n      <!-- Icon -->\r\n      <rect x=\"15\" y=\"15\" width=\"18\" height=\"18\" rx=\"4\" fill=\"#00d97e\" opacity=\"0.15\"/>\r\n      <circle cx=\"24\" cy=\"24\" r=\"6\" fill=\"none\" stroke=\"#00d97e\" stroke-width=\"2\"/>\r\n      <circle cx=\"24\" cy=\"24\" r=\"2\" fill=\"#00d97e\"/>\r\n      <text x=\"42\" y=\"30\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\" font-weight=\"600\">ASSETS WITH LIVE DATA</text>\r\n      <text id=\"kpi_assets_value\" x=\"20\" y=\"72\" fill=\"#00d97e\" font-size=\"36\" font-weight=\"700\" filter=\"url(#glowGreen)\">--/45</text>\r\n      <text id=\"kpi_assets_pct\" x=\"350\" y=\"72\" fill=\"#64748b\" font-size=\"13\" font-weight=\"600\" text-anchor=\"end\">--%</text>\r\n    </g>\r\n\r\n    <!-- KPI 2 -->\r\n    <g class=\"card\" transform=\"translate(386, 0)\">\r\n      <rect class=\"card-bg\" width=\"370\" height=\"90\" rx=\"12\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1.5\" filter=\"url(#dropShadow)\"/>\r\n      <polygon points=\"24,18 33,36 15,36\" fill=\"#ffb547\" opacity=\"0.15\"/>\r\n      <polygon points=\"24,20 30,32 18,32\" fill=\"#ffb547\"/>\r\n      <text x=\"42\" y=\"30\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\" font-weight=\"600\">ACTIVE WARNINGS</text>\r\n      <text id=\"kpi_warn_value\" x=\"20\" y=\"72\" fill=\"#ffb547\" font-size=\"36\" font-weight=\"700\">--</text>\r\n      <text x=\"350\" y=\"72\" fill=\"#64748b\" font-size=\"13\" font-weight=\"600\" text-anchor=\"end\">amber</text>\r\n    </g>\r\n\r\n    <!-- KPI 3 -->\r\n    <g class=\"card\" transform=\"translate(772, 0)\">\r\n      <rect class=\"card-bg\" width=\"370\" height=\"90\" rx=\"12\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1.5\" filter=\"url(#dropShadow)\"/>\r\n      <rect x=\"18\" y=\"18\" width=\"14\" height=\"14\" rx=\"3\" fill=\"#ff4d6d\" opacity=\"0.15\"/>\r\n      <rect x=\"21\" y=\"21\" width=\"8\" height=\"8\" rx=\"2\" fill=\"#ff4d6d\"/>\r\n      <text x=\"42\" y=\"30\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\" font-weight=\"600\">CRITICAL ALARMS</text>\r\n      <text id=\"kpi_crit_value\" x=\"20\" y=\"72\" fill=\"#ff4d6d\" font-size=\"36\" font-weight=\"700\">--</text>\r\n      <text x=\"350\" y=\"72\" fill=\"#64748b\" font-size=\"13\" font-weight=\"600\" text-anchor=\"end\">red</text>\r\n    </g>\r\n\r\n    <!-- KPI 4 -->\r\n    <g class=\"card\" transform=\"translate(1158, 0)\">\r\n      <rect class=\"card-bg\" width=\"370\" height=\"90\" rx=\"12\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1.5\" filter=\"url(#dropShadow)\"/>\r\n      <circle cx=\"24\" cy=\"24\" r=\"8\" fill=\"none\" stroke=\"#7dd3fc\" stroke-width=\"2\" stroke-dasharray=\"4 2\"/>\r\n      <circle cx=\"24\" cy=\"24\" r=\"3\" fill=\"#7dd3fc\"/>\r\n      <text x=\"42\" y=\"30\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\" font-weight=\"600\">PLANT HEALTH SCORE</text>\r\n      <text id=\"kpi_health_value\" x=\"20\" y=\"72\" fill=\"#7dd3fc\" font-size=\"36\" font-weight=\"700\">--%</text>\r\n      <text x=\"350\" y=\"72\" fill=\"#64748b\" font-size=\"13\" font-weight=\"600\" text-anchor=\"end\">normal</text>\r\n    </g>\r\n\r\n    <!-- KPI 5 -->\r\n    <g class=\"card\" transform=\"translate(1544, 0)\">\r\n      <rect class=\"card-bg\" width=\"340\" height=\"90\" rx=\"12\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1.5\" filter=\"url(#dropShadow)\"/>\r\n      <circle cx=\"24\" cy=\"24\" r=\"8\" fill=\"#00d97e\" opacity=\"0.15\"/>\r\n      <path d=\"M20 24 L23 27 L28 21\" stroke=\"#00d97e\" stroke-width=\"2\" fill=\"none\"/>\r\n      <text x=\"42\" y=\"30\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\" font-weight=\"600\">STREAMING</text>\r\n      <text x=\"20\" y=\"72\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">739 tags</text>\r\n      <text x=\"320\" y=\"72\" fill=\"#00d97e\" font-size=\"12\" font-weight=\"600\" text-anchor=\"end\">● NATS LIVE</text>\r\n    </g>\r\n  </g>\r\n\r\n  <!-- FURNACE SECTION -->\r\n  <text x=\"28\" y=\"230\" fill=\"#94a3b8\" font-size=\"11\" font-weight=\"600\" letter-spacing=\"3\">FURNACE TEMPERATURES</text>\r\n  <rect x=\"180\" y=\"220\" width=\"120\" height=\"14\" rx=\"7\" fill=\"#1e3a5f\"/>\r\n  <text x=\"190\" y=\"232\" fill=\"#7dd3fc\" font-size=\"9\" font-weight=\"600\">normal &lt;1200°C</text>\r\n  <rect x=\"310\" y=\"220\" width=\"120\" height=\"14\" rx=\"7\" fill=\"#2a1f0a\"/>\r\n  <text x=\"320\" y=\"232\" fill=\"#ffb547\" font-size=\"9\" font-weight=\"600\">warn 1200–1300</text>\r\n  <rect x=\"440\" y=\"220\" width=\"120\" height=\"14\" rx=\"7\" fill=\"#2a0a0a\"/>\r\n  <text x=\"450\" y=\"232\" fill=\"#ff4d6d\" font-size=\"9\" font-weight=\"600\">critical &gt;1300°C</text>\r\n  <line x1=\"28\" y1=\"244\" x2=\"1892\" y2=\"244\" stroke=\"#1e3a5f\" stroke-width=\"1\"/>\r\n\r\n  <g transform=\"translate(28, 252)\" class=\"fade-in\">\r\n    <!-- Furnace 1 -->\r\n    <g class=\"card\">\r\n      <rect class=\"card-bg\" width=\"367\" height=\"130\" rx=\"12\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1.5\" filter=\"url(#dropShadow)\"/>\r\n      <rect id=\"furnace_1_glow\" width=\"367\" height=\"130\" rx=\"12\" fill=\"url(#furnaceGlowGrad)\" opacity=\"0\"/>\r\n      <circle id=\"furnace_1_status_dot\" cx=\"347\" cy=\"16\" r=\"7\" fill=\"#64748b\"/>\r\n      <text x=\"16\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"2\">FURNACE</text>\r\n      <text x=\"16\" y=\"44\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"600\">TEMPERATURE 1</text>\r\n      <!-- Thermometer Icon -->\r\n      <rect x=\"330\" y=\"60\" width=\"8\" height=\"34\" rx=\"4\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n      <circle cx=\"334\" cy=\"98\" r=\"5\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n      <circle cx=\"334\" cy=\"98\" r=\"2\" fill=\"#64748b\"/>\r\n      <text id=\"furnace_1_value\" x=\"16\" y=\"110\" fill=\"#e2e8f0\" font-size=\"42\" font-weight=\"700\">--</text>\r\n      <text x=\"340\" y=\"116\" fill=\"#64748b\" font-size=\"12\" font-weight=\"600\" text-anchor=\"end\">°C</text>\r\n    </g>\r\n\r\n    <!-- Furnace 2 -->\r\n    <g class=\"card\" transform=\"translate(383, 0)\">\r\n      <rect class=\"card-bg\" width=\"367\" height=\"130\" rx=\"12\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1.5\" filter=\"url(#dropShadow)\"/>\r\n      <rect id=\"furnace_2_glow\" width=\"367\" height=\"130\" rx=\"12\" fill=\"url(#furnaceGlowGrad)\" opacity=\"0\"/>\r\n      <circle id=\"furnace_2_status_dot\" cx=\"347\" cy=\"16\" r=\"7\" fill=\"#64748b\"/>\r\n      <text x=\"16\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"2\">FURNACE</text>\r\n      <text x=\"16\" y=\"44\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"600\">TEMPERATURE 2</text>\r\n      <rect x=\"330\" y=\"60\" width=\"8\" height=\"34\" rx=\"4\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n      <circle cx=\"334\" cy=\"98\" r=\"5\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n      <circle cx=\"334\" cy=\"98\" r=\"2\" fill=\"#64748b\"/>\r\n      <text id=\"furnace_2_value\" x=\"16\" y=\"110\" fill=\"#e2e8f0\" font-size=\"42\" font-weight=\"700\">--</text>\r\n      <text x=\"340\" y=\"116\" fill=\"#64748b\" font-size=\"12\" font-weight=\"600\" text-anchor=\"end\">°C</text>\r\n    </g>\r\n\r\n    <!-- Furnace 3 -->\r\n    <g class=\"card\" transform=\"translate(766, 0)\">\r\n      <rect class=\"card-bg\" width=\"367\" height=\"130\" rx=\"12\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1.5\" filter=\"url(#dropShadow)\"/>\r\n      <rect id=\"furnace_3_glow\" width=\"367\" height=\"130\" rx=\"12\" fill=\"url(#furnaceGlowGrad)\" opacity=\"0\"/>\r\n      <circle id=\"furnace_3_status_dot\" cx=\"347\" cy=\"16\" r=\"7\" fill=\"#64748b\"/>\r\n      <text x=\"16\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"2\">FURNACE</text>\r\n      <text x=\"16\" y=\"44\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"600\">TEMPERATURE 3</text>\r\n      <rect x=\"330\" y=\"60\" width=\"8\" height=\"34\" rx=\"4\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n      <circle cx=\"334\" cy=\"98\" r=\"5\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n      <circle cx=\"334\" cy=\"98\" r=\"2\" fill=\"#64748b\"/>\r\n      <text id=\"furnace_3_value\" x=\"16\" y=\"110\" fill=\"#e2e8f0\" font-size=\"42\" font-weight=\"700\">--</text>\r\n      <text x=\"340\" y=\"116\" fill=\"#64748b\" font-size=\"12\" font-weight=\"600\" text-anchor=\"end\">°C</text>\r\n    </g>\r\n\r\n    <!-- Furnace 5 -->\r\n    <g class=\"card\" transform=\"translate(1149, 0)\">\r\n      <rect class=\"card-bg\" width=\"367\" height=\"130\" rx=\"12\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1.5\" filter=\"url(#dropShadow)\"/>\r\n      <rect id=\"furnace_5_glow\" width=\"367\" height=\"130\" rx=\"12\" fill=\"url(#furnaceGlowGrad)\" opacity=\"0\"/>\r\n      <circle id=\"furnace_5_status_dot\" cx=\"347\" cy=\"16\" r=\"7\" fill=\"#64748b\"/>\r\n      <text x=\"16\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"2\">FURNACE</text>\r\n      <text x=\"16\" y=\"44\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"600\">TEMPERATURE 5</text>\r\n      <rect x=\"330\" y=\"60\" width=\"8\" height=\"34\" rx=\"4\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n      <circle cx=\"334\" cy=\"98\" r=\"5\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n      <circle cx=\"334\" cy=\"98\" r=\"2\" fill=\"#64748b\"/>\r\n      <text id=\"furnace_5_value\" x=\"16\" y=\"110\" fill=\"#e2e8f0\" font-size=\"42\" font-weight=\"700\">--</text>\r\n      <text x=\"340\" y=\"116\" fill=\"#64748b\" font-size=\"12\" font-weight=\"600\" text-anchor=\"end\">°C</text>\r\n    </g>\r\n\r\n    <!-- Furnace 6 -->\r\n    <g class=\"card\" transform=\"translate(1532, 0)\">\r\n      <rect class=\"card-bg\" width=\"360\" height=\"130\" rx=\"12\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1.5\" filter=\"url(#dropShadow)\"/>\r\n      <rect id=\"furnace_6_glow\" width=\"360\" height=\"130\" rx=\"12\" fill=\"url(#furnaceGlowGrad)\" opacity=\"0\"/>\r\n      <circle id=\"furnace_6_status_dot\" cx=\"340\" cy=\"16\" r=\"7\" fill=\"#64748b\"/>\r\n      <text x=\"16\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"2\">FURNACE</text>\r\n      <text x=\"16\" y=\"44\" fill=\"#e2e8f0\" font-size=\"14\" font-weight=\"600\">TEMPERATURE 6</text>\r\n      <rect x=\"330\" y=\"60\" width=\"8\" height=\"34\" rx=\"4\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n      <circle cx=\"334\" cy=\"98\" r=\"5\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n      <circle cx=\"334\" cy=\"98\" r=\"2\" fill=\"#64748b\"/>\r\n      <text id=\"furnace_6_value\" x=\"16\" y=\"110\" fill=\"#e2e8f0\" font-size=\"42\" font-weight=\"700\">--</text>\r\n      <text x=\"340\" y=\"116\" fill=\"#64748b\" font-size=\"12\" font-weight=\"600\" text-anchor=\"end\">°C</text>\r\n    </g>\r\n  </g>\r\n\r\n  <!-- FAN & MOTOR SECTION -->\r\n  <text x=\"28\" y=\"410\" fill=\"#94a3b8\" font-size=\"11\" font-weight=\"600\" letter-spacing=\"3\">WGF FAN &amp; MOTOR</text>\r\n  <rect x=\"170\" y=\"400\" width=\"200\" height=\"14\" rx=\"7\" fill=\"#1e3a5f\"/>\r\n  <text x=\"180\" y=\"412\" fill=\"#7dd3fc\" font-size=\"9\" font-weight=\"600\">vibration ISO10816</text>\r\n  <rect x=\"380\" y=\"400\" width=\"180\" height=\"14\" rx=\"7\" fill=\"#1e3a5f\"/>\r\n  <text x=\"390\" y=\"412\" fill=\"#7dd3fc\" font-size=\"9\" font-weight=\"600\">bearing temp 80/95°C</text>\r\n  <rect x=\"570\" y=\"400\" width=\"120\" height=\"14\" rx=\"7\" fill=\"#1e3a5f\"/>\r\n  <text x=\"580\" y=\"412\" fill=\"#7dd3fc\" font-size=\"9\" font-weight=\"600\">oil P ≥ 1.0 bar</text>\r\n  <line x1=\"28\" y1=\"424\" x2=\"1892\" y2=\"424\" stroke=\"#1e3a5f\" stroke-width=\"1\"/>\r\n\r\n  <g transform=\"translate(28, 434)\" class=\"fade-in\">\r\n    <!-- Fan Vibration Cards -->\r\n    <g class=\"card\">\r\n      <rect class=\"card-bg\" width=\"231\" height=\"90\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"wgf_fan_de_x_vib_status_dot\" cx=\"215\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">FAN DE • X VIB</text>\r\n      <text id=\"wgf_fan_de_x_vib_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"30\" font-weight=\"700\">--</text>\r\n      <text x=\"219\" y=\"78\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">mm/s</text>\r\n    </g>\r\n    <g class=\"card\" transform=\"translate(243, 0)\">\r\n      <rect class=\"card-bg\" width=\"231\" height=\"90\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"wgf_fan_de_y_vib_status_dot\" cx=\"215\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">FAN DE • Y VIB</text>\r\n      <text id=\"wgf_fan_de_y_vib_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"30\" font-weight=\"700\">--</text>\r\n      <text x=\"219\" y=\"78\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">mm/s</text>\r\n    </g>\r\n    <g class=\"card\" transform=\"translate(486, 0)\">\r\n      <rect class=\"card-bg\" width=\"231\" height=\"90\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"wgf_fan_nde_x_vib_status_dot\" cx=\"215\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">FAN NDE • X VIB</text>\r\n      <text id=\"wgf_fan_nde_x_vib_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"30\" font-weight=\"700\">--</text>\r\n      <text x=\"219\" y=\"78\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">mm/s</text>\r\n    </g>\r\n    <g class=\"card\" transform=\"translate(729, 0)\">\r\n      <rect class=\"card-bg\" width=\"231\" height=\"90\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"wgf_fan_nde_y_vib_status_dot\" cx=\"215\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">FAN NDE • Y VIB</text>\r\n      <text id=\"wgf_fan_nde_y_vib_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"30\" font-weight=\"700\">--</text>\r\n      <text x=\"219\" y=\"78\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">mm/s</text>\r\n    </g>\r\n\r\n    <!-- Motor Bearing Cards -->\r\n    <g class=\"card\" transform=\"translate(972, 0)\">\r\n      <rect class=\"card-bg\" width=\"231\" height=\"90\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"wgf_mot_de_bearing_status_dot\" cx=\"215\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">MOT DE • BEARING T</text>\r\n      <text id=\"wgf_mot_de_bearing_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"30\" font-weight=\"700\">--</text>\r\n      <text x=\"219\" y=\"78\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">°C</text>\r\n    </g>\r\n    <g class=\"card\" transform=\"translate(1215, 0)\">\r\n      <rect class=\"card-bg\" width=\"231\" height=\"90\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"wgf_mot_nde_bearing_status_dot\" cx=\"215\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">MOT NDE • BEARING T</text>\r\n      <text id=\"wgf_mot_nde_bearing_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"30\" font-weight=\"700\">--</text>\r\n      <text x=\"219\" y=\"78\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">°C</text>\r\n    </g>\r\n\r\n    <!-- Oil Pressure Cards -->\r\n    <g class=\"card\" transform=\"translate(1458, 0)\">\r\n      <rect class=\"card-bg\" width=\"231\" height=\"90\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"wgf_fan_de_oil_p_status_dot\" cx=\"215\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">FAN DE • OIL P</text>\r\n      <text id=\"wgf_fan_de_oil_p_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"30\" font-weight=\"700\">--</text>\r\n      <text x=\"219\" y=\"78\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">bar</text>\r\n    </g>\r\n    <g class=\"card\" transform=\"translate(1701, 0)\">\r\n      <rect class=\"card-bg\" width=\"191\" height=\"90\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"wgf_mot_de_oil_p_status_dot\" cx=\"175\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">MOT DE • OIL P</text>\r\n      <text id=\"wgf_mot_de_oil_p_value\" x=\"12\" y=\"68\" fill=\"#e2e8f0\" font-size=\"30\" font-weight=\"700\">--</text>\r\n      <text x=\"179\" y=\"78\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">bar</text>\r\n    </g>\r\n  </g>\r\n\r\n  <!-- STORAGE BINS SECTION -->\r\n  <text x=\"28\" y=\"552\" fill=\"#94a3b8\" font-size=\"11\" font-weight=\"600\" letter-spacing=\"3\">STORAGE BINS</text>\r\n  <rect x=\"150\" y=\"542\" width=\"140\" height=\"14\" rx=\"7\" fill=\"#1e3a5f\"/>\r\n  <text x=\"160\" y=\"554\" fill=\"#7dd3fc\" font-size=\"9\" font-weight=\"600\">normal 20–80%</text>\r\n  <rect x=\"300\" y=\"542\" width=\"160\" height=\"14\" rx=\"7\" fill=\"#2a1f0a\"/>\r\n  <text x=\"310\" y=\"554\" fill=\"#ffb547\" font-size=\"9\" font-weight=\"600\">warn 10–20 / 80–90</text>\r\n  <rect x=\"470\" y=\"542\" width=\"140\" height=\"14\" rx=\"7\" fill=\"#2a0a0a\"/>\r\n  <text x=\"480\" y=\"554\" fill=\"#ff4d6d\" font-size=\"9\" font-weight=\"600\">critical &lt;10% &gt;90%</text>\r\n  <line x1=\"28\" y1=\"566\" x2=\"1892\" y2=\"566\" stroke=\"#1e3a5f\" stroke-width=\"1\"/>\r\n\r\n  <g transform=\"translate(28, 576)\" class=\"fade-in\">\r\n    <!-- BIN 1 -->\r\n    <g class=\"card\">\r\n      <rect class=\"card-bg\" width=\"171\" height=\"120\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"bin_1_status_dot\" cx=\"155\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">BIN 1</text>\r\n      <!-- Bin Pictogram with Level -->\r\n      <g transform=\"translate(12, 32)\">\r\n        <rect x=\"0\" y=\"0\" width=\"26\" height=\"60\" rx=\"4\" fill=\"#0d1525\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n        <!-- Fill Animation -->\r\n        <rect id=\"bin_1_fill_rect\" x=\"2\" y=\"58\" width=\"22\" height=\"0\" fill=\"url(#greenGrad)\" rx=\"3\" opacity=\"0.9\"/>\r\n        <!-- Level lines -->\r\n        <line x1=\"-2\" y1=\"45\" x2=\"28\" y2=\"45\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"30\" x2=\"28\" y2=\"30\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"15\" x2=\"28\" y2=\"15\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n      </g>\r\n      <text id=\"bin_1_value\" x=\"155\" y=\"86\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\" text-anchor=\"end\">--</text>\r\n      <text x=\"155\" y=\"102\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">% fill</text>\r\n    </g>\r\n\r\n    <!-- BIN 2 -->\r\n    <g class=\"card\" transform=\"translate(183, 0)\">\r\n      <rect class=\"card-bg\" width=\"171\" height=\"120\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"bin_2_status_dot\" cx=\"155\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">BIN 2</text>\r\n      <g transform=\"translate(12, 32)\">\r\n        <rect x=\"0\" y=\"0\" width=\"26\" height=\"60\" rx=\"4\" fill=\"#0d1525\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n        <rect id=\"bin_2_fill_rect\" x=\"2\" y=\"58\" width=\"22\" height=\"0\" fill=\"url(#greenGrad)\" rx=\"3\" opacity=\"0.9\"/>\r\n        <line x1=\"-2\" y1=\"45\" x2=\"28\" y2=\"45\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"30\" x2=\"28\" y2=\"30\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"15\" x2=\"28\" y2=\"15\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n      </g>\r\n      <text id=\"bin_2_value\" x=\"155\" y=\"86\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\" text-anchor=\"end\">--</text>\r\n      <text x=\"155\" y=\"102\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">% fill</text>\r\n    </g>\r\n\r\n    <!-- BIN 3 -->\r\n    <g class=\"card\" transform=\"translate(366, 0)\">\r\n      <rect class=\"card-bg\" width=\"171\" height=\"120\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"bin_3_status_dot\" cx=\"155\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">BIN 3</text>\r\n      <g transform=\"translate(12, 32)\">\r\n        <rect x=\"0\" y=\"0\" width=\"26\" height=\"60\" rx=\"4\" fill=\"#0d1525\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n        <rect id=\"bin_3_fill_rect\" x=\"2\" y=\"58\" width=\"22\" height=\"0\" fill=\"url(#greenGrad)\" rx=\"3\" opacity=\"0.9\"/>\r\n        <line x1=\"-2\" y1=\"45\" x2=\"28\" y2=\"45\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"30\" x2=\"28\" y2=\"30\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"15\" x2=\"28\" y2=\"15\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n      </g>\r\n      <text id=\"bin_3_value\" x=\"155\" y=\"86\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\" text-anchor=\"end\">--</text>\r\n      <text x=\"155\" y=\"102\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">% fill</text>\r\n    </g>\r\n\r\n    <!-- BIN 4 -->\r\n    <g class=\"card\" transform=\"translate(549, 0)\">\r\n      <rect class=\"card-bg\" width=\"171\" height=\"120\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"bin_4_status_dot\" cx=\"155\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">BIN 4</text>\r\n      <g transform=\"translate(12, 32)\">\r\n        <rect x=\"0\" y=\"0\" width=\"26\" height=\"60\" rx=\"4\" fill=\"#0d1525\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n        <rect id=\"bin_4_fill_rect\" x=\"2\" y=\"58\" width=\"22\" height=\"0\" fill=\"url(#greenGrad)\" rx=\"3\" opacity=\"0.9\"/>\r\n        <line x1=\"-2\" y1=\"45\" x2=\"28\" y2=\"45\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"30\" x2=\"28\" y2=\"30\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"15\" x2=\"28\" y2=\"15\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n      </g>\r\n      <text id=\"bin_4_value\" x=\"155\" y=\"86\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\" text-anchor=\"end\">--</text>\r\n      <text x=\"155\" y=\"102\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">% fill</text>\r\n    </g>\r\n\r\n    <!-- BIN 5 -->\r\n    <g class=\"card\" transform=\"translate(732, 0)\">\r\n      <rect class=\"card-bg\" width=\"171\" height=\"120\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"bin_5_status_dot\" cx=\"155\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">BIN 5</text>\r\n      <g transform=\"translate(12, 32)\">\r\n        <rect x=\"0\" y=\"0\" width=\"26\" height=\"60\" rx=\"4\" fill=\"#0d1525\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n        <rect id=\"bin_5_fill_rect\" x=\"2\" y=\"58\" width=\"22\" height=\"0\" fill=\"url(#greenGrad)\" rx=\"3\" opacity=\"0.9\"/>\r\n        <line x1=\"-2\" y1=\"45\" x2=\"28\" y2=\"45\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"30\" x2=\"28\" y2=\"30\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"15\" x2=\"28\" y2=\"15\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n      </g>\r\n      <text id=\"bin_5_value\" x=\"155\" y=\"86\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\" text-anchor=\"end\">--</text>\r\n      <text x=\"155\" y=\"102\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">% fill</text>\r\n    </g>\r\n\r\n    <!-- BIN 6 -->\r\n    <g class=\"card\" transform=\"translate(915, 0)\">\r\n      <rect class=\"card-bg\" width=\"171\" height=\"120\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"bin_6_status_dot\" cx=\"155\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">BIN 6</text>\r\n      <g transform=\"translate(12, 32)\">\r\n        <rect x=\"0\" y=\"0\" width=\"26\" height=\"60\" rx=\"4\" fill=\"#0d1525\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n        <rect id=\"bin_6_fill_rect\" x=\"2\" y=\"58\" width=\"22\" height=\"0\" fill=\"url(#greenGrad)\" rx=\"3\" opacity=\"0.9\"/>\r\n        <line x1=\"-2\" y1=\"45\" x2=\"28\" y2=\"45\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"30\" x2=\"28\" y2=\"30\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"15\" x2=\"28\" y2=\"15\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n      </g>\r\n      <text id=\"bin_6_value\" x=\"155\" y=\"86\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\" text-anchor=\"end\">--</text>\r\n      <text x=\"155\" y=\"102\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">% fill</text>\r\n    </g>\r\n\r\n    <!-- BIN 7 -->\r\n    <g class=\"card\" transform=\"translate(1098, 0)\">\r\n      <rect class=\"card-bg\" width=\"171\" height=\"120\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"bin_7_status_dot\" cx=\"155\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">BIN 7</text>\r\n      <g transform=\"translate(12, 32)\">\r\n        <rect x=\"0\" y=\"0\" width=\"26\" height=\"60\" rx=\"4\" fill=\"#0d1525\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n        <rect id=\"bin_7_fill_rect\" x=\"2\" y=\"58\" width=\"22\" height=\"0\" fill=\"url(#greenGrad)\" rx=\"3\" opacity=\"0.9\"/>\r\n        <line x1=\"-2\" y1=\"45\" x2=\"28\" y2=\"45\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"30\" x2=\"28\" y2=\"30\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"15\" x2=\"28\" y2=\"15\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n      </g>\r\n      <text id=\"bin_7_value\" x=\"155\" y=\"86\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\" text-anchor=\"end\">--</text>\r\n      <text x=\"155\" y=\"102\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">% fill</text>\r\n    </g>\r\n\r\n    <!-- BIN 8 -->\r\n    <g class=\"card\" transform=\"translate(1281, 0)\">\r\n      <rect class=\"card-bg\" width=\"171\" height=\"120\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"bin_8_status_dot\" cx=\"155\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">BIN 8</text>\r\n      <g transform=\"translate(12, 32)\">\r\n        <rect x=\"0\" y=\"0\" width=\"26\" height=\"60\" rx=\"4\" fill=\"#0d1525\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n        <rect id=\"bin_8_fill_rect\" x=\"2\" y=\"58\" width=\"22\" height=\"0\" fill=\"url(#greenGrad)\" rx=\"3\" opacity=\"0.9\"/>\r\n        <line x1=\"-2\" y1=\"45\" x2=\"28\" y2=\"45\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"30\" x2=\"28\" y2=\"30\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"15\" x2=\"28\" y2=\"15\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n      </g>\r\n      <text id=\"bin_8_value\" x=\"155\" y=\"86\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\" text-anchor=\"end\">--</text>\r\n      <text x=\"155\" y=\"102\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">% fill</text>\r\n    </g>\r\n\r\n    <!-- BIN 9 -->\r\n    <g class=\"card\" transform=\"translate(1464, 0)\">\r\n      <rect class=\"card-bg\" width=\"171\" height=\"120\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"bin_9_status_dot\" cx=\"155\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">BIN 9</text>\r\n      <g transform=\"translate(12, 32)\">\r\n        <rect x=\"0\" y=\"0\" width=\"26\" height=\"60\" rx=\"4\" fill=\"#0d1525\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n        <rect id=\"bin_9_fill_rect\" x=\"2\" y=\"58\" width=\"22\" height=\"0\" fill=\"url(#greenGrad)\" rx=\"3\" opacity=\"0.9\"/>\r\n        <line x1=\"-2\" y1=\"45\" x2=\"28\" y2=\"45\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"30\" x2=\"28\" y2=\"30\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"15\" x2=\"28\" y2=\"15\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n      </g>\r\n      <text id=\"bin_9_value\" x=\"155\" y=\"86\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\" text-anchor=\"end\">--</text>\r\n      <text x=\"155\" y=\"102\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">% fill</text>\r\n    </g>\r\n\r\n    <!-- BIN 10 -->\r\n    <g class=\"card\" transform=\"translate(1647, 0)\">\r\n      <rect class=\"card-bg\" width=\"171\" height=\"120\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"bin_10_status_dot\" cx=\"155\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">BIN 10</text>\r\n      <g transform=\"translate(12, 32)\">\r\n        <rect x=\"0\" y=\"0\" width=\"26\" height=\"60\" rx=\"4\" fill=\"#0d1525\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n        <rect id=\"bin_10_fill_rect\" x=\"2\" y=\"58\" width=\"22\" height=\"0\" fill=\"url(#greenGrad)\" rx=\"3\" opacity=\"0.9\"/>\r\n        <line x1=\"-2\" y1=\"45\" x2=\"28\" y2=\"45\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"30\" x2=\"28\" y2=\"30\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"15\" x2=\"28\" y2=\"15\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n      </g>\r\n      <text id=\"bin_10_value\" x=\"155\" y=\"86\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\" text-anchor=\"end\">--</text>\r\n      <text x=\"155\" y=\"102\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">% fill</text>\r\n    </g>\r\n\r\n    <!-- BIN 11 -->\r\n    <g class=\"card\" transform=\"translate(1830, 0)\">\r\n      <rect class=\"card-bg\" width=\"62\" height=\"120\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"bin_11_status_dot\" cx=\"46\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">B11</text>\r\n      <g transform=\"translate(12, 32)\">\r\n        <rect x=\"0\" y=\"0\" width=\"26\" height=\"60\" rx=\"4\" fill=\"#0d1525\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n        <rect id=\"bin_11_fill_rect\" x=\"2\" y=\"58\" width=\"22\" height=\"0\" fill=\"url(#greenGrad)\" rx=\"3\" opacity=\"0.9\"/>\r\n        <line x1=\"-2\" y1=\"45\" x2=\"28\" y2=\"45\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"30\" x2=\"28\" y2=\"30\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n        <line x1=\"-2\" y1=\"15\" x2=\"28\" y2=\"15\" stroke=\"#1e3a5f\" stroke-width=\"0.5\" stroke-dasharray=\"2 2\"/>\r\n      </g>\r\n      <text id=\"bin_11_value\" x=\"46\" y=\"86\" fill=\"#e2e8f0\" font-size=\"16\" font-weight=\"700\" text-anchor=\"end\">--</text>\r\n      <text x=\"46\" y=\"102\" fill=\"#64748b\" font-size=\"8\" font-weight=\"600\" text-anchor=\"end\">%</text>\r\n    </g>\r\n  </g>\r\n\r\n  <!-- TRANSFORMERS SECTION -->\r\n  <text x=\"28\" y=\"724\" fill=\"#94a3b8\" font-size=\"11\" font-weight=\"600\" letter-spacing=\"3\">TRANSFORMERS (TR 1–15)</text>\r\n  <rect x=\"210\" y=\"714\" width=\"130\" height=\"14\" rx=\"7\" fill=\"#1e3a5f\"/>\r\n  <text x=\"220\" y=\"726\" fill=\"#7dd3fc\" font-size=\"9\" font-weight=\"600\">secondary current</text>\r\n  <rect x=\"350\" y=\"714\" width=\"120\" height=\"14\" rx=\"7\" fill=\"#2a1f0a\"/>\r\n  <text x=\"360\" y=\"726\" fill=\"#ffb547\" font-size=\"9\" font-weight=\"600\">warn 800 mA</text>\r\n  <rect x=\"480\" y=\"714\" width=\"110\" height=\"14\" rx=\"7\" fill=\"#2a0a0a\"/>\r\n  <text x=\"490\" y=\"726\" fill=\"#ff4d6d\" font-size=\"9\" font-weight=\"600\">critical 1000</text>\r\n  <line x1=\"28\" y1=\"738\" x2=\"1892\" y2=\"738\" stroke=\"#1e3a5f\" stroke-width=\"1\"/>\r\n\r\n  <g transform=\"translate(28, 748)\" class=\"fade-in\">\r\n    <!-- TR 01 -->\r\n    <g class=\"card\">\r\n      <rect class=\"card-bg\" width=\"120\" height=\"80\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"tr_1_i_status_dot\" cx=\"106\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">TR 01</text>\r\n      <text id=\"tr_1_i_value\" x=\"12\" y=\"60\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\r\n      <text x=\"108\" y=\"70\" fill=\"#64748b\" font-size=\"9\" font-weight=\"600\" text-anchor=\"end\">mA</text>\r\n    </g>\r\n    <!-- TR 02 -->\r\n    <g class=\"card\" transform=\"translate(128, 0)\">\r\n      <rect class=\"card-bg\" width=\"120\" height=\"80\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"tr_2_i_status_dot\" cx=\"106\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">TR 02</text>\r\n      <text id=\"tr_2_i_value\" x=\"12\" y=\"60\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\r\n      <text x=\"108\" y=\"70\" fill=\"#64748b\" font-size=\"9\" font-weight=\"600\" text-anchor=\"end\">mA</text>\r\n    </g>\r\n    <!-- TR 03 -->\r\n    <g class=\"card\" transform=\"translate(256, 0)\">\r\n      <rect class=\"card-bg\" width=\"120\" height=\"80\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"tr_3_i_status_dot\" cx=\"106\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">TR 03</text>\r\n      <text id=\"tr_3_i_value\" x=\"12\" y=\"60\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\r\n      <text x=\"108\" y=\"70\" fill=\"#64748b\" font-size=\"9\" font-weight=\"600\" text-anchor=\"end\">mA</text>\r\n    </g>\r\n    <!-- TR 04 -->\r\n    <g class=\"card\" transform=\"translate(384, 0)\">\r\n      <rect class=\"card-bg\" width=\"120\" height=\"80\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"tr_4_i_status_dot\" cx=\"106\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">TR 04</text>\r\n      <text id=\"tr_4_i_value\" x=\"12\" y=\"60\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\r\n      <text x=\"108\" y=\"70\" fill=\"#64748b\" font-size=\"9\" font-weight=\"600\" text-anchor=\"end\">mA</text>\r\n    </g>\r\n    <!-- TR 05 -->\r\n    <g class=\"card\" transform=\"translate(512, 0)\">\r\n      <rect class=\"card-bg\" width=\"120\" height=\"80\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"tr_5_i_status_dot\" cx=\"106\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">TR 05</text>\r\n      <text id=\"tr_5_i_value\" x=\"12\" y=\"60\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\r\n      <text x=\"108\" y=\"70\" fill=\"#64748b\" font-size=\"9\" font-weight=\"600\" text-anchor=\"end\">mA</text>\r\n    </g>\r\n    <!-- TR 06 -->\r\n    <g class=\"card\" transform=\"translate(640, 0)\">\r\n      <rect class=\"card-bg\" width=\"120\" height=\"80\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"tr_6_i_status_dot\" cx=\"106\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">TR 06</text>\r\n      <text id=\"tr_6_i_value\" x=\"12\" y=\"60\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\r\n      <text x=\"108\" y=\"70\" fill=\"#64748b\" font-size=\"9\" font-weight=\"600\" text-anchor=\"end\">mA</text>\r\n    </g>\r\n    <!-- TR 07 -->\r\n    <g class=\"card\" transform=\"translate(768, 0)\">\r\n      <rect class=\"card-bg\" width=\"120\" height=\"80\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"tr_7_i_status_dot\" cx=\"106\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">TR 07</text>\r\n      <text id=\"tr_7_i_value\" x=\"12\" y=\"60\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\r\n      <text x=\"108\" y=\"70\" fill=\"#64748b\" font-size=\"9\" font-weight=\"600\" text-anchor=\"end\">mA</text>\r\n    </g>\r\n    <!-- TR 08 -->\r\n    <g class=\"card\" transform=\"translate(896, 0)\">\r\n      <rect class=\"card-bg\" width=\"120\" height=\"80\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"tr_8_i_status_dot\" cx=\"106\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">TR 08</text>\r\n      <text id=\"tr_8_i_value\" x=\"12\" y=\"60\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\r\n      <text x=\"108\" y=\"70\" fill=\"#64748b\" font-size=\"9\" font-weight=\"600\" text-anchor=\"end\">mA</text>\r\n    </g>\r\n    <!-- TR 09 -->\r\n    <g class=\"card\" transform=\"translate(1024, 0)\">\r\n      <rect class=\"card-bg\" width=\"120\" height=\"80\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"tr_9_i_status_dot\" cx=\"106\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">TR 09</text>\r\n      <text id=\"tr_9_i_value\" x=\"12\" y=\"60\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\r\n      <text x=\"108\" y=\"70\" fill=\"#64748b\" font-size=\"9\" font-weight=\"600\" text-anchor=\"end\">mA</text>\r\n    </g>\r\n    <!-- TR 10 -->\r\n    <g class=\"card\" transform=\"translate(1152, 0)\">\r\n      <rect class=\"card-bg\" width=\"120\" height=\"80\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"tr_10_i_status_dot\" cx=\"106\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">TR 10</text>\r\n      <text id=\"tr_10_i_value\" x=\"12\" y=\"60\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\r\n      <text x=\"108\" y=\"70\" fill=\"#64748b\" font-size=\"9\" font-weight=\"600\" text-anchor=\"end\">mA</text>\r\n    </g>\r\n    <!-- TR 11 -->\r\n    <g class=\"card\" transform=\"translate(1280, 0)\">\r\n      <rect class=\"card-bg\" width=\"120\" height=\"80\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"tr_11_i_status_dot\" cx=\"106\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">TR 11</text>\r\n      <text id=\"tr_11_i_value\" x=\"12\" y=\"60\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\r\n      <text x=\"108\" y=\"70\" fill=\"#64748b\" font-size=\"9\" font-weight=\"600\" text-anchor=\"end\">mA</text>\r\n    </g>\r\n    <!-- TR 12 -->\r\n    <g class=\"card\" transform=\"translate(1408, 0)\">\r\n      <rect class=\"card-bg\" width=\"120\" height=\"80\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"tr_12_i_status_dot\" cx=\"106\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">TR 12</text>\r\n      <text id=\"tr_12_i_value\" x=\"12\" y=\"60\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\r\n      <text x=\"108\" y=\"70\" fill=\"#64748b\" font-size=\"9\" font-weight=\"600\" text-anchor=\"end\">mA</text>\r\n    </g>\r\n    <!-- TR 13 -->\r\n    <g class=\"card\" transform=\"translate(1536, 0)\">\r\n      <rect class=\"card-bg\" width=\"120\" height=\"80\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"tr_13_i_status_dot\" cx=\"106\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">TR 13</text>\r\n      <text id=\"tr_13_i_value\" x=\"12\" y=\"60\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\r\n      <text x=\"108\" y=\"70\" fill=\"#64748b\" font-size=\"9\" font-weight=\"600\" text-anchor=\"end\">mA</text>\r\n    </g>\r\n    <!-- TR 14 -->\r\n    <g class=\"card\" transform=\"translate(1664, 0)\">\r\n      <rect class=\"card-bg\" width=\"120\" height=\"80\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"tr_14_i_status_dot\" cx=\"106\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">TR 14</text>\r\n      <text id=\"tr_14_i_value\" x=\"12\" y=\"60\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\r\n      <text x=\"108\" y=\"70\" fill=\"#64748b\" font-size=\"9\" font-weight=\"600\" text-anchor=\"end\">mA</text>\r\n    </g>\r\n    <!-- TR 15 -->\r\n    <g class=\"card\" transform=\"translate(1792, 0)\">\r\n      <rect class=\"card-bg\" width=\"100\" height=\"80\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"tr_15_i_status_dot\" cx=\"86\" cy=\"14\" r=\"5\" fill=\"#64748b\"/>\r\n      <text x=\"12\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">TR 15</text>\r\n      <text id=\"tr_15_i_value\" x=\"12\" y=\"60\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">--</text>\r\n      <text x=\"88\" y=\"70\" fill=\"#64748b\" font-size=\"9\" font-weight=\"600\" text-anchor=\"end\">mA</text>\r\n    </g>\r\n  </g>\r\n\r\n  <!-- WINDBOX SECTION -->\r\n  <text x=\"28\" y=\"856\" fill=\"#94a3b8\" font-size=\"11\" font-weight=\"600\" letter-spacing=\"3\">WINDBOX DIFFERENTIAL PRESSURES</text>\r\n  <rect x=\"260\" y=\"846\" width=\"130\" height=\"14\" rx=\"7\" fill=\"#1e3a5f\"/>\r\n  <text x=\"270\" y=\"858\" fill=\"#7dd3fc\" font-size=\"9\" font-weight=\"600\">normal &lt;25 mbar</text>\r\n  <rect x=\"400\" y=\"846\" width=\"110\" height=\"14\" rx=\"7\" fill=\"#2a1f0a\"/>\r\n  <text x=\"410\" y=\"858\" fill=\"#ffb547\" font-size=\"9\" font-weight=\"600\">warn 25–35</text>\r\n  <rect x=\"520\" y=\"846\" width=\"100\" height=\"14\" rx=\"7\" fill=\"#2a0a0a\"/>\r\n  <text x=\"530\" y=\"858\" fill=\"#ff4d6d\" font-size=\"9\" font-weight=\"600\">critical &gt;35</text>\r\n  <line x1=\"28\" y1=\"870\" x2=\"1892\" y2=\"870\" stroke=\"#1e3a5f\" stroke-width=\"1\"/>\r\n\r\n  <g transform=\"translate(28, 880)\" class=\"fade-in\">\r\n    <!-- WB 11 -->\r\n    <g class=\"card\">\r\n      <rect class=\"card-bg\" width=\"302\" height=\"90\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"wb_11_status_dot\" cx=\"286\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"14\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">WB 11</text>\r\n      <!-- Pressure Gauge Icon -->\r\n      <g transform=\"translate(270, 45)\">\r\n        <circle cx=\"16\" cy=\"28\" r=\"14\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n        <line x1=\"16\" y1=\"28\" x2=\"16\" y2=\"20\" stroke=\"#64748b\" stroke-width=\"2\"/>\r\n      </g>\r\n      <text id=\"wb_11_value\" x=\"14\" y=\"74\" fill=\"#e2e8f0\" font-size=\"30\" font-weight=\"700\">--</text>\r\n      <text x=\"290\" y=\"78\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">mbar</text>\r\n    </g>\r\n    <!-- WB 12 -->\r\n    <g class=\"card\" transform=\"translate(318, 0)\">\r\n      <rect class=\"card-bg\" width=\"302\" height=\"90\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"wb_12_status_dot\" cx=\"286\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"14\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">WB 12</text>\r\n      <g transform=\"translate(270, 45)\">\r\n        <circle cx=\"16\" cy=\"28\" r=\"14\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n        <line x1=\"16\" y1=\"28\" x2=\"16\" y2=\"20\" stroke=\"#64748b\" stroke-width=\"2\"/>\r\n      </g>\r\n      <text id=\"wb_12_value\" x=\"14\" y=\"74\" fill=\"#e2e8f0\" font-size=\"30\" font-weight=\"700\">--</text>\r\n      <text x=\"290\" y=\"78\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">mbar</text>\r\n    </g>\r\n    <!-- WB 13 -->\r\n    <g class=\"card\" transform=\"translate(636, 0)\">\r\n      <rect class=\"card-bg\" width=\"302\" height=\"90\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"wb_13_status_dot\" cx=\"286\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"14\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">WB 13</text>\r\n      <g transform=\"translate(270, 45)\">\r\n        <circle cx=\"16\" cy=\"28\" r=\"14\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n        <line x1=\"16\" y1=\"28\" x2=\"16\" y2=\"20\" stroke=\"#64748b\" stroke-width=\"2\"/>\r\n      </g>\r\n      <text id=\"wb_13_value\" x=\"14\" y=\"74\" fill=\"#e2e8f0\" font-size=\"30\" font-weight=\"700\">--</text>\r\n      <text x=\"290\" y=\"78\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">mbar</text>\r\n    </g>\r\n    <!-- WB 14 -->\r\n    <g class=\"card\" transform=\"translate(954, 0)\">\r\n      <rect class=\"card-bg\" width=\"302\" height=\"90\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"wb_14_status_dot\" cx=\"286\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"14\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">WB 14</text>\r\n      <g transform=\"translate(270, 45)\">\r\n        <circle cx=\"16\" cy=\"28\" r=\"14\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n        <line x1=\"16\" y1=\"28\" x2=\"16\" y2=\"20\" stroke=\"#64748b\" stroke-width=\"2\"/>\r\n      </g>\r\n      <text id=\"wb_14_value\" x=\"14\" y=\"74\" fill=\"#e2e8f0\" font-size=\"30\" font-weight=\"700\">--</text>\r\n      <text x=\"290\" y=\"78\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">mbar</text>\r\n    </g>\r\n    <!-- WB 15 -->\r\n    <g class=\"card\" transform=\"translate(1272, 0)\">\r\n      <rect class=\"card-bg\" width=\"302\" height=\"90\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"wb_15_status_dot\" cx=\"286\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"14\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">WB 15</text>\r\n      <g transform=\"translate(270, 45)\">\r\n        <circle cx=\"16\" cy=\"28\" r=\"14\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n        <line x1=\"16\" y1=\"28\" x2=\"16\" y2=\"20\" stroke=\"#64748b\" stroke-width=\"2\"/>\r\n      </g>\r\n      <text id=\"wb_15_value\" x=\"14\" y=\"74\" fill=\"#e2e8f0\" font-size=\"30\" font-weight=\"700\">--</text>\r\n      <text x=\"290\" y=\"78\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">mbar</text>\r\n    </g>\r\n    <!-- WB 17A -->\r\n    <g class=\"card\" transform=\"translate(1590, 0)\">\r\n      <rect class=\"card-bg\" width=\"302\" height=\"90\" rx=\"10\" fill=\"url(#cardGrad)\" stroke=\"#1e3a5f\" stroke-width=\"1\" filter=\"url(#dropShadow)\"/>\r\n      <circle id=\"wb_17a_status_dot\" cx=\"286\" cy=\"14\" r=\"6\" fill=\"#64748b\"/>\r\n      <text x=\"14\" y=\"24\" fill=\"#94a3b8\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">WB 17A</text>\r\n      <g transform=\"translate(270, 45)\">\r\n        <circle cx=\"16\" cy=\"28\" r=\"14\" fill=\"none\" stroke=\"#1e3a5f\" stroke-width=\"1.5\"/>\r\n        <line x1=\"16\" y1=\"28\" x2=\"16\" y2=\"20\" stroke=\"#64748b\" stroke-width=\"2\"/>\r\n      </g>\r\n      <text id=\"wb_17a_value\" x=\"14\" y=\"74\" fill=\"#e2e8f0\" font-size=\"30\" font-weight=\"700\">--</text>\r\n      <text x=\"290\" y=\"78\" fill=\"#64748b\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">mbar</text>\r\n    </g>\r\n  </g>\r\n\r\n  <!-- FOOTER -->\r\n  <rect x=\"0\" y=\"994\" width=\"1920\" height=\"86\" fill=\"#0a0f1c\" opacity=\"0.8\"/>\r\n  <line x1=\"0\" y1=\"994\" x2=\"1920\" y2=\"994\" stroke=\"#1e3a5f\" stroke-width=\"1\"/>\r\n  \r\n  <!-- Footer left -->\r\n  <text x=\"28\" y=\"1024\" fill=\"#475569\" font-size=\"10\" font-weight=\"600\" letter-spacing=\"1\">SP4 Sinter Plant Overview</text>\r\n  <text x=\"28\" y=\"1040\" fill=\"#475569\" font-size=\"9\">45 live bindings  •  Refresh 5s  •  Litmus Edge</text>\r\n  \r\n  <!-- Footer center - Animated status bar -->\r\n  <g transform=\"translate(700, 1020)\">\r\n    <rect x=\"0\" y=\"0\" width=\"400\" height=\"8\" rx=\"4\" fill=\"#1e3a5f\"/>\r\n    <rect x=\"0\" y=\"0\" width=\"200\" height=\"8\" rx=\"4\" fill=\"#00d97e\" opacity=\"0.7\">\r\n      <animate attributeName=\"opacity\" values=\"0.7;1;0.7\" dur=\"3s\" repeatCount=\"indefinite\"/>\r\n    </rect>\r\n    <text x=\"200\" y=\"24\" fill=\"#475569\" font-size=\"9\" font-weight=\"600\" text-anchor=\"middle\">ALL SYSTEMS OPERATIONAL</text>\r\n  </g>\r\n  \r\n  <!-- Footer right -->\r\n  <text x=\"1892\" y=\"1024\" fill=\"#475569\" font-size=\"10\" font-weight=\"600\" text-anchor=\"end\">Litmus Jay</text>\r\n  <text x=\"1892\" y=\"1040\" fill=\"#475569\" font-size=\"9\" text-anchor=\"end\">Tata Steel ESP</text>\r\n\r\n  <!-- SCAN LINE OVERLAY (subtle) -->\r\n  <rect width=\"1920\" height=\"1080\" fill=\"url(#bgGrad)\" opacity=\"0.03\" pointer-events=\"none\"/>\r\n</svg>",
+      "targets": [
+        {
+          "alias": "FURNACE_TEMPERATURE_1",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'FURNACE_TEMPERATURE_1' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "FURNACE_TEMPERATURE_2",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'FURNACE_TEMPERATURE_2' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "FURNACE_TEMPERATURE_3",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'FURNACE_TEMPERATURE_3' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "FURNACE_TEMPERATURE_5",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'FURNACE_TEMPERATURE_5' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "D",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "FURNACE_TEMPERATURE_6",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'FURNACE_TEMPERATURE_6' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "E",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_DE_X_VIBRATION",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_DE_X_VIBRATION' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "F",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_DE_Y_VIBRATION",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_DE_Y_VIBRATION' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "G",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_NDE_X_VIBRATION",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_NDE_X_VIBRATION' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "H",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_NDE_Y_VIBRATION",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_NDE_Y_VIBRATION' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "I",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_DE_BEARING_TEMPERATURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_DE_BEARING_TEMPERATURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "J",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_NDE_BEARING_TEMPERATURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_NDE_BEARING_TEMPERATURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "K",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_FAN_DE_LUBRICATIONOIL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_DE_LUBRICATIONOIL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "L",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF_MOTOR_DE_LUBRICATIONOIL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_MOTOR_DE_LUBRICATIONOIL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "M",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "STORAGE_BIN1_LEVEL",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'STORAGE_BIN1_LEVEL' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "N",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "STORAGE_BIN2_LEVEL",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'STORAGE_BIN2_LEVEL' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "O",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "STORAGE_BIN3_LEVEL",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'STORAGE_BIN3_LEVEL' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "P",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "STORAGE_BIN4_LEVEL",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'STORAGE_BIN4_LEVEL' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "Q",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "STORAGE_BIN5_LEVEL",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'STORAGE_BIN5_LEVEL' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "R",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "STORAGE_BIN6_LEVEL",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'STORAGE_BIN6_LEVEL' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "S",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "STORAGE_BIN7_LEVEL",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'STORAGE_BIN7_LEVEL' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "T",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "STORAGE_BIN8_LEVEL",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'STORAGE_BIN8_LEVEL' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "U",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "STORAGE_BIN9_LEVEL",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'STORAGE_BIN9_LEVEL' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "V",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "STORAGE_BIN10_LEVEL",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'STORAGE_BIN10_LEVEL' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "W",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "STORAGE_BIN11_LEVEL",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'STORAGE_BIN11_LEVEL' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "X",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "TR_1_SECONDARY_CURRENT_mA_",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'TR_1_SECONDARY_CURRENT_mA_' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "Y",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "TR_2_SECONDARY_CURRENT_mA_",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'TR_2_SECONDARY_CURRENT_mA_' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "Z",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "TR_3_SECONDARY_CURRENT_mA_",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'TR_3_SECONDARY_CURRENT_mA_' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AA",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "TR_4_SECONDARY_CURRENT_mA_",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'TR_4_SECONDARY_CURRENT_mA_' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AB",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "TR_5_SECONDARY_CURRENT_mA_",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'TR_5_SECONDARY_CURRENT_mA_' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AC",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "TR_6_SECONDARY_CURRENT_mA_",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'TR_6_SECONDARY_CURRENT_mA_' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AD",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "TR_7_SECONDARY_CURRENT_mA_",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'TR_7_SECONDARY_CURRENT_mA_' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AE",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "TR_8_SECONDARY_CURRENT_mA_",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'TR_8_SECONDARY_CURRENT_mA_' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AF",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "TR_9_SECONDARY_CURRENT_mA_",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'TR_9_SECONDARY_CURRENT_mA_' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AG",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "TR_10_SECONDARY_CURRENT_mA_",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'TR_10_SECONDARY_CURRENT_mA_' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AH",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "TR_11_SECONDARY_CURRENT_mA_",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'TR_11_SECONDARY_CURRENT_mA_' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AI",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "TR_12_SECONDARY_CURRENT_mA_",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'TR_12_SECONDARY_CURRENT_mA_' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AJ",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "TR_13_SECONDARY_CURRENT_mA_",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'TR_13_SECONDARY_CURRENT_mA_' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AK",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "TR_14_SECONDARY_CURRENT_mA_",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'TR_14_SECONDARY_CURRENT_mA_' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AL",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "TR_15_SECONDARY_CURRENT_mA_",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'TR_15_SECONDARY_CURRENT_mA_' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AM",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_11_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_11_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AN",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_12_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_12_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AO",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_13_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_13_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AP",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_14_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_14_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AQ",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_15_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_15_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AR",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_17A_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_17A_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AS",
+          "resultFormat": "time_series"
+        }
+      ],
+      "type": "marcuscalidus-svg-panel",
+      "useSVGBuilder": false
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "sp4",
+    "sinter",
+    "litmus",
+    "plant-overview"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "SP4 Sinter Plant — Plant Overview",
+  "uid": "sp4-plant-overview",
+  "version": 7,
+  "weekStart": ""
+}

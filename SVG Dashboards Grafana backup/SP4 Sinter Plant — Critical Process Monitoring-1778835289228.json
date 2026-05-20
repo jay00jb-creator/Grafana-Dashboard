@@ -1,0 +1,1569 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 12,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "aliasColors": {},
+      "datasource": {
+        "type": "influxdb",
+        "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+      },
+      "doInit": {},
+      "format": "short",
+      "gridPos": {
+        "h": 23,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "handleMetric": {},
+      "id": 1,
+      "js_code": "// ============================================================\n// SP4 Critical Process Monitoring — Marcus Calidus Events code\n// Series are bound in the same order as the queries (A, B, C, ...)\n// ============================================================\nvar series = (ctrl && ctrl.series) ? ctrl.series : [];\n \nfunction latestOf(s) {\n  if (!s) return null;\n  if (s.datapoints && s.datapoints.length) {\n    for (var i = s.datapoints.length - 1; i >= 0; i--) {\n      var v = s.datapoints[i][0];\n      if (v !== null && v !== undefined && !isNaN(v)) return v;\n    }\n  }\n  if (s.stats) {\n    if (s.stats.current !== undefined && s.stats.current !== null) return s.stats.current;\n    if (s.stats.last    !== undefined && s.stats.last    !== null) return s.stats.last;\n  }\n  return null;\n}\nfunction fmt(v, d) { return (v===null||v===undefined||isNaN(v))?'--':Number(v).toFixed(d); }\nfunction setAttr(id, attr, val) { var e=svgnode.getElementById(id); if(e) e.setAttribute(attr, val); }\nfunction setText(id, txt)       { var e=svgnode.getElementById(id); if(e) e.textContent = txt; }\n \nvar COLOR = { normal:'#22c55e', warning:'#f59e0b', critical:'#ef4444', nodata:'#475569' };\n \n// Heat-scale interpolation 0..40 mbar → blue → cyan → green → orange → red\nfunction dpColor(v) {\n  if (v===null || v===undefined || isNaN(v)) return '#1e3a5f';\n  var stops = [\n    {p:0,   c:[30,58,95]},     // #1e3a5f\n    {p:10,  c:[34,211,238]},   // #22d3ee\n    {p:20,  c:[34,197,94]},    // #22c55e\n    {p:30,  c:[245,158,11]},   // #f59e0b\n    {p:40,  c:[239,68,68]}     // #ef4444\n  ];\n  var x = Math.max(0, Math.min(40, v));\n  for (var i = 0; i < stops.length - 1; i++) {\n    if (x <= stops[i+1].p) {\n      var a = stops[i], b = stops[i+1];\n      var t = (x - a.p) / (b.p - a.p);\n      var r = Math.round(a.c[0] + (b.c[0]-a.c[0])*t);\n      var g = Math.round(a.c[1] + (b.c[1]-a.c[1])*t);\n      var bl= Math.round(a.c[2] + (b.c[2]-a.c[2])*t);\n      return 'rgb(' + r + ',' + g + ',' + bl + ')';\n    }\n  }\n  return '#ef4444';\n}\n \nvar level, v;\nvar values = {};            // collected for cross-section calcs\n \n \n// --- [0] wb2  (WINDBOX_2_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[0]);\nvalues['wb2'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb2_cell', 'fill', dpColor(v));\nsetText('wb2_label', fmt(v, 1));\nsetAttr('wb2_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n \n// --- [1] wb3  (WINDBOX_3_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[1]);\nvalues['wb3'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb3_cell', 'fill', dpColor(v));\nsetText('wb3_label', fmt(v, 1));\nsetAttr('wb3_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n \n// --- [2] wb4  (WINDBOX_4_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[2]);\nvalues['wb4'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb4_cell', 'fill', dpColor(v));\nsetText('wb4_label', fmt(v, 1));\nsetAttr('wb4_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n \n// --- [3] wb5  (WINDBOX_5_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[3]);\nvalues['wb5'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb5_cell', 'fill', dpColor(v));\nsetText('wb5_label', fmt(v, 1));\nsetAttr('wb5_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n \n// --- [4] wb6  (WINDBOX_6_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[4]);\nvalues['wb6'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb6_cell', 'fill', dpColor(v));\nsetText('wb6_label', fmt(v, 1));\nsetAttr('wb6_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n \n// --- [5] wb7  (WINDBOX_7_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[5]);\nvalues['wb7'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb7_cell', 'fill', dpColor(v));\nsetText('wb7_label', fmt(v, 1));\nsetAttr('wb7_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n \n// --- [6] wb8  (WINDBOX_8_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[6]);\nvalues['wb8'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb8_cell', 'fill', dpColor(v));\nsetText('wb8_label', fmt(v, 1));\nsetAttr('wb8_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n \n// --- [7] wb9  (WINDBOX_9_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[7]);\nvalues['wb9'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb9_cell', 'fill', dpColor(v));\nsetText('wb9_label', fmt(v, 1));\nsetAttr('wb9_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n \n// --- [8] wb10  (WINDBOX_10_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[8]);\nvalues['wb10'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb10_cell', 'fill', dpColor(v));\nsetText('wb10_label', fmt(v, 1));\nsetAttr('wb10_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n \n// --- [9] wb11  (WINDBOX_11_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[9]);\nvalues['wb11'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb11_cell', 'fill', dpColor(v));\nsetText('wb11_label', fmt(v, 1));\nsetAttr('wb11_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n \n// --- [10] wb13  (WINDBOX_13_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[10]);\nvalues['wb13'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb13_cell', 'fill', dpColor(v));\nsetText('wb13_label', fmt(v, 1));\nsetAttr('wb13_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n \n// --- [11] wb14  (WINDBOX_14_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[11]);\nvalues['wb14'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb14_cell', 'fill', dpColor(v));\nsetText('wb14_label', fmt(v, 1));\nsetAttr('wb14_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n \n// --- [12] wb15a  (WINDBOX_15A_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[12]);\nvalues['wb15a'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb15a_cell', 'fill', dpColor(v));\nsetText('wb15a_label', fmt(v, 1));\nsetAttr('wb15a_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n \n// --- [13] wb15b  (WINDBOX_15B_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[13]);\nvalues['wb15b'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb15b_cell', 'fill', dpColor(v));\nsetText('wb15b_label', fmt(v, 1));\nsetAttr('wb15b_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n \n// --- [14] wb16a  (WINDBOX_16A_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[14]);\nvalues['wb16a'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb16a_cell', 'fill', dpColor(v));\nsetText('wb16a_label', fmt(v, 1));\nsetAttr('wb16a_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n \n// --- [15] wb16b  (WINDBOX_16B_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[15]);\nvalues['wb16b'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb16b_cell', 'fill', dpColor(v));\nsetText('wb16b_label', fmt(v, 1));\nsetAttr('wb16b_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n \n// --- [16] wb17a  (WINDBOX_17A_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[16]);\nvalues['wb17a'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb17a_cell', 'fill', dpColor(v));\nsetText('wb17a_label', fmt(v, 1));\nsetAttr('wb17a_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n \n// --- [17] wb17b  (WINDBOX_17B_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[17]);\nvalues['wb17b'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb17b_cell', 'fill', dpColor(v));\nsetText('wb17b_label', fmt(v, 1));\nsetAttr('wb17b_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n \n// --- [18] e4ti21  (Applications_Application_2_E4TI021) ---\nv = latestOf(series[18]);\nvalues['e4ti21'] = v;\nlevel = (v===null)?'nodata':(v>1350?'critical':(v>=1200?'warning':'normal'));\nsetText('e4ti21_value', fmt(v, 0));\nsetAttr('e4ti21_status_dot', 'fill', COLOR[level]);\n \n// --- [19] e4ti22  (Applications_Application_2_E4TI022) ---\nv = latestOf(series[19]);\nvalues['e4ti22'] = v;\nlevel = (v===null)?'nodata':(v>1350?'critical':(v>=1200?'warning':'normal'));\nsetText('e4ti22_value', fmt(v, 0));\nsetAttr('e4ti22_status_dot', 'fill', COLOR[level]);\n \n// --- [20] e4ti23  (Applications_Application_2_E4TI023) ---\nv = latestOf(series[20]);\nvalues['e4ti23'] = v;\nlevel = (v===null)?'nodata':(v>1350?'critical':(v>=1200?'warning':'normal'));\nsetText('e4ti23_value', fmt(v, 0));\nsetAttr('e4ti23_status_dot', 'fill', COLOR[level]);\n \n// --- [21] e4ti24  (Applications_Application_2_E4TI024) ---\nv = latestOf(series[21]);\nvalues['e4ti24'] = v;\nlevel = (v===null)?'nodata':(v>1350?'critical':(v>=1200?'warning':'normal'));\nsetText('e4ti24_value', fmt(v, 0));\nsetAttr('e4ti24_status_dot', 'fill', COLOR[level]);\n \n// --- [22] e4ti25  (Applications_Application_2_E4TI025) ---\nv = latestOf(series[22]);\nvalues['e4ti25'] = v;\nlevel = (v===null)?'nodata':(v>1350?'critical':(v>=1200?'warning':'normal'));\nsetText('e4ti25_value', fmt(v, 0));\nsetAttr('e4ti25_status_dot', 'fill', COLOR[level]);\n \n// --- [23] e3ti31  (Applications_Application_1_E3TI031) ---\nv = latestOf(series[23]);\nvalues['e3ti31'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti31_value', fmt(v, 0));\nsetAttr('e3ti31_status_dot', 'fill', COLOR[level]);\n \n// --- [24] e3ti32  (Applications_Application_1_E3TI032) ---\nv = latestOf(series[24]);\nvalues['e3ti32'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti32_value', fmt(v, 0));\nsetAttr('e3ti32_status_dot', 'fill', COLOR[level]);\n \n// --- [25] e3ti33  (Applications_Application_1_E3TI033) ---\nv = latestOf(series[25]);\nvalues['e3ti33'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti33_value', fmt(v, 0));\nsetAttr('e3ti33_status_dot', 'fill', COLOR[level]);\n \n// --- [26] e3ti34  (Applications_Application_1_E3TI034) ---\nv = latestOf(series[26]);\nvalues['e3ti34'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti34_value', fmt(v, 0));\nsetAttr('e3ti34_status_dot', 'fill', COLOR[level]);\n \n// --- [27] e3ti35  (Applications_Application_1_E3TI035) ---\nv = latestOf(series[27]);\nvalues['e3ti35'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti35_value', fmt(v, 0));\nsetAttr('e3ti35_status_dot', 'fill', COLOR[level]);\n \n// --- [28] e3ti36  (Applications_Application_1_E3TI036) ---\nv = latestOf(series[28]);\nvalues['e3ti36'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti36_value', fmt(v, 0));\nsetAttr('e3ti36_status_dot', 'fill', COLOR[level]);\n \n// --- [29] e3ti37  (Applications_Application_1_E3TI037) ---\nv = latestOf(series[29]);\nvalues['e3ti37'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti37_value', fmt(v, 0));\nsetAttr('e3ti37_status_dot', 'fill', COLOR[level]);\n \n// --- [30] e3ti38  (Applications_Application_1_E3TI038) ---\nv = latestOf(series[30]);\nvalues['e3ti38'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti38_value', fmt(v, 0));\nsetAttr('e3ti38_status_dot', 'fill', COLOR[level]);\n \n// --- [31] e3ti39  (Applications_Application_1_E3TI039) ---\nv = latestOf(series[31]);\nvalues['e3ti39'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti39_value', fmt(v, 0));\nsetAttr('e3ti39_status_dot', 'fill', COLOR[level]);\n \n// --- [32] e3ti40  (Applications_Application_1_E3TI040) ---\nv = latestOf(series[32]);\nvalues['e3ti40'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti40_value', fmt(v, 0));\nsetAttr('e3ti40_status_dot', 'fill', COLOR[level]);\n \n// --- [33] e3ti41  (Applications_Application_1_E3TI041) ---\nv = latestOf(series[33]);\nvalues['e3ti41'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti41_value', fmt(v, 0));\nsetAttr('e3ti41_status_dot', 'fill', COLOR[level]);\n \n \n// ============================================================\n// SECTION 1 cross-calcs: BTP marker & strand status\n// ============================================================\n(function(){\n  var wbIds = [\"wb2\", \"wb3\", \"wb4\", \"wb5\", \"wb6\", \"wb7\", \"wb8\", \"wb9\", \"wb10\", \"wb11\", \"wb13\", \"wb14\", \"wb15a\", \"wb15b\", \"wb16a\", \"wb16b\", \"wb17a\", \"wb17b\"];\n  var centers = [71.9, 138.8, 205.6, 272.4, 339.3, 406.1, 472.9, 539.8, 606.6, 673.4, 740.3, 807.1, 873.9, 940.8, 1007.6, 1074.4, 1141.3, 1208.1];\n  // BTP = position of HOTTEST bed temp (E4TI021..025) — we use bed temps to locate it.\n  // Each bed temp covers ~3-4 windboxes. Map E4TI021..025 to windbox indices proportionally.\n  var bedTemps = [values['e4ti21'], values['e4ti22'], values['e4ti23'], values['e4ti24'], values['e4ti25']];\n  var validBed = bedTemps.filter(function(x){return x!==null && !isNaN(x);});\n  if (validBed.length > 0) {\n    // find hottest bed\n    var maxT = -Infinity, maxI = 0;\n    for (var i = 0; i < bedTemps.length; i++) {\n      if (bedTemps[i] !== null && bedTemps[i] > maxT) { maxT = bedTemps[i]; maxI = i; }\n    }\n    // Map bed sensor index (0..4) → windbox index (0..17). Bed sensor i covers WB at index round(i * 17/4)\n    var wbIdx = Math.round(maxI * (centers.length - 1) / 4);\n    var x = centers[wbIdx];\n    setAttr('btp_marker', 'transform', 'translate(' + x + ',' + 102 + ')');\n    setText('btp_marker_label', 'BTP·WB' + [\"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"10\", \"11\", \"13\", \"14\", \"15A\", \"15B\", \"16A\", \"16B\", \"17A\", \"17B\"][wbIdx]);\n  }\n \n  // Strand insight string\n  var dpVals = wbIds.map(function(id){ return values[id]; }).filter(function(x){return x!==null && !isNaN(x);});\n  if (dpVals.length > 0) {\n    var crit = wbIds.filter(function(id){ var v=values[id]; return v!==null && v>35; }).length;\n    var warn = wbIds.filter(function(id){ var v=values[id]; return v!==null && v>=25 && v<=35; }).length;\n    var msg = crit + ' critical · ' + warn + ' warning · ' + (dpVals.length - crit - warn) + ' normal';\n    setText('strand_insight', 'Strand status: ' + msg);\n  } else {\n    setText('strand_insight', 'Strand status: no data');\n  }\n})();\n \n// ============================================================\n// SECTION 2 cross-calcs: hood average / min-max / status\n// ============================================================\n(function(){\n  var hoodIds = [\"e3ti31\", \"e3ti32\", \"e3ti33\", \"e3ti34\", \"e3ti35\", \"e3ti36\", \"e3ti37\", \"e3ti38\", \"e3ti39\", \"e3ti40\", \"e3ti41\"];\n  var vals = hoodIds.map(function(id){ return values[id]; }).filter(function(x){return x!==null && !isNaN(x);});\n  if (vals.length === 0) {\n    setText('hood_avg_value', '--');\n    setText('hood_minmax_value', '-- / --');\n    setText('hood_status_text', 'no data');\n    return;\n  }\n  var sum=0, mn=Infinity, mx=-Infinity;\n  for (var i=0; i<vals.length; i++){ sum+=vals[i]; if(vals[i]<mn)mn=vals[i]; if(vals[i]>mx)mx=vals[i]; }\n  var avg = sum/vals.length;\n  setText('hood_avg_value', avg.toFixed(0));\n  setText('hood_minmax_value', mn.toFixed(0) + ' / ' + mx.toFixed(0));\n  var spread = mx - mn;\n  var statusMsg = vals.length + '/' + hoodIds.length + ' zones online · spread ' + spread.toFixed(0) + '°C';\n  if (spread > 150) statusMsg += ' · uneven combustion';\n  else if (avg > 1300) statusMsg += ' · over-fired';\n  else statusMsg += ' · balanced';\n  setText('hood_status_text', statusMsg);\n})();\n \n// ============================================================\n// SECTION 3 cross-calcs: radar polygon + stats\n// ============================================================\n(function(){\n  // Map ΔP values to radar points. Radar radius range: 0 (centre) -> 150 (outer)\n  // Scale: 0 mbar → r=0, 40 mbar → r=150\n  var axes = [\"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"10\", \"11\", \"13\", \"14\"];\n  var radii = [[0.0, -1.0], [0.5, -0.866], [0.866, -0.5], [1.0, 0.0], [0.866, 0.5], [0.5, 0.866], [0.0, 1.0], [-0.5, 0.866], [-0.866, 0.5], [-1.0, 0.0], [-0.866, -0.5], [-0.5, -0.866]];\n  var points = [];\n  var vs = [];\n  for (var i = 0; i < axes.length; i++) {\n    var id = 'wb' + axes[i].toLowerCase();\n    var v = values[id];\n    if (v === null || v === undefined || isNaN(v)) {\n      points.push('0,0');\n      continue;\n    }\n    vs.push(v);\n    var r = Math.max(0, Math.min(150, (v / 40) * 150));\n    var x = (radii[i][0] * r).toFixed(2);\n    var y = (radii[i][1] * r).toFixed(2);\n    points.push(x + ',' + y);\n  }\n  setAttr('radar_live', 'points', points.join(' '));\n \n  if (vs.length > 0) {\n    var sum=0, mn=Infinity, mx=-Infinity, mnId='', mxId='';\n    for (var j=0; j<vs.length; j++){\n      sum+=vs[j];\n      if (vs[j]<mn) { mn=vs[j]; mnId='WB'+axes[j]; }\n      if (vs[j]>mx) { mx=vs[j]; mxId='WB'+axes[j]; }\n    }\n    var avg = sum/vs.length;\n    setText('radar_max_label', 'Max ΔP: ' + mx.toFixed(1) + ' mbar (' + mxId + ')');\n    setText('radar_min_label', 'Min ΔP: ' + mn.toFixed(1) + ' mbar (' + mnId + ')');\n    setText('radar_avg_label', 'Mean ΔP: ' + avg.toFixed(1) + ' mbar');\n    setText('radar_spread_label', 'Spread: ' + (mx-mn).toFixed(1) + ' mbar');\n    var normal = vs.filter(function(x){return x < 25;}).length;\n    setText('radar_health_value', Math.round((normal / vs.length) * 100) + '%');\n  } else {\n    setText('radar_max_label', 'Max ΔP: --');\n    setText('radar_min_label', 'Min ΔP: --');\n    setText('radar_avg_label', 'Mean ΔP: --');\n    setText('radar_spread_label', 'Spread: --');\n    setText('radar_health_value', '--%');\n  }\n})();\n \n// Header timestamp\n(function(){\n  var t = new Date();\n  function pad(n){ return n<10?'0'+n:n; }\n  setText('header_updated', 'Updated ' + pad(t.getHours())+':'+pad(t.getMinutes())+':'+pad(t.getSeconds()));\n})();",
+      "js_init_code": "",
+      "links": [],
+      "maxDataPoints": 3,
+      "nullPointMode": "connected",
+      "options": {
+        "events_data": {
+          "events": []
+        },
+        "js_code_data": {
+          "js_code": "// ============================================================\n// SP4 Critical Process Monitoring — Marcus Calidus Events code\n// Series are bound in the same order as the queries (A, B, C, ...)\n// ============================================================\nvar series = (ctrl && ctrl.series) ? ctrl.series : [];\n\nfunction latestOf(s) {\n  if (!s) return null;\n  if (s.datapoints && s.datapoints.length) {\n    for (var i = s.datapoints.length - 1; i >= 0; i--) {\n      var v = s.datapoints[i][0];\n      if (v !== null && v !== undefined && !isNaN(v)) return v;\n    }\n  }\n  if (s.stats) {\n    if (s.stats.current !== undefined && s.stats.current !== null) return s.stats.current;\n    if (s.stats.last    !== undefined && s.stats.last    !== null) return s.stats.last;\n  }\n  return null;\n}\nfunction fmt(v, d) { return (v===null||v===undefined||isNaN(v))?'--':Number(v).toFixed(d); }\nfunction setAttr(id, attr, val) { var e=svgnode.getElementById(id); if(e) e.setAttribute(attr, val); }\nfunction setText(id, txt)       { var e=svgnode.getElementById(id); if(e) e.textContent = txt; }\n\nvar COLOR = { normal:'#22c55e', warning:'#f59e0b', critical:'#ef4444', nodata:'#475569' };\n\n// Heat-scale interpolation 0..40 mbar → blue → cyan → green → orange → red\nfunction dpColor(v) {\n  if (v===null || v===undefined || isNaN(v)) return '#1e3a5f';\n  var stops = [\n    {p:0,   c:[30,58,95]},     // #1e3a5f\n    {p:10,  c:[34,211,238]},   // #22d3ee\n    {p:20,  c:[34,197,94]},    // #22c55e\n    {p:30,  c:[245,158,11]},   // #f59e0b\n    {p:40,  c:[239,68,68]}     // #ef4444\n  ];\n  var x = Math.max(0, Math.min(40, v));\n  for (var i = 0; i < stops.length - 1; i++) {\n    if (x <= stops[i+1].p) {\n      var a = stops[i], b = stops[i+1];\n      var t = (x - a.p) / (b.p - a.p);\n      var r = Math.round(a.c[0] + (b.c[0]-a.c[0])*t);\n      var g = Math.round(a.c[1] + (b.c[1]-a.c[1])*t);\n      var bl= Math.round(a.c[2] + (b.c[2]-a.c[2])*t);\n      return 'rgb(' + r + ',' + g + ',' + bl + ')';\n    }\n  }\n  return '#ef4444';\n}\n\nvar level, v;\nvar values = {};            // collected for cross-section calcs\n\n\n// --- [0] wb2  (WINDBOX_2_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[0]);\nvalues['wb2'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb2_cell', 'fill', dpColor(v));\nsetText('wb2_label', fmt(v, 1));\nsetAttr('wb2_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n\n// --- [1] wb3  (WINDBOX_3_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[1]);\nvalues['wb3'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb3_cell', 'fill', dpColor(v));\nsetText('wb3_label', fmt(v, 1));\nsetAttr('wb3_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n\n// --- [2] wb4  (WINDBOX_4_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[2]);\nvalues['wb4'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb4_cell', 'fill', dpColor(v));\nsetText('wb4_label', fmt(v, 1));\nsetAttr('wb4_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n\n// --- [3] wb5  (WINDBOX_5_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[3]);\nvalues['wb5'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb5_cell', 'fill', dpColor(v));\nsetText('wb5_label', fmt(v, 1));\nsetAttr('wb5_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n\n// --- [4] wb6  (WINDBOX_6_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[4]);\nvalues['wb6'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb6_cell', 'fill', dpColor(v));\nsetText('wb6_label', fmt(v, 1));\nsetAttr('wb6_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n\n// --- [5] wb7  (WINDBOX_7_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[5]);\nvalues['wb7'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb7_cell', 'fill', dpColor(v));\nsetText('wb7_label', fmt(v, 1));\nsetAttr('wb7_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n\n// --- [6] wb8  (WINDBOX_8_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[6]);\nvalues['wb8'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb8_cell', 'fill', dpColor(v));\nsetText('wb8_label', fmt(v, 1));\nsetAttr('wb8_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n\n// --- [7] wb9  (WINDBOX_9_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[7]);\nvalues['wb9'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb9_cell', 'fill', dpColor(v));\nsetText('wb9_label', fmt(v, 1));\nsetAttr('wb9_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n\n// --- [8] wb10  (WINDBOX_10_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[8]);\nvalues['wb10'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb10_cell', 'fill', dpColor(v));\nsetText('wb10_label', fmt(v, 1));\nsetAttr('wb10_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n\n// --- [9] wb11  (WINDBOX_11_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[9]);\nvalues['wb11'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb11_cell', 'fill', dpColor(v));\nsetText('wb11_label', fmt(v, 1));\nsetAttr('wb11_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n\n// --- [10] wb13  (WINDBOX_13_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[10]);\nvalues['wb13'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb13_cell', 'fill', dpColor(v));\nsetText('wb13_label', fmt(v, 1));\nsetAttr('wb13_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n\n// --- [11] wb14  (WINDBOX_14_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[11]);\nvalues['wb14'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb14_cell', 'fill', dpColor(v));\nsetText('wb14_label', fmt(v, 1));\nsetAttr('wb14_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n\n// --- [12] wb15a  (WINDBOX_15A_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[12]);\nvalues['wb15a'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb15a_cell', 'fill', dpColor(v));\nsetText('wb15a_label', fmt(v, 1));\nsetAttr('wb15a_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n\n// --- [13] wb15b  (WINDBOX_15B_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[13]);\nvalues['wb15b'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb15b_cell', 'fill', dpColor(v));\nsetText('wb15b_label', fmt(v, 1));\nsetAttr('wb15b_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n\n// --- [14] wb16a  (WINDBOX_16A_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[14]);\nvalues['wb16a'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb16a_cell', 'fill', dpColor(v));\nsetText('wb16a_label', fmt(v, 1));\nsetAttr('wb16a_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n\n// --- [15] wb16b  (WINDBOX_16B_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[15]);\nvalues['wb16b'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb16b_cell', 'fill', dpColor(v));\nsetText('wb16b_label', fmt(v, 1));\nsetAttr('wb16b_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n\n// --- [16] wb17a  (WINDBOX_17A_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[16]);\nvalues['wb17a'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb17a_cell', 'fill', dpColor(v));\nsetText('wb17a_label', fmt(v, 1));\nsetAttr('wb17a_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n\n// --- [17] wb17b  (WINDBOX_17B_DIFFERENTIAL_PRESSURE) ---\nv = latestOf(series[17]);\nvalues['wb17b'] = v;\nlevel = (v===null)?'nodata':(v>35?'critical':(v>=25?'warning':'normal'));\nsetAttr('wb17b_cell', 'fill', dpColor(v));\nsetText('wb17b_label', fmt(v, 1));\nsetAttr('wb17b_label', 'fill', (v!==null && v>15)?'#0f172a':'#cbd5e1');\n\n// --- [18] e4ti21  (Applications_Application_2_E4TI021) ---\nv = latestOf(series[18]);\nvalues['e4ti21'] = v;\nlevel = (v===null)?'nodata':(v>1350?'critical':(v>=1200?'warning':'normal'));\nsetText('e4ti21_value', fmt(v, 0));\nsetAttr('e4ti21_status_dot', 'fill', COLOR[level]);\n\n// --- [19] e4ti22  (Applications_Application_2_E4TI022) ---\nv = latestOf(series[19]);\nvalues['e4ti22'] = v;\nlevel = (v===null)?'nodata':(v>1350?'critical':(v>=1200?'warning':'normal'));\nsetText('e4ti22_value', fmt(v, 0));\nsetAttr('e4ti22_status_dot', 'fill', COLOR[level]);\n\n// --- [20] e4ti23  (Applications_Application_2_E4TI023) ---\nv = latestOf(series[20]);\nvalues['e4ti23'] = v;\nlevel = (v===null)?'nodata':(v>1350?'critical':(v>=1200?'warning':'normal'));\nsetText('e4ti23_value', fmt(v, 0));\nsetAttr('e4ti23_status_dot', 'fill', COLOR[level]);\n\n// --- [21] e4ti24  (Applications_Application_2_E4TI024) ---\nv = latestOf(series[21]);\nvalues['e4ti24'] = v;\nlevel = (v===null)?'nodata':(v>1350?'critical':(v>=1200?'warning':'normal'));\nsetText('e4ti24_value', fmt(v, 0));\nsetAttr('e4ti24_status_dot', 'fill', COLOR[level]);\n\n// --- [22] e4ti25  (Applications_Application_2_E4TI025) ---\nv = latestOf(series[22]);\nvalues['e4ti25'] = v;\nlevel = (v===null)?'nodata':(v>1350?'critical':(v>=1200?'warning':'normal'));\nsetText('e4ti25_value', fmt(v, 0));\nsetAttr('e4ti25_status_dot', 'fill', COLOR[level]);\n\n// --- [23] e3ti31  (Applications_Application_1_E3TI031) ---\nv = latestOf(series[23]);\nvalues['e3ti31'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti31_value', fmt(v, 0));\nsetAttr('e3ti31_status_dot', 'fill', COLOR[level]);\n\n// --- [24] e3ti32  (Applications_Application_1_E3TI032) ---\nv = latestOf(series[24]);\nvalues['e3ti32'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti32_value', fmt(v, 0));\nsetAttr('e3ti32_status_dot', 'fill', COLOR[level]);\n\n// --- [25] e3ti33  (Applications_Application_1_E3TI033) ---\nv = latestOf(series[25]);\nvalues['e3ti33'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti33_value', fmt(v, 0));\nsetAttr('e3ti33_status_dot', 'fill', COLOR[level]);\n\n// --- [26] e3ti34  (Applications_Application_1_E3TI034) ---\nv = latestOf(series[26]);\nvalues['e3ti34'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti34_value', fmt(v, 0));\nsetAttr('e3ti34_status_dot', 'fill', COLOR[level]);\n\n// --- [27] e3ti35  (Applications_Application_1_E3TI035) ---\nv = latestOf(series[27]);\nvalues['e3ti35'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti35_value', fmt(v, 0));\nsetAttr('e3ti35_status_dot', 'fill', COLOR[level]);\n\n// --- [28] e3ti36  (Applications_Application_1_E3TI036) ---\nv = latestOf(series[28]);\nvalues['e3ti36'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti36_value', fmt(v, 0));\nsetAttr('e3ti36_status_dot', 'fill', COLOR[level]);\n\n// --- [29] e3ti37  (Applications_Application_1_E3TI037) ---\nv = latestOf(series[29]);\nvalues['e3ti37'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti37_value', fmt(v, 0));\nsetAttr('e3ti37_status_dot', 'fill', COLOR[level]);\n\n// --- [30] e3ti38  (Applications_Application_1_E3TI038) ---\nv = latestOf(series[30]);\nvalues['e3ti38'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti38_value', fmt(v, 0));\nsetAttr('e3ti38_status_dot', 'fill', COLOR[level]);\n\n// --- [31] e3ti39  (Applications_Application_1_E3TI039) ---\nv = latestOf(series[31]);\nvalues['e3ti39'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti39_value', fmt(v, 0));\nsetAttr('e3ti39_status_dot', 'fill', COLOR[level]);\n\n// --- [32] e3ti40  (Applications_Application_1_E3TI040) ---\nv = latestOf(series[32]);\nvalues['e3ti40'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti40_value', fmt(v, 0));\nsetAttr('e3ti40_status_dot', 'fill', COLOR[level]);\n\n// --- [33] e3ti41  (Applications_Application_1_E3TI041) ---\nv = latestOf(series[33]);\nvalues['e3ti41'] = v;\nlevel = (v===null)?'nodata':(v>1300?'critical':(v>=1200?'warning':'normal'));\nsetText('e3ti41_value', fmt(v, 0));\nsetAttr('e3ti41_status_dot', 'fill', COLOR[level]);\n\n\n// ============================================================\n// SECTION 1 cross-calcs: BTP marker & strand status\n// ============================================================\n(function(){\n  var wbIds = [\"wb2\", \"wb3\", \"wb4\", \"wb5\", \"wb6\", \"wb7\", \"wb8\", \"wb9\", \"wb10\", \"wb11\", \"wb13\", \"wb14\", \"wb15a\", \"wb15b\", \"wb16a\", \"wb16b\", \"wb17a\", \"wb17b\"];\n  var centers = [71.9, 138.8, 205.6, 272.4, 339.3, 406.1, 472.9, 539.8, 606.6, 673.4, 740.3, 807.1, 873.9, 940.8, 1007.6, 1074.4, 1141.3, 1208.1];\n  // BTP = position of HOTTEST bed temp (E4TI021..025) — we use bed temps to locate it.\n  // Each bed temp covers ~3-4 windboxes. Map E4TI021..025 to windbox indices proportionally.\n  var bedTemps = [values['e4ti21'], values['e4ti22'], values['e4ti23'], values['e4ti24'], values['e4ti25']];\n  var validBed = bedTemps.filter(function(x){return x!==null && !isNaN(x);});\n  if (validBed.length > 0) {\n    // find hottest bed\n    var maxT = -Infinity, maxI = 0;\n    for (var i = 0; i < bedTemps.length; i++) {\n      if (bedTemps[i] !== null && bedTemps[i] > maxT) { maxT = bedTemps[i]; maxI = i; }\n    }\n    // Map bed sensor index (0..4) → windbox index (0..17). Bed sensor i covers WB at index round(i * 17/4)\n    var wbIdx = Math.round(maxI * (centers.length - 1) / 4);\n    var x = centers[wbIdx];\n    setAttr('btp_marker', 'transform', 'translate(' + x + ',' + 102 + ')');\n    setText('btp_marker_label', 'BTP·WB' + [\"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"10\", \"11\", \"13\", \"14\", \"15A\", \"15B\", \"16A\", \"16B\", \"17A\", \"17B\"][wbIdx]);\n  }\n\n  // Strand insight string\n  var dpVals = wbIds.map(function(id){ return values[id]; }).filter(function(x){return x!==null && !isNaN(x);});\n  if (dpVals.length > 0) {\n    var crit = wbIds.filter(function(id){ var v=values[id]; return v!==null && v>35; }).length;\n    var warn = wbIds.filter(function(id){ var v=values[id]; return v!==null && v>=25 && v<=35; }).length;\n    var msg = crit + ' critical · ' + warn + ' warning · ' + (dpVals.length - crit - warn) + ' normal';\n    setText('strand_insight', 'Strand status: ' + msg);\n  } else {\n    setText('strand_insight', 'Strand status: no data');\n  }\n})();\n\n// ============================================================\n// SECTION 2 cross-calcs: hood average / min-max / status\n// ============================================================\n(function(){\n  var hoodIds = [\"e3ti31\", \"e3ti32\", \"e3ti33\", \"e3ti34\", \"e3ti35\", \"e3ti36\", \"e3ti37\", \"e3ti38\", \"e3ti39\", \"e3ti40\", \"e3ti41\"];\n  var vals = hoodIds.map(function(id){ return values[id]; }).filter(function(x){return x!==null && !isNaN(x);});\n  if (vals.length === 0) {\n    setText('hood_avg_value', '--');\n    setText('hood_minmax_value', '-- / --');\n    setText('hood_status_text', 'no data');\n    return;\n  }\n  var sum=0, mn=Infinity, mx=-Infinity;\n  for (var i=0; i<vals.length; i++){ sum+=vals[i]; if(vals[i]<mn)mn=vals[i]; if(vals[i]>mx)mx=vals[i]; }\n  var avg = sum/vals.length;\n  setText('hood_avg_value', avg.toFixed(0));\n  setText('hood_minmax_value', mn.toFixed(0) + ' / ' + mx.toFixed(0));\n  var spread = mx - mn;\n  var statusMsg = vals.length + '/' + hoodIds.length + ' zones online · spread ' + spread.toFixed(0) + '°C';\n  if (spread > 150) statusMsg += ' · uneven combustion';\n  else if (avg > 1300) statusMsg += ' · over-fired';\n  else statusMsg += ' · balanced';\n  setText('hood_status_text', statusMsg);\n})();\n\n// ============================================================\n// SECTION 3 cross-calcs: radar polygon + stats\n// ============================================================\n(function(){\n  // Map ΔP values to radar points. Radar radius range: 0 (centre) -> 150 (outer)\n  // Scale: 0 mbar → r=0, 40 mbar → r=150\n  var axes = [\"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"10\", \"11\", \"13\", \"14\"];\n  var radii = [[0.0, -1.0], [0.5, -0.866], [0.866, -0.5], [1.0, 0.0], [0.866, 0.5], [0.5, 0.866], [0.0, 1.0], [-0.5, 0.866], [-0.866, 0.5], [-1.0, 0.0], [-0.866, -0.5], [-0.5, -0.866]];\n  var points = [];\n  var vs = [];\n  for (var i = 0; i < axes.length; i++) {\n    var id = 'wb' + axes[i].toLowerCase();\n    var v = values[id];\n    if (v === null || v === undefined || isNaN(v)) {\n      points.push('0,0');\n      continue;\n    }\n    vs.push(v);\n    var r = Math.max(0, Math.min(150, (v / 40) * 150));\n    var x = (radii[i][0] * r).toFixed(2);\n    var y = (radii[i][1] * r).toFixed(2);\n    points.push(x + ',' + y);\n  }\n  setAttr('radar_live', 'points', points.join(' '));\n\n  if (vs.length > 0) {\n    var sum=0, mn=Infinity, mx=-Infinity, mnId='', mxId='';\n    for (var j=0; j<vs.length; j++){\n      sum+=vs[j];\n      if (vs[j]<mn) { mn=vs[j]; mnId='WB'+axes[j]; }\n      if (vs[j]>mx) { mx=vs[j]; mxId='WB'+axes[j]; }\n    }\n    var avg = sum/vs.length;\n    setText('radar_max_label', 'Max ΔP: ' + mx.toFixed(1) + ' mbar (' + mxId + ')');\n    setText('radar_min_label', 'Min ΔP: ' + mn.toFixed(1) + ' mbar (' + mnId + ')');\n    setText('radar_avg_label', 'Mean ΔP: ' + avg.toFixed(1) + ' mbar');\n    setText('radar_spread_label', 'Spread: ' + (mx-mn).toFixed(1) + ' mbar');\n    var normal = vs.filter(function(x){return x < 25;}).length;\n    setText('radar_health_value', Math.round((normal / vs.length) * 100) + '%');\n  } else {\n    setText('radar_max_label', 'Max ΔP: --');\n    setText('radar_min_label', 'Min ΔP: --');\n    setText('radar_avg_label', 'Mean ΔP: --');\n    setText('radar_spread_label', 'Spread: --');\n    setText('radar_health_value', '--%');\n  }\n})();\n\n// Header timestamp\n(function(){\n  var t = new Date();\n  function pad(n){ return n<10?'0'+n:n; }\n  setText('header_updated', 'Updated ' + pad(t.getHours())+':'+pad(t.getMinutes())+':'+pad(t.getSeconds()));\n})();\n"
+        },
+        "js_code_init_data": {
+          "js_code": "// no init needed"
+        },
+        "svg_data": {
+          "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1920 1080\" font-family=\"'Segoe UI', Arial, sans-serif\">\n  <defs>\n    <linearGradient id=\"bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\n      <stop offset=\"0\" stop-color=\"#0c1322\"/><stop offset=\"1\" stop-color=\"#0a1a2e\"/>\n    </linearGradient>\n    <linearGradient id=\"card\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\n      <stop offset=\"0\" stop-color=\"#152037\"/><stop offset=\"1\" stop-color=\"#0e192c\"/>\n    </linearGradient>\n    <linearGradient id=\"heatScale\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\">\n      <stop offset=\"0\" stop-color=\"#1e3a5f\"/>\n      <stop offset=\"0.25\" stop-color=\"#22d3ee\"/>\n      <stop offset=\"0.5\" stop-color=\"#22c55e\"/>\n      <stop offset=\"0.75\" stop-color=\"#f59e0b\"/>\n      <stop offset=\"1\" stop-color=\"#ef4444\"/>\n    </linearGradient>\n    <linearGradient id=\"flame\" x1=\"0\" y1=\"1\" x2=\"0\" y2=\"0\">\n      <stop offset=\"0\" stop-color=\"#fde047\"/>\n      <stop offset=\"0.5\" stop-color=\"#fb923c\"/>\n      <stop offset=\"1\" stop-color=\"#dc2626\"/>\n    </linearGradient>\n  </defs>\n  <rect width=\"1920\" height=\"1080\" fill=\"url(#bg)\"/>\n\n  <!-- HEADER -->\n  <rect x=\"0\" y=\"0\" width=\"1920\" height=\"84\" fill=\"#06101f\"/>\n  <text x=\"32\" y=\"34\" fill=\"#fbbf24\" font-size=\"12\" letter-spacing=\"4\">LITMUS EDGE  •  SP4 SINTER PLANT</text>\n  <text x=\"32\" y=\"64\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">Critical Process Monitoring</text>\n  <text x=\"1888\" y=\"34\" fill=\"#94a3b8\" font-size=\"12\" text-anchor=\"end\">18 windboxes  ·  11 hood zones  ·  5 strand bed temps</text>\n  <text x=\"1888\" y=\"58\" fill=\"#94a3b8\" font-size=\"12\" text-anchor=\"end\">DB: tsdata  ·  Measurement: SP4Iba.94F1A3D6…D360</text>\n  <text x=\"1888\" y=\"76\" fill=\"#94a3b8\" font-size=\"11\" text-anchor=\"end\" id=\"header_updated\">Updated --:--:--</text>\n  <rect x=\"0\" y=\"84\" width=\"1920\" height=\"2\" fill=\"#1e3a5f\"/>\n\n  <!-- ========== SECTION 1 — SINTER STRAND WINDBOX MAP ========== -->\n  <g transform=\"translate(24,100)\">\n    <rect width=\"1280\" height=\"460\" rx=\"14\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <text x=\"20\" y=\"32\" fill=\"#e2e8f0\" font-size=\"16\" font-weight=\"600\">Sinter Strand — Windbox Map (ΔP + Bed Temperatures + BTP)</text>\n    <text x=\"20\" y=\"52\" fill=\"#64748b\" font-size=\"11\">18 WINDBOX_*_DIFFERENTIAL_PRESSURE  ·  5 E4TI bed temps  ·  burn-through point follows hottest bed</text>\n\n    <!-- Strand layout: 18 cells across 1240px width with 4px gap -->\n    <!-- Windbox cells (filled by JS based on ΔP) -->\n    <rect id=\"wb2_cell\" x=\"40.0\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\n    <rect id=\"wb3_cell\" x=\"106.8\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\n    <rect id=\"wb4_cell\" x=\"173.7\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\n    <rect id=\"wb5_cell\" x=\"240.5\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\n    <rect id=\"wb6_cell\" x=\"307.3\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\n    <rect id=\"wb7_cell\" x=\"374.2\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\n    <rect id=\"wb8_cell\" x=\"441.0\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\n    <rect id=\"wb9_cell\" x=\"507.8\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\n    <rect id=\"wb10_cell\" x=\"574.7\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\n    <rect id=\"wb11_cell\" x=\"641.5\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\n    <rect id=\"wb13_cell\" x=\"708.3\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\n    <rect id=\"wb14_cell\" x=\"775.2\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\n    <rect id=\"wb15a_cell\" x=\"842.0\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\n    <rect id=\"wb15b_cell\" x=\"908.8\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\n    <rect id=\"wb16a_cell\" x=\"975.7\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\n    <rect id=\"wb16b_cell\" x=\"1042.5\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\n    <rect id=\"wb17a_cell\" x=\"1109.3\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\n    <rect id=\"wb17b_cell\" x=\"1176.2\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\n    <g font-size=\"10\" fill=\"#cbd5e1\" font-weight=\"600\">\n      <text x=\"71.9\" y=\"160\" text-anchor=\"middle\">WB2</text>\n      <text x=\"138.8\" y=\"160\" text-anchor=\"middle\">WB3</text>\n      <text x=\"205.6\" y=\"160\" text-anchor=\"middle\">WB4</text>\n      <text x=\"272.4\" y=\"160\" text-anchor=\"middle\">WB5</text>\n      <text x=\"339.3\" y=\"160\" text-anchor=\"middle\">WB6</text>\n      <text x=\"406.1\" y=\"160\" text-anchor=\"middle\">WB7</text>\n      <text x=\"472.9\" y=\"160\" text-anchor=\"middle\">WB8</text>\n      <text x=\"539.8\" y=\"160\" text-anchor=\"middle\">WB9</text>\n      <text x=\"606.6\" y=\"160\" text-anchor=\"middle\">WB10</text>\n      <text x=\"673.4\" y=\"160\" text-anchor=\"middle\">WB11</text>\n      <text x=\"740.3\" y=\"160\" text-anchor=\"middle\">WB13</text>\n      <text x=\"807.1\" y=\"160\" text-anchor=\"middle\">WB14</text>\n      <text x=\"873.9\" y=\"160\" text-anchor=\"middle\">WB15A</text>\n      <text x=\"940.8\" y=\"160\" text-anchor=\"middle\">WB15B</text>\n      <text x=\"1007.6\" y=\"160\" text-anchor=\"middle\">WB16A</text>\n      <text x=\"1074.4\" y=\"160\" text-anchor=\"middle\">WB16B</text>\n      <text x=\"1141.3\" y=\"160\" text-anchor=\"middle\">WB17A</text>\n      <text x=\"1208.1\" y=\"160\" text-anchor=\"middle\">WB17B</text>\n    </g>\n    <g font-size=\"10\" fill=\"#0f172a\" font-weight=\"700\">\n      <text id=\"wb2_label\" x=\"71.9\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\n      <text id=\"wb3_label\" x=\"138.8\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\n      <text id=\"wb4_label\" x=\"205.6\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\n      <text id=\"wb5_label\" x=\"272.4\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\n      <text id=\"wb6_label\" x=\"339.3\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\n      <text id=\"wb7_label\" x=\"406.1\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\n      <text id=\"wb8_label\" x=\"472.9\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\n      <text id=\"wb9_label\" x=\"539.8\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\n      <text id=\"wb10_label\" x=\"606.6\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\n      <text id=\"wb11_label\" x=\"673.4\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\n      <text id=\"wb13_label\" x=\"740.3\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\n      <text id=\"wb14_label\" x=\"807.1\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\n      <text id=\"wb15a_label\" x=\"873.9\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\n      <text id=\"wb15b_label\" x=\"940.8\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\n      <text id=\"wb16a_label\" x=\"1007.6\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\n      <text id=\"wb16b_label\" x=\"1074.4\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\n      <text id=\"wb17a_label\" x=\"1141.3\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\n      <text id=\"wb17b_label\" x=\"1208.1\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\n    </g>\n    <text x=\"40\" y=\"224\" fill=\"#64748b\" font-size=\"9\">ΔP (mbar) — colored by reading</text>\n    <g id=\"btp_marker\" transform=\"translate(614.5,102)\">\n      <line x1=\"0\" y1=\"6\" x2=\"0\" y2=\"28\" stroke=\"#ef4444\" stroke-width=\"2\" stroke-dasharray=\"4 3\"/>\n      <polygon points=\"-8,-2 8,-2 0,8\" fill=\"#ef4444\"/>\n      <text id=\"btp_marker_label\" x=\"0\" y=\"-8\" fill=\"#ef4444\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">BTP</text>\n    </g>\n    <!-- Strand bed temperature tiles (E4TI021..025) -->\n    <text x=\"40\" y=\"260\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\">STRAND BED TEMPERATURES  ·  E4TI021–025</text>\n    <g transform=\"translate(40.0,280)\">\n      <rect id=\"e4ti21_card\" width=\"230.4\" height=\"110\" rx=\"8\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <text x=\"14\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">E4TI021</text>\n      <circle id=\"e4ti21_status_dot\" cx=\"216.4\" cy=\"16\" r=\"5\" fill=\"#64748b\"/>\n      <text id=\"e4ti21_value\" x=\"14\" y=\"80\" fill=\"#e2e8f0\" font-size=\"34\" font-weight=\"700\">--</text>\n      <text x=\"216.4\" y=\"98\" fill=\"#64748b\" font-size=\"10\" text-anchor=\"end\">°C  ·  bed temp</text>\n    </g>\n    <g transform=\"translate(282.4,280)\">\n      <rect id=\"e4ti22_card\" width=\"230.4\" height=\"110\" rx=\"8\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <text x=\"14\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">E4TI022</text>\n      <circle id=\"e4ti22_status_dot\" cx=\"216.4\" cy=\"16\" r=\"5\" fill=\"#64748b\"/>\n      <text id=\"e4ti22_value\" x=\"14\" y=\"80\" fill=\"#e2e8f0\" font-size=\"34\" font-weight=\"700\">--</text>\n      <text x=\"216.4\" y=\"98\" fill=\"#64748b\" font-size=\"10\" text-anchor=\"end\">°C  ·  bed temp</text>\n    </g>\n    <g transform=\"translate(524.8,280)\">\n      <rect id=\"e4ti23_card\" width=\"230.4\" height=\"110\" rx=\"8\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <text x=\"14\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">E4TI023</text>\n      <circle id=\"e4ti23_status_dot\" cx=\"216.4\" cy=\"16\" r=\"5\" fill=\"#64748b\"/>\n      <text id=\"e4ti23_value\" x=\"14\" y=\"80\" fill=\"#e2e8f0\" font-size=\"34\" font-weight=\"700\">--</text>\n      <text x=\"216.4\" y=\"98\" fill=\"#64748b\" font-size=\"10\" text-anchor=\"end\">°C  ·  bed temp</text>\n    </g>\n    <g transform=\"translate(767.2,280)\">\n      <rect id=\"e4ti24_card\" width=\"230.4\" height=\"110\" rx=\"8\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <text x=\"14\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">E4TI024</text>\n      <circle id=\"e4ti24_status_dot\" cx=\"216.4\" cy=\"16\" r=\"5\" fill=\"#64748b\"/>\n      <text id=\"e4ti24_value\" x=\"14\" y=\"80\" fill=\"#e2e8f0\" font-size=\"34\" font-weight=\"700\">--</text>\n      <text x=\"216.4\" y=\"98\" fill=\"#64748b\" font-size=\"10\" text-anchor=\"end\">°C  ·  bed temp</text>\n    </g>\n    <g transform=\"translate(1009.6,280)\">\n      <rect id=\"e4ti25_card\" width=\"230.4\" height=\"110\" rx=\"8\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <text x=\"14\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">E4TI025</text>\n      <circle id=\"e4ti25_status_dot\" cx=\"216.4\" cy=\"16\" r=\"5\" fill=\"#64748b\"/>\n      <text id=\"e4ti25_value\" x=\"14\" y=\"80\" fill=\"#e2e8f0\" font-size=\"34\" font-weight=\"700\">--</text>\n      <text x=\"216.4\" y=\"98\" fill=\"#64748b\" font-size=\"10\" text-anchor=\"end\">°C  ·  bed temp</text>\n    </g>\n    <!-- Heat scale legend -->\n    <g transform=\"translate(40,420)\">\n      <text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"11\">ΔP scale:</text>\n      <rect x=\"80\" y=\"-10\" width=\"200\" height=\"10\" fill=\"url(#heatScale)\"/>\n      <text x=\"80\" y=\"16\" fill=\"#64748b\" font-size=\"9\">0</text>\n      <text x=\"180\" y=\"16\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"middle\">25 mbar</text>\n      <text x=\"280\" y=\"16\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">≥ 40</text>\n      <text id=\"strand_insight\" x=\"320\" y=\"0\" fill=\"#cbd5e1\" font-size=\"11\">Strand status: --</text>\n    </g>\n  </g>\n\n  <!-- ========== SECTION 2 — IGNITION HOOD ========== -->\n  <g transform=\"translate(1320,100)\">\n    <rect width=\"576\" height=\"460\" rx=\"14\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <text x=\"20\" y=\"32\" fill=\"#e2e8f0\" font-size=\"16\" font-weight=\"600\">Ignition Hood — Burner Zones</text>\n    <text x=\"20\" y=\"52\" fill=\"#64748b\" font-size=\"11\">11 E3TI hood-zone temperatures  ·  E3TI031 – E3TI041</text>\n\n    <!-- Flame icon + average -->\n    <g transform=\"translate(40,90)\">\n      <path d=\"M40 0 C 60 30 80 40 70 90 C 65 110 30 110 25 90 C 15 60 30 30 40 0 Z\" fill=\"url(#flame)\">\n        <animate attributeName=\"opacity\" values=\"0.85;1;0.85\" dur=\"1.5s\" repeatCount=\"indefinite\"/>\n      </path>\n      <text x=\"40\" y=\"135\" fill=\"#e2e8f0\" font-size=\"12\" text-anchor=\"middle\">Hood Avg</text>\n      <text id=\"hood_avg_value\" x=\"40\" y=\"165\" fill=\"#fbbf24\" font-size=\"26\" font-weight=\"700\" text-anchor=\"middle\">--</text>\n      <text x=\"40\" y=\"184\" fill=\"#64748b\" font-size=\"10\" text-anchor=\"middle\">°C</text>\n      <text x=\"40\" y=\"208\" fill=\"#94a3b8\" font-size=\"10\" text-anchor=\"middle\">min / max</text>\n      <text id=\"hood_minmax_value\" x=\"40\" y=\"226\" fill=\"#cbd5e1\" font-size=\"11\" text-anchor=\"middle\">-- / --</text>\n    </g>\n\n    <!-- Per-zone tiles, 4 cols x 3 rows = 12 slots, we use 11 -->\n    <g transform=\"translate(130,80)\">\n      <rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <circle id=\"e3ti31_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\n      <text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI031</text>\n      <text id=\"e3ti31_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\n      <text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n    </g>\n    <g transform=\"translate(248,80)\">\n      <rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <circle id=\"e3ti32_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\n      <text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI032</text>\n      <text id=\"e3ti32_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\n      <text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n    </g>\n    <g transform=\"translate(366,80)\">\n      <rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <circle id=\"e3ti33_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\n      <text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI033</text>\n      <text id=\"e3ti33_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\n      <text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n    </g>\n    <g transform=\"translate(484,80)\">\n      <rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <circle id=\"e3ti34_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\n      <text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI034</text>\n      <text id=\"e3ti34_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\n      <text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n    </g>\n    <g transform=\"translate(130,180)\">\n      <rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <circle id=\"e3ti35_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\n      <text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI035</text>\n      <text id=\"e3ti35_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\n      <text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n    </g>\n    <g transform=\"translate(248,180)\">\n      <rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <circle id=\"e3ti36_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\n      <text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI036</text>\n      <text id=\"e3ti36_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\n      <text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n    </g>\n    <g transform=\"translate(366,180)\">\n      <rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <circle id=\"e3ti37_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\n      <text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI037</text>\n      <text id=\"e3ti37_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\n      <text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n    </g>\n    <g transform=\"translate(484,180)\">\n      <rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <circle id=\"e3ti38_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\n      <text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI038</text>\n      <text id=\"e3ti38_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\n      <text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n    </g>\n    <g transform=\"translate(130,280)\">\n      <rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <circle id=\"e3ti39_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\n      <text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI039</text>\n      <text id=\"e3ti39_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\n      <text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n    </g>\n    <g transform=\"translate(248,280)\">\n      <rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <circle id=\"e3ti40_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\n      <text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI040</text>\n      <text id=\"e3ti40_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\n      <text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n    </g>\n    <g transform=\"translate(366,280)\">\n      <rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <circle id=\"e3ti41_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\n      <text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI041</text>\n      <text id=\"e3ti41_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\n      <text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\n    </g>\n    <text x=\"20\" y=\"440\" fill=\"#94a3b8\" font-size=\"11\">Status: <tspan id=\"hood_status_text\" fill=\"#cbd5e1\">--</tspan></text>\n  </g>\n\n  <!-- ========== SECTION 3 — WINDBOX ΔP RADAR ========== -->\n  <g transform=\"translate(24,580)\">\n    <rect width=\"720\" height=\"460\" rx=\"14\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\n    <text x=\"20\" y=\"32\" fill=\"#e2e8f0\" font-size=\"16\" font-weight=\"600\">Windbox ΔP — Permeability Radar</text>\n    <text x=\"20\" y=\"52\" fill=\"#64748b\" font-size=\"11\">12 windboxes mapped to radar axes  ·  lower ΔP = better bed permeability</text>\n\n    <!-- Radar -->\n    <g transform=\"translate(220,250)\">\n      <!-- rings -->\n      <circle cx=\"0\" cy=\"0\" r=\"50\" fill=\"none\" stroke=\"#1e3a5f\"/>\n      <circle cx=\"0\" cy=\"0\" r=\"100\" fill=\"none\" stroke=\"#1e3a5f\"/>\n      <circle cx=\"0\" cy=\"0\" r=\"150\" fill=\"none\" stroke=\"#1e3a5f\"/>\n      <text x=\"6\" y=\"-50\" fill=\"#475569\" font-size=\"9\">10</text>\n      <text x=\"6\" y=\"-100\" fill=\"#475569\" font-size=\"9\">25</text>\n      <text x=\"6\" y=\"-150\" fill=\"#475569\" font-size=\"9\">40 mbar</text>\n      <!-- radial axes -->\n      <g stroke=\"#1e3a5f\" opacity=\"0.5\">\n        <line x1=\"0\" y1=\"0\" x2=\"0.0\" y2=\"-150.0\"/>\n        <line x1=\"0\" y1=\"0\" x2=\"75.0\" y2=\"-129.9\"/>\n        <line x1=\"0\" y1=\"0\" x2=\"129.9\" y2=\"-75.0\"/>\n        <line x1=\"0\" y1=\"0\" x2=\"150.0\" y2=\"0.0\"/>\n        <line x1=\"0\" y1=\"0\" x2=\"129.9\" y2=\"75.0\"/>\n        <line x1=\"0\" y1=\"0\" x2=\"75.0\" y2=\"129.9\"/>\n        <line x1=\"0\" y1=\"0\" x2=\"0.0\" y2=\"150.0\"/>\n        <line x1=\"0\" y1=\"0\" x2=\"-75.0\" y2=\"129.9\"/>\n        <line x1=\"0\" y1=\"0\" x2=\"-129.9\" y2=\"75.0\"/>\n        <line x1=\"0\" y1=\"0\" x2=\"-150.0\" y2=\"0.0\"/>\n        <line x1=\"0\" y1=\"0\" x2=\"-129.9\" y2=\"-75.0\"/>\n        <line x1=\"0\" y1=\"0\" x2=\"-75.0\" y2=\"-129.9\"/>\n      </g>\n      <g font-size=\"9\" fill=\"#94a3b8\">\n        <text x=\"0.0\" y=\"-164.0\" text-anchor=\"middle\">WB2</text>\n        <text x=\"84.0\" y=\"-141.5\" text-anchor=\"start\">WB3</text>\n        <text x=\"145.5\" y=\"-80.0\" text-anchor=\"start\">WB4</text>\n        <text x=\"168.0\" y=\"4.0\" text-anchor=\"start\">WB5</text>\n        <text x=\"145.5\" y=\"88.0\" text-anchor=\"start\">WB6</text>\n        <text x=\"84.0\" y=\"149.5\" text-anchor=\"start\">WB7</text>\n        <text x=\"0.0\" y=\"172.0\" text-anchor=\"middle\">WB8</text>\n        <text x=\"-84.0\" y=\"149.5\" text-anchor=\"end\">WB9</text>\n        <text x=\"-145.5\" y=\"88.0\" text-anchor=\"end\">WB10</text>\n        <text x=\"-168.0\" y=\"4.0\" text-anchor=\"end\">WB11</text>\n        <text x=\"-145.5\" y=\"-80.0\" text-anchor=\"end\">WB13</text>\n        <text x=\"-84.0\" y=\"-141.5\" text-anchor=\"end\">WB14</text>\n      </g>\n      <polygon id=\"radar_live\" points=\"0,0\" fill=\"#fbbf24\" fill-opacity=\"0.25\" stroke=\"#fbbf24\" stroke-width=\"2\"/>\n      <circle cx=\"0\" cy=\"0\" r=\"3\" fill=\"#475569\"/>\n    </g>\n\n    <!-- Legend / insights -->\n    <g transform=\"translate(440,100)\">\n      <text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"11\" font-weight=\"600\">Live shift</text>\n      <rect x=\"0\" y=\"10\" width=\"14\" height=\"14\" fill=\"#fbbf24\" opacity=\"0.5\"/>\n      <text x=\"22\" y=\"22\" fill=\"#cbd5e1\" font-size=\"11\">Current ΔP (last 5 min)</text>\n\n      <text x=\"0\" y=\"60\" fill=\"#94a3b8\" font-size=\"11\" font-weight=\"600\">Insights</text>\n      <text id=\"radar_max_label\" x=\"0\" y=\"84\" fill=\"#cbd5e1\" font-size=\"11\">Max ΔP: --</text>\n      <text id=\"radar_min_label\" x=\"0\" y=\"104\" fill=\"#cbd5e1\" font-size=\"11\">Min ΔP: --</text>\n      <text id=\"radar_avg_label\" x=\"0\" y=\"124\" fill=\"#cbd5e1\" font-size=\"11\">Mean ΔP: --</text>\n      <text id=\"radar_spread_label\" x=\"0\" y=\"144\" fill=\"#cbd5e1\" font-size=\"11\">Spread: --</text>\n\n      <rect x=\"0\" y=\"170\" width=\"240\" height=\"56\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\n      <text x=\"10\" y=\"190\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">PERMEABILITY HEALTH</text>\n      <text id=\"radar_health_value\" x=\"230\" y=\"218\" fill=\"#fbbf24\" font-size=\"22\" font-weight=\"700\" text-anchor=\"end\">--</text>\n      <text x=\"10\" y=\"218\" fill=\"#94a3b8\" font-size=\"10\">% normal cells</text>\n    </g>\n  </g>\n\n  <!-- Footer note inside the SVG -->\n  <text x=\"28\" y=\"1060\" fill=\"#475569\" font-size=\"10\">SP4 Critical Process Monitoring  ·  34 SVG bindings  ·  refresh 5s  ·  trends + alarms below in native Grafana panels</text>\n  <text x=\"1892\" y=\"1060\" fill=\"#475569\" font-size=\"10\" text-anchor=\"end\">Marcus Calidus SVG  ·  Grafana 10.0.1</text>\n</svg>\n"
+        },
+        "useCustomBuiltinFunc": false,
+        "useEventsJSON": false,
+        "useSVGFile": false
+      },
+      "repositories": {
+        "rtmaster": {
+          "description": "simple examples",
+          "items": [
+            {
+              "category": "arrows",
+              "description": "Arrow facing up",
+              "name": "arrow-up",
+              "path": "rtmaster/arrows/arrow-up.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing down",
+              "name": "arrow-down",
+              "path": "rtmaster/arrows/arrow-down.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing right",
+              "name": "arrow-right",
+              "path": "rtmaster/arrows/arrow-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing left",
+              "name": "arrow-left",
+              "path": "rtmaster/arrows/arrow-left.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up right",
+              "name": "arrow-up-right",
+              "path": "rtmaster/arrows/arrow-up-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up left",
+              "name": "arrow-up-left",
+              "path": "rtmaster/arrows/arrow-up-left.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing down left",
+              "name": "arrow-down-left",
+              "path": "rtmaster/arrows/arrow-down-left.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing down right",
+              "name": "arrow-down-right",
+              "path": "rtmaster/arrows/arrow-down-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing left right",
+              "name": "arrow-left-right",
+              "path": "rtmaster/arrows/arrow-left-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up down",
+              "name": "arrow-up-down",
+              "path": "rtmaster/arrows/arrow-up-down.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up down left right",
+              "name": "arrow-up-down-left-right",
+              "path": "rtmaster/arrows/arrow-up-down-left-right.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Factory",
+              "name": "factory",
+              "path": "rtmaster/facilities/factory.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Jackup",
+              "name": "jackup",
+              "path": "rtmaster/facilities/jackup.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Plant",
+              "name": "plant",
+              "path": "rtmaster/facilities/plant.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Semisub",
+              "name": "semisub",
+              "path": "rtmaster/facilities/semisub.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Ship",
+              "name": "ship",
+              "path": "rtmaster/facilities/ship.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Truck",
+              "name": "truck",
+              "path": "rtmaster/facilities/truck.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Light Bulb",
+              "name": "light-bulb",
+              "path": "rtmaster/indicators/light-bulb.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Green Light Indicator",
+              "name": "light-green",
+              "path": "rtmaster/indicators/light-green.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Orange Light Indicator",
+              "name": "light-orange",
+              "path": "rtmaster/indicators/light-orange.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Red Light Indicator",
+              "name": "light-red",
+              "path": "rtmaster/indicators/light-red.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Compressor",
+              "name": "compressor",
+              "path": "rtmaster/industrial/compressor.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Derrick",
+              "name": "derrick",
+              "path": "rtmaster/industrial/derrick.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Heat Exchanger",
+              "name": "heatexchanger",
+              "path": "rtmaster/industrial/heatexchanger.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Motor",
+              "name": "motor",
+              "path": "rtmaster/industrial/motor.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Pump",
+              "name": "pump",
+              "path": "rtmaster/industrial/pump.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Horizontal Tank",
+              "name": "tank-horizontal",
+              "path": "rtmaster/industrial/tank-horizontal.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Vertical Tank",
+              "name": "tank-vertical",
+              "path": "rtmaster/industrial/tank-vertical.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Turbine",
+              "name": "turbine",
+              "path": "rtmaster/industrial/turbine.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Horizontal Vessel",
+              "name": "vessel-horizontal",
+              "path": "rtmaster/industrial/vessel-horizontal.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Vertical Vessel",
+              "name": "vessel-vertical",
+              "path": "rtmaster/industrial/vessel-vertical.svg"
+            },
+            {
+              "category": "letters",
+              "description": "A",
+              "name": "A",
+              "path": "rtmaster/letters/letter-a.svg"
+            },
+            {
+              "category": "letters",
+              "description": "B",
+              "name": "B",
+              "path": "rtmaster/letters/letter-b.svg"
+            },
+            {
+              "category": "letters",
+              "description": "C",
+              "name": "C",
+              "path": "rtmaster/letters/letter-c.svg"
+            },
+            {
+              "category": "letters",
+              "description": "D",
+              "name": "D",
+              "path": "rtmaster/letters/letter-d.svg"
+            },
+            {
+              "category": "letters",
+              "description": "E",
+              "name": "E",
+              "path": "rtmaster/letters/letter-e.svg"
+            },
+            {
+              "category": "letters",
+              "description": "F",
+              "name": "F",
+              "path": "rtmaster/letters/letter-f.svg"
+            },
+            {
+              "category": "letters",
+              "description": "G",
+              "name": "G",
+              "path": "rtmaster/letters/letter-g.svg"
+            },
+            {
+              "category": "letters",
+              "description": "H",
+              "name": "H",
+              "path": "rtmaster/letters/letter-h.svg"
+            },
+            {
+              "category": "letters",
+              "description": "I",
+              "name": "I",
+              "path": "rtmaster/letters/letter-i.svg"
+            },
+            {
+              "category": "letters",
+              "description": "J",
+              "name": "J",
+              "path": "rtmaster/letters/letter-j.svg"
+            },
+            {
+              "category": "letters",
+              "description": "K",
+              "name": "K",
+              "path": "rtmaster/letters/letter-k.svg"
+            },
+            {
+              "category": "letters",
+              "description": "L",
+              "name": "L",
+              "path": "rtmaster/letters/letter-l.svg"
+            },
+            {
+              "category": "letters",
+              "description": "M",
+              "name": "M",
+              "path": "rtmaster/letters/letter-m.svg"
+            },
+            {
+              "category": "letters",
+              "description": "N",
+              "name": "N",
+              "path": "rtmaster/letters/letter-n.svg"
+            },
+            {
+              "category": "letters",
+              "description": "O",
+              "name": "O",
+              "path": "rtmaster/letters/letter-o.svg"
+            },
+            {
+              "category": "letters",
+              "description": "P",
+              "name": "P",
+              "path": "rtmaster/letters/letter-p.svg"
+            },
+            {
+              "category": "letters",
+              "description": "Q",
+              "name": "Q",
+              "path": "rtmaster/letters/letter-q.svg"
+            },
+            {
+              "category": "letters",
+              "description": "R",
+              "name": "R",
+              "path": "rtmaster/letters-letter-r.svg"
+            },
+            {
+              "category": "letters",
+              "description": "S",
+              "name": "S",
+              "path": "rtmaster/letters/letter-s.svg"
+            },
+            {
+              "category": "letters",
+              "description": "T",
+              "name": "T",
+              "path": "rtmaster/letters/letter-t.svg"
+            },
+            {
+              "category": "letters",
+              "description": "U",
+              "name": "U",
+              "path": "rtmaster/letters/letter-u.svg"
+            },
+            {
+              "category": "letters",
+              "description": "V",
+              "name": "V",
+              "path": "rtmaster/letters/letter-v.svg"
+            },
+            {
+              "category": "letters",
+              "description": "W",
+              "name": "W",
+              "path": "rtmaster/letters/letter-w.svg"
+            },
+            {
+              "category": "letters",
+              "description": "X",
+              "name": "X",
+              "path": "rtmaster/letters/letter-x.svg"
+            },
+            {
+              "category": "letters",
+              "description": "Y",
+              "name": "Y",
+              "path": "rtmaster/letters/letter-y.svg"
+            },
+            {
+              "category": "letters",
+              "description": "Z",
+              "name": "Z",
+              "path": "rtmaster/letters/letter-z.svg"
+            },
+            {
+              "category": "meters",
+              "description": "Laboratory Flask",
+              "name": "flask",
+              "path": "rtmaster/meters/flask.svg"
+            },
+            {
+              "category": "meters",
+              "description": "Flowmeter",
+              "name": "flowmeter",
+              "path": "rtmaster/meters/flowmeter.svg"
+            },
+            {
+              "category": "meters",
+              "description": "Gauge",
+              "name": "gauge",
+              "path": "rtmaster/meters/gauge.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "0",
+              "name": "0",
+              "path": "rtmaster/numbers/number-0.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "1",
+              "name": "1",
+              "path": "rtmaster/numbers/number-1.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "2",
+              "name": "2",
+              "path": "rtmaster/numbers/number-2.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "3",
+              "name": "3",
+              "path": "rtmaster/numbers/number-3.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "4",
+              "name": "4",
+              "path": "rtmaster/numbers/number-4.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "5",
+              "name": "5",
+              "path": "rtmaster/numbers/number-5.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "6",
+              "name": "6",
+              "path": "rtmaster/numbers/number-6.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "7",
+              "name": "7",
+              "path": "rtmaster/numbers/number-7.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "8",
+              "name": "8",
+              "path": "rtmaster/numbers/number-8.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "9",
+              "name": "9",
+              "path": "rtmaster/numbers/number-9.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve down",
+              "name": "pipe-curve-down",
+              "path": "rtmaster/pipes/pipe-curve-down.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve down left",
+              "name": "pipe-curve-down-left",
+              "path": "rtmaster/pipes/pipe-curve-down-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve down right",
+              "name": "pipe-curve-down-right",
+              "path": "rtmaster/pipes/pipe-curve-down-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve left",
+              "name": "pipe-curve-left",
+              "path": "rtmaster/pipes/pipe-curve-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve right",
+              "name": "pipe-curve-right",
+              "path": "rtmaster/pipes/pipe-curve-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve up",
+              "name": "pipe-curve-up",
+              "path": "rtmaster/pipes/pipe-curve-up.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve up left",
+              "name": "pipe-curve-up-left",
+              "path": "rtmaster/pipes/pipe-curve-up-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve up right",
+              "name": "pipe-curve-up-right",
+              "path": "rtmaster/pipes/pipe-curve-up-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe diagonal left",
+              "name": "pipe-diagonal-left",
+              "path": "rtmaster/pipes/pipe-diagonal-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe diagonal right",
+              "name": "pipe-diagonal-right",
+              "path": "rtmaster/pipes/pipe-diagonal-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe flange horizontal",
+              "name": "pipe-flange-horizontal",
+              "path": "rtmaster/pipes/pipe-flange-horizontal.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe flange intersection",
+              "name": "pipe-flange-intersection",
+              "path": "rtmaster/pipes/pipe-flange-intersection.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe flange vertical",
+              "name": "pipe-flange-vertical",
+              "path": "rtmaster/pipes/pipe-flange-vertical.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe horizontal",
+              "name": "pipe-horizontal",
+              "path": "rtmaster/pipes/pipe-horizontal.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee down",
+              "name": "pipe-tee-down",
+              "path": "rtmaster/pipes/pipe-tee-down.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee left",
+              "name": "pipe-tee-left",
+              "path": "rtmaster/pipes/pipe-tee-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee right",
+              "name": "pipe-tee-right",
+              "path": "rtmaster/pipes/pipe-tee-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee up",
+              "name": "pipe-tee-up",
+              "path": "rtmaster/pipes/pipe-tee-up"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe vertical",
+              "name": "pipe-vertical",
+              "path": "rtmaster/pipes/pipe-vertical.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Circle",
+              "name": "circle",
+              "path": "rtmaster/shapes/circle.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Gear",
+              "name": "gear",
+              "path": "rtmaster/shapes/gear.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line horizontal",
+              "name": "line-horizontal",
+              "path": "rtmaster/shapes/line-horizontal.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line horizontal arrow left",
+              "name": "line-horizontal-arrow-left",
+              "path": "rtmaster/shapes/line-horizontal-arrow-left.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line horizontal arrow right",
+              "name": "line-horizontal-arrow-right",
+              "path": "rtmaster/shapes/line-horizontal-arrow-right.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line vertical",
+              "name": "line-vertical",
+              "path": "rtmaster/shapes/line-vertical.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line vertical arrow down",
+              "name": "line-vertical-arrow-down",
+              "path": "rtmaster/shapes/line-vertical-arrow-down.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line vertical arrow up",
+              "name": "line-vertical-arrow-up",
+              "path": "rtmaster/shapes/line-vertical-arrow-up.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Square",
+              "name": "square",
+              "path": "rtmaster/shapes/square.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle down",
+              "name": "triangle-down",
+              "path": "rtmaster/shapes/triangle-down.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle left",
+              "name": "triangle-left",
+              "path": "rtmaster/shapes/triangle-left.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle right",
+              "name": "triangle-right",
+              "path": "rtmaster/shapes/triangle-right.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle-up",
+              "name": "triangle-up",
+              "path": "rtmaster/shapes/triangle-up.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve Horizontal",
+              "name": "valve-horizontal",
+              "path": "rtmaster/valves/valve-horizontal.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve left right",
+              "name": "valve-left-right",
+              "path": "rtmaster/valves/valve-left-right.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round down",
+              "name": "valve-round-down",
+              "path": "rtmaster/valves/valve-round-down.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round left",
+              "name": "valve-round-left",
+              "path": "rtmaster/valves/valve-round-left.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round right",
+              "name": "valve-round-right",
+              "path": "rtmaster/valves/valve-round-right.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round up",
+              "name": "valve-round-up",
+              "path": "rtmaster/valves/valve-round-up.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square down",
+              "name": "valve-square-down",
+              "path": "rtmaster/valves/valve-square-down.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square left",
+              "name": "valve-square-left",
+              "path": "rtmaster/valves/valve-square-left.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square right",
+              "name": "valve-square-right",
+              "path": "rtmaster/valves/valve-square-right.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square up",
+              "name": "valve-square-up",
+              "path": "rtmaster/valves/valve-square-up.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve vertical",
+              "name": "valve-vertical",
+              "path": "rtmaster/valves/valve-vertical"
+            }
+          ],
+          "license": "Apache 2.0",
+          "url": "https://github.com/rtmaster"
+        }
+      },
+      "svgBuilderData": {
+        "elements": [],
+        "height": "100%",
+        "viewport": {
+          "height": 1000,
+          "width": 1000,
+          "x": 0,
+          "y": 0
+        },
+        "width": "100%"
+      },
+      "svg_data": "\r\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1920 1080\" font-family=\"'Segoe UI', Arial, sans-serif\">\r\n<defs>\r\n<linearGradient id=\"bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\r\n<stop offset=\"0\" stop-color=\"#0c1322\"/><stop offset=\"1\" stop-color=\"#0a1a2e\"/>\r\n</linearGradient>\r\n<linearGradient id=\"card\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\">\r\n<stop offset=\"0\" stop-color=\"#152037\"/><stop offset=\"1\" stop-color=\"#0e192c\"/>\r\n</linearGradient>\r\n<linearGradient id=\"heatScale\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\">\r\n<stop offset=\"0\" stop-color=\"#1e3a5f\"/>\r\n<stop offset=\"0.25\" stop-color=\"#22d3ee\"/>\r\n<stop offset=\"0.5\" stop-color=\"#22c55e\"/>\r\n<stop offset=\"0.75\" stop-color=\"#f59e0b\"/>\r\n<stop offset=\"1\" stop-color=\"#ef4444\"/>\r\n</linearGradient>\r\n<linearGradient id=\"flame\" x1=\"0\" y1=\"1\" x2=\"0\" y2=\"0\">\r\n<stop offset=\"0\" stop-color=\"#fde047\"/>\r\n<stop offset=\"0.5\" stop-color=\"#fb923c\"/>\r\n<stop offset=\"1\" stop-color=\"#dc2626\"/>\r\n</linearGradient>\r\n</defs>\r\n<rect width=\"1920\" height=\"1080\" fill=\"url(#bg)\"/>\r\n\r\n \r\n\r\n  <!-- HEADER -->\r\n<rect x=\"0\" y=\"0\" width=\"1920\" height=\"84\" fill=\"#06101f\"/>\r\n<text x=\"32\" y=\"34\" fill=\"#fbbf24\" font-size=\"12\" letter-spacing=\"4\">LITMUS EDGE  •  SP4 SINTER PLANT</text>\r\n<text x=\"32\" y=\"64\" fill=\"#e2e8f0\" font-size=\"26\" font-weight=\"700\">Critical Process Monitoring</text>\r\n<text x=\"1888\" y=\"34\" fill=\"#94a3b8\" font-size=\"12\" text-anchor=\"end\">18 windboxes  ·  11 hood zones  ·  5 strand bed temps</text>\r\n<text x=\"1888\" y=\"58\" fill=\"#94a3b8\" font-size=\"12\" text-anchor=\"end\">DB: tsdata  ·  Measurement: SP4Iba.94F1A3D6…D360</text>\r\n<text x=\"1888\" y=\"76\" fill=\"#94a3b8\" font-size=\"11\" text-anchor=\"end\" id=\"header_updated\">Updated --:--:--</text>\r\n<rect x=\"0\" y=\"84\" width=\"1920\" height=\"2\" fill=\"#1e3a5f\"/>\r\n\r\n \r\n\r\n  <!-- ========== SECTION 1 — SINTER STRAND WINDBOX MAP ========== -->\r\n<g transform=\"translate(24,100)\">\r\n<rect width=\"1280\" height=\"460\" rx=\"14\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\r\n<text x=\"20\" y=\"32\" fill=\"#e2e8f0\" font-size=\"16\" font-weight=\"600\">Sinter Strand — Windbox Map (ΔP + Bed Temperatures + BTP)</text>\r\n<text x=\"20\" y=\"52\" fill=\"#64748b\" font-size=\"11\">18 WINDBOX_*_DIFFERENTIAL_PRESSURE  ·  5 E4TI bed temps  ·  burn-through point follows hottest bed</text>\r\n\r\n \r\n\r\n    <!-- Strand layout: 18 cells across 1240px width with 4px gap -->\r\n<!-- Windbox cells (filled by JS based on ΔP) -->\r\n<rect id=\"wb2_cell\" x=\"40.0\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\r\n<rect id=\"wb3_cell\" x=\"106.8\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\r\n<rect id=\"wb4_cell\" x=\"173.7\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\r\n<rect id=\"wb5_cell\" x=\"240.5\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\r\n<rect id=\"wb6_cell\" x=\"307.3\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\r\n<rect id=\"wb7_cell\" x=\"374.2\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\r\n<rect id=\"wb8_cell\" x=\"441.0\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\r\n<rect id=\"wb9_cell\" x=\"507.8\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\r\n<rect id=\"wb10_cell\" x=\"574.7\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\r\n<rect id=\"wb11_cell\" x=\"641.5\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\r\n<rect id=\"wb13_cell\" x=\"708.3\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\r\n<rect id=\"wb14_cell\" x=\"775.2\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\r\n<rect id=\"wb15a_cell\" x=\"842.0\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\r\n<rect id=\"wb15b_cell\" x=\"908.8\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\r\n<rect id=\"wb16a_cell\" x=\"975.7\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\r\n<rect id=\"wb16b_cell\" x=\"1042.5\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\r\n<rect id=\"wb17a_cell\" x=\"1109.3\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\r\n<rect id=\"wb17b_cell\" x=\"1176.2\" y=\"130\" width=\"63.8\" height=\"80\" fill=\"#1e3a5f\" stroke=\"#0a1a2e\" stroke-width=\"0.5\"/>\r\n<g font-size=\"10\" fill=\"#cbd5e1\" font-weight=\"600\">\r\n<text x=\"71.9\" y=\"160\" text-anchor=\"middle\">WB2</text>\r\n<text x=\"138.8\" y=\"160\" text-anchor=\"middle\">WB3</text>\r\n<text x=\"205.6\" y=\"160\" text-anchor=\"middle\">WB4</text>\r\n<text x=\"272.4\" y=\"160\" text-anchor=\"middle\">WB5</text>\r\n<text x=\"339.3\" y=\"160\" text-anchor=\"middle\">WB6</text>\r\n<text x=\"406.1\" y=\"160\" text-anchor=\"middle\">WB7</text>\r\n<text x=\"472.9\" y=\"160\" text-anchor=\"middle\">WB8</text>\r\n<text x=\"539.8\" y=\"160\" text-anchor=\"middle\">WB9</text>\r\n<text x=\"606.6\" y=\"160\" text-anchor=\"middle\">WB10</text>\r\n<text x=\"673.4\" y=\"160\" text-anchor=\"middle\">WB11</text>\r\n<text x=\"740.3\" y=\"160\" text-anchor=\"middle\">WB13</text>\r\n<text x=\"807.1\" y=\"160\" text-anchor=\"middle\">WB14</text>\r\n<text x=\"873.9\" y=\"160\" text-anchor=\"middle\">WB15A</text>\r\n<text x=\"940.8\" y=\"160\" text-anchor=\"middle\">WB15B</text>\r\n<text x=\"1007.6\" y=\"160\" text-anchor=\"middle\">WB16A</text>\r\n<text x=\"1074.4\" y=\"160\" text-anchor=\"middle\">WB16B</text>\r\n<text x=\"1141.3\" y=\"160\" text-anchor=\"middle\">WB17A</text>\r\n<text x=\"1208.1\" y=\"160\" text-anchor=\"middle\">WB17B</text>\r\n</g>\r\n<g font-size=\"10\" fill=\"#0f172a\" font-weight=\"700\">\r\n<text id=\"wb2_label\" x=\"71.9\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\r\n<text id=\"wb3_label\" x=\"138.8\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\r\n<text id=\"wb4_label\" x=\"205.6\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\r\n<text id=\"wb5_label\" x=\"272.4\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\r\n<text id=\"wb6_label\" x=\"339.3\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\r\n<text id=\"wb7_label\" x=\"406.1\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\r\n<text id=\"wb8_label\" x=\"472.9\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\r\n<text id=\"wb9_label\" x=\"539.8\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\r\n<text id=\"wb10_label\" x=\"606.6\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\r\n<text id=\"wb11_label\" x=\"673.4\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\r\n<text id=\"wb13_label\" x=\"740.3\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\r\n<text id=\"wb14_label\" x=\"807.1\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\r\n<text id=\"wb15a_label\" x=\"873.9\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\r\n<text id=\"wb15b_label\" x=\"940.8\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\r\n<text id=\"wb16a_label\" x=\"1007.6\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\r\n<text id=\"wb16b_label\" x=\"1074.4\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\r\n<text id=\"wb17a_label\" x=\"1141.3\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\r\n<text id=\"wb17b_label\" x=\"1208.1\" y=\"180\" text-anchor=\"middle\" fill=\"#cbd5e1\">--</text>\r\n</g>\r\n<text x=\"40\" y=\"224\" fill=\"#64748b\" font-size=\"9\">ΔP (mbar) — colored by reading</text>\r\n<g id=\"btp_marker\" transform=\"translate(614.5,102)\">\r\n<line x1=\"0\" y1=\"6\" x2=\"0\" y2=\"28\" stroke=\"#ef4444\" stroke-width=\"2\" stroke-dasharray=\"4 3\"/>\r\n<polygon points=\"-8,-2 8,-2 0,8\" fill=\"#ef4444\"/>\r\n<text id=\"btp_marker_label\" x=\"0\" y=\"-8\" fill=\"#ef4444\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">BTP</text>\r\n</g>\r\n<!-- Strand bed temperature tiles (E4TI021..025) -->\r\n<text x=\"40\" y=\"260\" fill=\"#94a3b8\" font-size=\"11\" letter-spacing=\"2\">STRAND BED TEMPERATURES  ·  E4TI021–025</text>\r\n<g transform=\"translate(40.0,280)\">\r\n<rect id=\"e4ti21_card\" width=\"230.4\" height=\"110\" rx=\"8\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\r\n<text x=\"14\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">E4TI021</text>\r\n<circle id=\"e4ti21_status_dot\" cx=\"216.4\" cy=\"16\" r=\"5\" fill=\"#64748b\"/>\r\n<text id=\"e4ti21_value\" x=\"14\" y=\"80\" fill=\"#e2e8f0\" font-size=\"34\" font-weight=\"700\">--</text>\r\n<text x=\"216.4\" y=\"98\" fill=\"#64748b\" font-size=\"10\" text-anchor=\"end\">°C  ·  bed temp</text>\r\n</g>\r\n<g transform=\"translate(282.4,280)\">\r\n<rect id=\"e4ti22_card\" width=\"230.4\" height=\"110\" rx=\"8\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\r\n<text x=\"14\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">E4TI022</text>\r\n<circle id=\"e4ti22_status_dot\" cx=\"216.4\" cy=\"16\" r=\"5\" fill=\"#64748b\"/>\r\n<text id=\"e4ti22_value\" x=\"14\" y=\"80\" fill=\"#e2e8f0\" font-size=\"34\" font-weight=\"700\">--</text>\r\n<text x=\"216.4\" y=\"98\" fill=\"#64748b\" font-size=\"10\" text-anchor=\"end\">°C  ·  bed temp</text>\r\n</g>\r\n<g transform=\"translate(524.8,280)\">\r\n<rect id=\"e4ti23_card\" width=\"230.4\" height=\"110\" rx=\"8\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\r\n<text x=\"14\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">E4TI023</text>\r\n<circle id=\"e4ti23_status_dot\" cx=\"216.4\" cy=\"16\" r=\"5\" fill=\"#64748b\"/>\r\n<text id=\"e4ti23_value\" x=\"14\" y=\"80\" fill=\"#e2e8f0\" font-size=\"34\" font-weight=\"700\">--</text>\r\n<text x=\"216.4\" y=\"98\" fill=\"#64748b\" font-size=\"10\" text-anchor=\"end\">°C  ·  bed temp</text>\r\n</g>\r\n<g transform=\"translate(767.2,280)\">\r\n<rect id=\"e4ti24_card\" width=\"230.4\" height=\"110\" rx=\"8\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\r\n<text x=\"14\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">E4TI024</text>\r\n<circle id=\"e4ti24_status_dot\" cx=\"216.4\" cy=\"16\" r=\"5\" fill=\"#64748b\"/>\r\n<text id=\"e4ti24_value\" x=\"14\" y=\"80\" fill=\"#e2e8f0\" font-size=\"34\" font-weight=\"700\">--</text>\r\n<text x=\"216.4\" y=\"98\" fill=\"#64748b\" font-size=\"10\" text-anchor=\"end\">°C  ·  bed temp</text>\r\n</g>\r\n<g transform=\"translate(1009.6,280)\">\r\n<rect id=\"e4ti25_card\" width=\"230.4\" height=\"110\" rx=\"8\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\r\n<text x=\"14\" y=\"22\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">E4TI025</text>\r\n<circle id=\"e4ti25_status_dot\" cx=\"216.4\" cy=\"16\" r=\"5\" fill=\"#64748b\"/>\r\n<text id=\"e4ti25_value\" x=\"14\" y=\"80\" fill=\"#e2e8f0\" font-size=\"34\" font-weight=\"700\">--</text>\r\n<text x=\"216.4\" y=\"98\" fill=\"#64748b\" font-size=\"10\" text-anchor=\"end\">°C  ·  bed temp</text>\r\n</g>\r\n<!-- Heat scale legend -->\r\n<g transform=\"translate(40,420)\">\r\n<text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"11\">ΔP scale:</text>\r\n<rect x=\"80\" y=\"-10\" width=\"200\" height=\"10\" fill=\"url(#heatScale)\"/>\r\n<text x=\"80\" y=\"16\" fill=\"#64748b\" font-size=\"9\">0</text>\r\n<text x=\"180\" y=\"16\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"middle\">25 mbar</text>\r\n<text x=\"280\" y=\"16\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">≥ 40</text>\r\n<text id=\"strand_insight\" x=\"320\" y=\"0\" fill=\"#cbd5e1\" font-size=\"11\">Strand status: --</text>\r\n</g>\r\n</g>\r\n\r\n \r\n\r\n  <!-- ========== SECTION 2 — IGNITION HOOD ========== -->\r\n<g transform=\"translate(1320,100)\">\r\n<rect width=\"576\" height=\"460\" rx=\"14\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\r\n<text x=\"20\" y=\"32\" fill=\"#e2e8f0\" font-size=\"16\" font-weight=\"600\">Ignition Hood — Burner Zones</text>\r\n<text x=\"20\" y=\"52\" fill=\"#64748b\" font-size=\"11\">11 E3TI hood-zone temperatures  ·  E3TI031 – E3TI041</text>\r\n\r\n \r\n\r\n    <!-- Flame icon + average -->\r\n<g transform=\"translate(40,90)\">\r\n<path d=\"M40 0 C 60 30 80 40 70 90 C 65 110 30 110 25 90 C 15 60 30 30 40 0 Z\" fill=\"url(#flame)\">\r\n<animate attributeName=\"opacity\" values=\"0.85;1;0.85\" dur=\"1.5s\" repeatCount=\"indefinite\"/>\r\n</path>\r\n<text x=\"40\" y=\"135\" fill=\"#e2e8f0\" font-size=\"12\" text-anchor=\"middle\">Hood Avg</text>\r\n<text id=\"hood_avg_value\" x=\"40\" y=\"165\" fill=\"#fbbf24\" font-size=\"26\" font-weight=\"700\" text-anchor=\"middle\">--</text>\r\n<text x=\"40\" y=\"184\" fill=\"#64748b\" font-size=\"10\" text-anchor=\"middle\">°C</text>\r\n<text x=\"40\" y=\"208\" fill=\"#94a3b8\" font-size=\"10\" text-anchor=\"middle\">min / max</text>\r\n<text id=\"hood_minmax_value\" x=\"40\" y=\"226\" fill=\"#cbd5e1\" font-size=\"11\" text-anchor=\"middle\">-- / --</text>\r\n</g>\r\n\r\n \r\n\r\n    <!-- Per-zone tiles, 4 cols x 3 rows = 12 slots, we use 11 -->\r\n<g transform=\"translate(130,80)\">\r\n<rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\r\n<circle id=\"e3ti31_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\r\n<text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI031</text>\r\n<text id=\"e3ti31_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\r\n<text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\r\n</g>\r\n<g transform=\"translate(248,80)\">\r\n<rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\r\n<circle id=\"e3ti32_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\r\n<text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI032</text>\r\n<text id=\"e3ti32_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\r\n<text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\r\n</g>\r\n<g transform=\"translate(366,80)\">\r\n<rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\r\n<circle id=\"e3ti33_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\r\n<text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI033</text>\r\n<text id=\"e3ti33_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\r\n<text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\r\n</g>\r\n<g transform=\"translate(484,80)\">\r\n<rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\r\n<circle id=\"e3ti34_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\r\n<text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI034</text>\r\n<text id=\"e3ti34_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\r\n<text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\r\n</g>\r\n<g transform=\"translate(130,180)\">\r\n<rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\r\n<circle id=\"e3ti35_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\r\n<text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI035</text>\r\n<text id=\"e3ti35_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\r\n<text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\r\n</g>\r\n<g transform=\"translate(248,180)\">\r\n<rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\r\n<circle id=\"e3ti36_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\r\n<text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI036</text>\r\n<text id=\"e3ti36_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\r\n<text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\r\n</g>\r\n<g transform=\"translate(366,180)\">\r\n<rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\r\n<circle id=\"e3ti37_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\r\n<text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI037</text>\r\n<text id=\"e3ti37_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\r\n<text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\r\n</g>\r\n<g transform=\"translate(484,180)\">\r\n<rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\r\n<circle id=\"e3ti38_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\r\n<text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI038</text>\r\n<text id=\"e3ti38_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\r\n<text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\r\n</g>\r\n<g transform=\"translate(130,280)\">\r\n<rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\r\n<circle id=\"e3ti39_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\r\n<text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI039</text>\r\n<text id=\"e3ti39_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\r\n<text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\r\n</g>\r\n<g transform=\"translate(248,280)\">\r\n<rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\r\n<circle id=\"e3ti40_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\r\n<text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI040</text>\r\n<text id=\"e3ti40_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\r\n<text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\r\n</g>\r\n<g transform=\"translate(366,280)\">\r\n<rect width=\"110\" height=\"92\" rx=\"6\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\r\n<circle id=\"e3ti41_status_dot\" cx=\"100\" cy=\"10\" r=\"4\" fill=\"#64748b\"/>\r\n<text x=\"10\" y=\"18\" fill=\"#94a3b8\" font-size=\"9\" letter-spacing=\"1\">E3TI041</text>\r\n<text id=\"e3ti41_value\" x=\"10\" y=\"64\" fill=\"#e2e8f0\" font-size=\"24\" font-weight=\"700\">--</text>\r\n<text x=\"100\" y=\"80\" fill=\"#64748b\" font-size=\"9\" text-anchor=\"end\">°C</text>\r\n</g>\r\n<text x=\"20\" y=\"440\" fill=\"#94a3b8\" font-size=\"11\">Status: <tspan id=\"hood_status_text\" fill=\"#cbd5e1\">--</tspan></text>\r\n</g>\r\n\r\n \r\n\r\n  <!-- ========== SECTION 3 — WINDBOX ΔP RADAR ========== -->\r\n<g transform=\"translate(24,580)\">\r\n<rect width=\"720\" height=\"460\" rx=\"14\" fill=\"url(#card)\" stroke=\"#1e3a5f\"/>\r\n<text x=\"20\" y=\"32\" fill=\"#e2e8f0\" font-size=\"16\" font-weight=\"600\">Windbox ΔP — Permeability Radar</text>\r\n<text x=\"20\" y=\"52\" fill=\"#64748b\" font-size=\"11\">12 windboxes mapped to radar axes  ·  lower ΔP = better bed permeability</text>\r\n\r\n \r\n\r\n    <!-- Radar -->\r\n<g transform=\"translate(220,250)\">\r\n<!-- rings -->\r\n<circle cx=\"0\" cy=\"0\" r=\"50\" fill=\"none\" stroke=\"#1e3a5f\"/>\r\n<circle cx=\"0\" cy=\"0\" r=\"100\" fill=\"none\" stroke=\"#1e3a5f\"/>\r\n<circle cx=\"0\" cy=\"0\" r=\"150\" fill=\"none\" stroke=\"#1e3a5f\"/>\r\n<text x=\"6\" y=\"-50\" fill=\"#475569\" font-size=\"9\">10</text>\r\n<text x=\"6\" y=\"-100\" fill=\"#475569\" font-size=\"9\">25</text>\r\n<text x=\"6\" y=\"-150\" fill=\"#475569\" font-size=\"9\">40 mbar</text>\r\n<!-- radial axes -->\r\n<g stroke=\"#1e3a5f\" opacity=\"0.5\">\r\n<line x1=\"0\" y1=\"0\" x2=\"0.0\" y2=\"-150.0\"/>\r\n<line x1=\"0\" y1=\"0\" x2=\"75.0\" y2=\"-129.9\"/>\r\n<line x1=\"0\" y1=\"0\" x2=\"129.9\" y2=\"-75.0\"/>\r\n<line x1=\"0\" y1=\"0\" x2=\"150.0\" y2=\"0.0\"/>\r\n<line x1=\"0\" y1=\"0\" x2=\"129.9\" y2=\"75.0\"/>\r\n<line x1=\"0\" y1=\"0\" x2=\"75.0\" y2=\"129.9\"/>\r\n<line x1=\"0\" y1=\"0\" x2=\"0.0\" y2=\"150.0\"/>\r\n<line x1=\"0\" y1=\"0\" x2=\"-75.0\" y2=\"129.9\"/>\r\n<line x1=\"0\" y1=\"0\" x2=\"-129.9\" y2=\"75.0\"/>\r\n<line x1=\"0\" y1=\"0\" x2=\"-150.0\" y2=\"0.0\"/>\r\n<line x1=\"0\" y1=\"0\" x2=\"-129.9\" y2=\"-75.0\"/>\r\n<line x1=\"0\" y1=\"0\" x2=\"-75.0\" y2=\"-129.9\"/>\r\n</g>\r\n<g font-size=\"9\" fill=\"#94a3b8\">\r\n<text x=\"0.0\" y=\"-164.0\" text-anchor=\"middle\">WB2</text>\r\n<text x=\"84.0\" y=\"-141.5\" text-anchor=\"start\">WB3</text>\r\n<text x=\"145.5\" y=\"-80.0\" text-anchor=\"start\">WB4</text>\r\n<text x=\"168.0\" y=\"4.0\" text-anchor=\"start\">WB5</text>\r\n<text x=\"145.5\" y=\"88.0\" text-anchor=\"start\">WB6</text>\r\n<text x=\"84.0\" y=\"149.5\" text-anchor=\"start\">WB7</text>\r\n<text x=\"0.0\" y=\"172.0\" text-anchor=\"middle\">WB8</text>\r\n<text x=\"-84.0\" y=\"149.5\" text-anchor=\"end\">WB9</text>\r\n<text x=\"-145.5\" y=\"88.0\" text-anchor=\"end\">WB10</text>\r\n<text x=\"-168.0\" y=\"4.0\" text-anchor=\"end\">WB11</text>\r\n<text x=\"-145.5\" y=\"-80.0\" text-anchor=\"end\">WB13</text>\r\n<text x=\"-84.0\" y=\"-141.5\" text-anchor=\"end\">WB14</text>\r\n</g>\r\n<polygon id=\"radar_live\" points=\"0,0\" fill=\"#fbbf24\" fill-opacity=\"0.25\" stroke=\"#fbbf24\" stroke-width=\"2\"/>\r\n<circle cx=\"0\" cy=\"0\" r=\"3\" fill=\"#475569\"/>\r\n</g>\r\n\r\n \r\n\r\n    <!-- Legend / insights -->\r\n<g transform=\"translate(440,100)\">\r\n<text x=\"0\" y=\"0\" fill=\"#94a3b8\" font-size=\"11\" font-weight=\"600\">Live shift</text>\r\n<rect x=\"0\" y=\"10\" width=\"14\" height=\"14\" fill=\"#fbbf24\" opacity=\"0.5\"/>\r\n<text x=\"22\" y=\"22\" fill=\"#cbd5e1\" font-size=\"11\">Current ΔP (last 5 min)</text>\r\n\r\n \r\n\r\n      <text x=\"0\" y=\"60\" fill=\"#94a3b8\" font-size=\"11\" font-weight=\"600\">Insights</text>\r\n<text id=\"radar_max_label\" x=\"0\" y=\"84\" fill=\"#cbd5e1\" font-size=\"11\">Max ΔP: --</text>\r\n<text id=\"radar_min_label\" x=\"0\" y=\"104\" fill=\"#cbd5e1\" font-size=\"11\">Min ΔP: --</text>\r\n<text id=\"radar_avg_label\" x=\"0\" y=\"124\" fill=\"#cbd5e1\" font-size=\"11\">Mean ΔP: --</text>\r\n<text id=\"radar_spread_label\" x=\"0\" y=\"144\" fill=\"#cbd5e1\" font-size=\"11\">Spread: --</text>\r\n\r\n \r\n\r\n      <rect x=\"0\" y=\"170\" width=\"240\" height=\"56\" fill=\"#0a1a2e\" stroke=\"#1e3a5f\"/>\r\n<text x=\"10\" y=\"190\" fill=\"#94a3b8\" font-size=\"10\" letter-spacing=\"1\">PERMEABILITY HEALTH</text>\r\n<text id=\"radar_health_value\" x=\"230\" y=\"218\" fill=\"#fbbf24\" font-size=\"22\" font-weight=\"700\" text-anchor=\"end\">--</text>\r\n<text x=\"10\" y=\"218\" fill=\"#94a3b8\" font-size=\"10\">% normal cells</text>\r\n</g>\r\n</g>\r\n\r\n \r\n\r\n  <!-- Footer note inside the SVG -->\r\n<text x=\"28\" y=\"1060\" fill=\"#475569\" font-size=\"10\">SP4 Critical Process Monitoring  ·  34 SVG bindings  ·  refresh 5s  ·  trends + alarms below in native Grafana panels</text>\r\n<text x=\"1892\" y=\"1060\" fill=\"#475569\" font-size=\"10\" text-anchor=\"end\">Marcus Calidus SVG  ·  Grafana 10.0.1</text>\r\n</svg>\r\n\r\n",
+      "targets": [
+        {
+          "alias": "WINDBOX_2_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_2_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_3_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_3_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_4_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_4_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_5_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_5_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "D",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_6_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_6_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "E",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_7_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_7_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "F",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_8_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_8_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "G",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_9_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_9_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "H",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_10_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_10_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "I",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_11_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_11_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "J",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_13_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_13_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "K",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_14_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_14_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "L",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_15A_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_15A_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "M",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_15B_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_15B_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "N",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_16A_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_16A_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "O",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_16B_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_16B_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "P",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_17A_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_17A_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "Q",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WINDBOX_17B_DIFFERENTIAL_PRESSURE",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WINDBOX_17B_DIFFERENTIAL_PRESSURE' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "R",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Applications_Application_2_E4TI021",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_2_E4TI021' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "S",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Applications_Application_2_E4TI022",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_2_E4TI022' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "T",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Applications_Application_2_E4TI023",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_2_E4TI023' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "U",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Applications_Application_2_E4TI024",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_2_E4TI024' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "V",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Applications_Application_2_E4TI025",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_2_E4TI025' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "W",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Applications_Application_1_E3TI031",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E3TI031' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "X",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Applications_Application_1_E3TI032",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E3TI032' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "Y",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Applications_Application_1_E3TI033",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E3TI033' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "Z",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Applications_Application_1_E3TI034",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E3TI034' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AA",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Applications_Application_1_E3TI035",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E3TI035' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AB",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Applications_Application_1_E3TI036",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E3TI036' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AC",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Applications_Application_1_E3TI037",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E3TI037' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AD",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Applications_Application_1_E3TI038",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E3TI038' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AE",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Applications_Application_1_E3TI039",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E3TI039' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AF",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Applications_Application_1_E3TI040",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E3TI040' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AG",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Applications_Application_1_E3TI041",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E3TI041' AND $timeFilter",
+          "rawQuery": true,
+          "refId": "AH",
+          "resultFormat": "time_series"
+        }
+      ],
+      "type": "marcuscalidus-svg-panel",
+      "useSVGBuilder": false
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 8,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 14,
+        "x": 0,
+        "y": 23
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "alias": "Hottest bed temp",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT mean(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_2_E4TI023' AND $timeFilter GROUP BY time($__interval) fill(linear)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Avg windbox ΔP",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT mean(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE (\"tag\" = 'WINDBOX_2_DIFFERENTIAL_PRESSURE' OR \"tag\" = 'WINDBOX_3_DIFFERENTIAL_PRESSURE' OR \"tag\" = 'WINDBOX_4_DIFFERENTIAL_PRESSURE' OR \"tag\" = 'WINDBOX_5_DIFFERENTIAL_PRESSURE' OR \"tag\" = 'WINDBOX_6_DIFFERENTIAL_PRESSURE' OR \"tag\" = 'WINDBOX_7_DIFFERENTIAL_PRESSURE' OR \"tag\" = 'WINDBOX_8_DIFFERENTIAL_PRESSURE' OR \"tag\" = 'WINDBOX_9_DIFFERENTIAL_PRESSURE' OR \"tag\" = 'WINDBOX_10_DIFFERENTIAL_PRESSURE' OR \"tag\" = 'WINDBOX_11_DIFFERENTIAL_PRESSURE' OR \"tag\" = 'WINDBOX_13_DIFFERENTIAL_PRESSURE' OR \"tag\" = 'WINDBOX_14_DIFFERENTIAL_PRESSURE' OR \"tag\" = 'WINDBOX_15A_DIFFERENTIAL_PRESSURE' OR \"tag\" = 'WINDBOX_15B_DIFFERENTIAL_PRESSURE' OR \"tag\" = 'WINDBOX_16A_DIFFERENTIAL_PRESSURE' OR \"tag\" = 'WINDBOX_16B_DIFFERENTIAL_PRESSURE' OR \"tag\" = 'WINDBOX_17A_DIFFERENTIAL_PRESSURE' OR \"tag\" = 'WINDBOX_17B_DIFFERENTIAL_PRESSURE' ) AND $timeFilter GROUP BY time($__interval) fill(linear)",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "WGF DE-X vibration",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT mean(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'WGF_FAN_DE_X_VIBRATION' AND $timeFilter GROUP BY time($__interval) fill(linear)",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "Hood E3TI036",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT mean(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E3TI036' AND $timeFilter GROUP BY time($__interval) fill(linear)",
+          "rawQuery": true,
+          "refId": "D",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Process Trends — last 8h (strand bed · ΔP avg · WGF vib · hood)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 10,
+        "x": 14,
+        "y": 23
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "pluginVersion": "10.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT count(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" =~ /_EMS$/ AND \"value\" = 1 AND time > now() - 5m",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Active EMS Interlocks (5 min)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 70,
+            "lineWidth": 0,
+            "spanNulls": false
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "green",
+                  "text": "OK"
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "1": {
+                  "color": "red",
+                  "text": "TRIP"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 33
+      },
+      "id": 4,
+      "options": {
+        "alignValue": "left",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "mergeValues": true,
+        "rowHeight": 0.9,
+        "showValue": "auto",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "alias": "E1025M01",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E1025M01_EMS' AND $timeFilter GROUP BY time(1m) fill(previous)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "E2003M01",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E2003M01_EMS' AND $timeFilter GROUP BY time(1m) fill(previous)",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "E2007M01",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E2007M01_EMS' AND $timeFilter GROUP BY time(1m) fill(previous)",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "E2008M01",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E2008M01_EMS' AND $timeFilter GROUP BY time(1m) fill(previous)",
+          "rawQuery": true,
+          "refId": "D",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "E2009M01",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E2009M01_EMS' AND $timeFilter GROUP BY time(1m) fill(previous)",
+          "rawQuery": true,
+          "refId": "E",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "E2011M02",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E2011M02_EMS' AND $timeFilter GROUP BY time(1m) fill(previous)",
+          "rawQuery": true,
+          "refId": "F",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "E7003M01",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E7003M01_EMS' AND $timeFilter GROUP BY time(1m) fill(previous)",
+          "rawQuery": true,
+          "refId": "G",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "E7004M01",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "caee2dc3-bbe5-4675-bab5-5546d817fd3b"
+          },
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"SP4Iba.94F1A3D6-7319-4C42-8744-CFE06FD3D360\" WHERE \"tag\" = 'Applications_Application_1_E7004M01_EMS' AND $timeFilter GROUP BY time(1m) fill(previous)",
+          "rawQuery": true,
+          "refId": "H",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "EMS Interlock Timeline — last 12h (8 sample tags)",
+      "type": "state-timeline"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "sp4",
+    "sinter",
+    "litmus",
+    "critical-process"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "SP4 Sinter Plant — Critical Process Monitoring",
+  "uid": "sp4-critical-process",
+  "version": 5,
+  "weekStart": ""
+}
